@@ -1,7 +1,7 @@
 // models/data.js
 const portfolioData = {
   personal: {
-    name: "Your Name",
+    name: "Joshua Bonham",
     title: "UX/UI Designer & Developer",
     bio: "Crafting digital experiences that blend functionality with aesthetics.",
     skills: ["UX Design", "UI Design", "Frontend Development", "Prototyping"],
