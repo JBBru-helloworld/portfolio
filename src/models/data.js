@@ -6,7 +6,7 @@ const portfolioData = {
     bio: "Crafting digital experiences that blend functionality with aesthetics.",
     skills: ["UX Design", "UI Design", "Frontend Development", "Prototyping"],
     socialLinks: {
-      linkedin: "www.linkedin.com/in/joshuabonham03",
+      linkedin: "https://www.linkedin.com/in/joshuabonham03",
       github: "https://github.com/JBBru-helloworld",
       twitter: "https://twitter.com/yourprofile",
       dribbble: "https://dribbble.com/yourprofile",
