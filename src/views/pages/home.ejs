@@ -1,0 +1,83 @@
+<!-- views/pages/home.ejs -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="hero-title">Hello, I'm <%= data.personal.name %></h1>
+      <p class="hero-subtitle"><%= data.personal.title %></p>
+      <p class="hero-description"><%= data.personal.bio %></p>
+      <a href="/work" class="cta-button">View My Work</a>
+    </div>
+  </div>
+</section>
+
+<section class="bento-section">
+  <div class="container">
+    <div class="bento-grid">
+      <!-- Featured project -->
+      <div class="bento-item large">
+        <div class="bento-content">
+          <span class="bento-label">Featured Project</span>
+          <h3 class="bento-title"><%= data.projects[0].title %></h3>
+          <p class="bento-description"><%= data.projects[0].description %></p>
+          <a href="/work/<%= data.projects[0].id %>" class="bento-link"
+            >View Project</a
+          >
+        </div>
+        <div class="bento-image">
+          <img
+            src="<%= data.projects[0].thumbnail %>"
+            alt="<%= data.projects[0].title %>"
+            loading="lazy"
+          />
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="bento-item">
+        <div class="bento-content">
+          <span class="bento-label">Skills & Expertise</span>
+          <ul class="skill-list">
+            <% data.personal.skills.forEach(skill => { %>
+            <li><%= skill %></li>
+            <% }) %>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Latest project -->
+      <div class="bento-item">
+        <div class="bento-content">
+          <span class="bento-label">Latest Project</span>
+          <h3 class="bento-title"><%= data.projects[1].title %></h3>
+          <p class="bento-description"><%= data.projects[1].description %></p>
+        </div>
+      </div>
+
+      <!-- Testimonial -->
+      <div class="bento-item">
+        <div class="bento-content">
+          <blockquote class="testimonial">
+            <p><%= data.testimonials[0].quote %></p>
+            <footer>
+              <cite
+                ><%= data.testimonials[0].author %>, <%=
+                data.testimonials[0].position %></cite
+              >
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+
+      <!-- Contact CTA -->
+      <div class="bento-item highlight">
+        <div class="bento-content">
+          <h3 class="bento-title">Let's Work Together</h3>
+          <p class="bento-description">
+            I'm currently available for freelance projects and collaborations.
+          </p>
+          <a href="/contact" class="cta-button">Get in Touch</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
