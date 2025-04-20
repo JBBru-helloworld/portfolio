@@ -97,8 +97,9 @@ app.use("/", routes);
 
 // Error handling
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something broke!");
+  console.error("Error details:", err);
+  console.error("Stack trace:", err.stack);
+  res.status(500).send(`Error: ${err.message}`);
 });
 
 const PORT = process.env.PORT || 3000;
