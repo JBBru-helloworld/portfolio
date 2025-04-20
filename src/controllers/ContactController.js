@@ -1,6 +1,5 @@
 // src/controllers/ContactController.js
 const dataModel = require("../models/data");
-const nodemailer = require("nodemailer"); // If you want email functionality
 
 const ContactController = {
   index: (req, res) => {
@@ -29,8 +28,7 @@ const ContactController = {
         });
       }
 
-      // Here you would typically send an email or save to a database
-      // For now, we'll just send a success response
+      // For now, just log the submission and send a success response
       console.log("Contact form submission:", {
         name,
         email,
