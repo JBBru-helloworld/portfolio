@@ -1,0 +1,93 @@
+<!-- views/pages/contact.ejs -->
+<section class="contact-section">
+  <div class="container">
+    <h1 class="page-title">Get in Touch</h1>
+    <p class="page-description">
+      Have a project in mind? Let's work together to bring your ideas to life.
+    </p>
+
+    <div class="contact-grid">
+      <form
+        class="contact-form"
+        id="contactForm"
+        action="/contact"
+        method="POST"
+      >
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            minlength="2"
+            maxlength="50"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea
+            id="message"
+            name="message"
+            required
+            minlength="10"
+            maxlength="1000"
+            rows="5"
+          ></textarea>
+        </div>
+
+        <button type="submit" class="submit-button">Send Message</button>
+      </form>
+
+      <div class="contact-info">
+        <h2>Let's Connect</h2>
+        <p>
+          I'm always interested in hearing about new projects and opportunities.
+        </p>
+
+        <div class="social-links">
+          <a
+            href="https://linkedin.com/in/yourprofile"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+          >
+            <svg><!-- LinkedIn icon --></svg>
+          </a>
+          <a
+            href="https://github.com/yourprofile"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+          >
+            <svg><!-- GitHub icon --></svg>
+          </a>
+          <a
+            href="https://twitter.com/yourprofile"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Twitter"
+          >
+            <svg><!-- Twitter icon --></svg>
+          </a>
+          <a
+            href="https://dribbble.com/yourprofile"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Dribbble"
+          >
+            <svg><!-- Dribbble icon --></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
