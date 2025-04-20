@@ -1,0 +1,53 @@
+<!-- views/components/header.ejs -->
+<header class="header">
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="logo" aria-label="Home">
+        <span class="logo-text">YN</span>
+      </a>
+
+      <button
+        class="nav-toggle"
+        aria-label="Toggle navigation"
+        aria-expanded="false"
+      >
+        <span class="hamburger"></span>
+      </button>
+
+      <ul class="nav-menu">
+        <li>
+          <a
+            href="/"
+            class="nav-link"
+            aria-current="<%= title === 'Home' ? 'page' : 'false' %>"
+            >Home</a
+          >
+        </li>
+        <li>
+          <a
+            href="/work"
+            class="nav-link"
+            aria-current="<%= title === 'Work' ? 'page' : 'false' %>"
+            >Work</a
+          >
+        </li>
+        <li>
+          <a
+            href="/about"
+            class="nav-link"
+            aria-current="<%= title === 'About' ? 'page' : 'false' %>"
+            >About</a
+          >
+        </li>
+        <li>
+          <a
+            href="/contact"
+            class="nav-link"
+            aria-current="<%= title === 'Contact' ? 'page' : 'false' %>"
+            >Contact</a
+          >
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
