@@ -3,23 +3,25 @@ const dataModel = require("../models/data");
 
 const AboutController = {
   index: (req, res) => {
-    // Get data from your data model
-    const { socialLinks, skills, experience, education } = dataModel;
+    try {
+      // Make sure dataModel exists and has the required properties
+      const socialLinks = dataModel?.socialLinks || {};
+      const skills = dataModel?.skills || [];
+      const experience = dataModel?.experience || [];
+      const education = dataModel?.education || [];
 
-    // Prepare data for the about page
-    const aboutData = {
-      title: "About Me",
-      socialLinks: {
-        linkedin: socialLinks.linkedin,
-        github: socialLinks.github,
-        instagram: socialLinks.instagram,
-      },
-      skills: skills || [], // Assuming you might have skills data
-      experience: experience || [], // Assuming you might have experience data
-      education: education || [], // Assuming you might have education data
-    };
-
-    res.render("pages/about", aboutData);
+      // Render the about page with data
+      res.render("pages/about", {
+        title: "About Me",
+        socialLinks,
+        skills,
+        experience,
+        education,
+      });
+    } catch (error) {
+      console.error("Error in AboutController:", error);
+      res.status(500).send("Internal Server Error");
+    }
   },
 };
 
