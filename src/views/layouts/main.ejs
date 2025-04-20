@@ -1,0 +1,64 @@
+<!-- views/layouts/main.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Portfolio of Your Name - UX/UI Designer & Developer specializing in creating intuitive digital experiences"
+    />
+    <meta
+      name="keywords"
+      content="UX Design, UI Design, Web Development, Portfolio, User Experience"
+    />
+    <meta name="author" content="Your Name" />
+    <meta
+      property="og:title"
+      content="Your Name - UX/UI Designer & Developer"
+    />
+    <meta
+      property="og:description"
+      content="Crafting digital experiences that blend functionality with aesthetics"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://yourwebsite.com" />
+    <meta
+      property="og:image"
+      content="https://yourwebsite.com/assets/images/og-image.jpg"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Your Name - UX/UI Designer & Developer"
+    />
+    <meta
+      name="twitter:description"
+      content="Crafting digital experiences that blend functionality with aesthetics"
+    />
+    <meta
+      name="twitter:image"
+      content="https://yourwebsite.com/assets/images/twitter-card.jpg"
+    />
+
+    <link rel="canonical" href="https://yourwebsite.com" />
+    <link rel="icon" href="/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/responsive.css" />
+
+    <title><%= title %> | Your Name - Portfolio</title>
+  </head>
+  <body>
+    <%- include('../components/header') %>
+
+    <main class="main-content"><%- body %></main>
+
+    <%- include('../components/footer') %>
+
+    <script src="/js/main.js"></script>
+  </body>
+</html>
