@@ -1,10 +1,56 @@
 // src/controllers/ContactController.js
+const dataModel = require("../models/data");
+const nodemailer = require("nodemailer"); // If you want email functionality
+
 const ContactController = {
   index: (req, res) => {
-    res.send("Contact form page");
+    const { socialLinks } = dataModel;
+
+    res.render("pages/contact", {
+      title: "Contact Me",
+      socialLinks: {
+        linkedin: socialLinks.linkedin,
+        github: socialLinks.github,
+        instagram: socialLinks.instagram,
+      },
+      csrfToken: req.csrfToken(), // For form security
+    });
   },
-  submit: (req, res) => {
-    res.send("Contact form submitted");
+
+  submit: async (req, res) => {
+    try {
+      const { name, email, subject, message } = req.body;
+
+      // Validate form data
+      if (!name || !email || !message) {
+        return res.status(400).json({
+          success: false,
+          message: "Please fill in all required fields",
+        });
+      }
+
+      // Here you would typically send an email or save to a database
+      // For now, we'll just send a success response
+      console.log("Contact form submission:", {
+        name,
+        email,
+        subject,
+        message,
+      });
+
+      res.json({
+        success: true,
+        message: "Thank you for your message! I will get back to you soon.",
+      });
+    } catch (error) {
+      console.error("Contact form error:", error);
+      res.status(500).json({
+        success: false,
+        message:
+          "Sorry, there was an error sending your message. Please try again later.",
+      });
+    }
   },
 };
+
 module.exports = ContactController;
