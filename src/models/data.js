@@ -61,4 +61,71 @@ const portfolioData = {
   ],
 };
 
+// src/models/data.js
+const dataModel = {
+  socialLinks: {
+    linkedin: "https://www.linkedin.com/in/yourprofile",
+    github: "https://github.com/yourusername",
+    instagram: "https://www.instagram.com/yourusername",
+  },
+  skills: [
+    {
+      name: "UI/UX Design",
+      description: "Creating intuitive and beautiful user interfaces",
+      icon: "fas fa-palette",
+    },
+    {
+      name: "Frontend Development",
+      description: "Building responsive websites with modern technologies",
+      icon: "fas fa-code",
+    },
+    {
+      name: "User Research",
+      description: "Understanding user needs through research and testing",
+      icon: "fas fa-users",
+    },
+    {
+      name: "Prototyping",
+      description: "Rapid prototyping for quick iteration and feedback",
+      icon: "fas fa-pencil-ruler",
+    },
+  ],
+  experience: [
+    {
+      position: "Senior UX Designer",
+      company: "Tech Company",
+      startDate: "2020",
+      endDate: "Present",
+      description: "Leading UX design for multiple product lines",
+      achievements: [
+        "Increased user engagement by 35%",
+        "Established design system for consistent UI across products",
+        "Mentored junior designers and developers",
+      ],
+    },
+    {
+      position: "UI/UX Designer",
+      company: "Design Agency",
+      startDate: "2018",
+      endDate: "2020",
+      description: "Created user interfaces for various client projects",
+      achievements: [
+        "Designed award-winning mobile applications",
+        "Developed responsive web designs for Fortune 500 clients",
+      ],
+    },
+  ],
+  education: [
+    {
+      degree: "Bachelor of Design",
+      institution: "University Name",
+      graduationYear: "2018",
+      description:
+        "Focused on user experience design and human-computer interaction",
+    },
+  ],
+};
+
+module.exports = dataModel;
+
 module.exports = portfolioData;
