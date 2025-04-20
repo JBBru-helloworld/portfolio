@@ -1,0 +1,37 @@
+<!-- views/pages/work.ejs -->
+<section class="work-section">
+  <div class="container">
+    <h1 class="page-title">Selected Work</h1>
+    <p class="page-description">
+      A collection of my recent projects and case studies.
+    </p>
+
+    <div class="project-grid">
+      <% projects.forEach(project => { %>
+      <article class="project-card">
+        <a href="/work/<%= project.id %>" class="project-link">
+          <div class="project-image">
+            <img
+              src="<%= project.thumbnail %>"
+              alt="<%= project.title %>"
+              loading="lazy"
+            />
+          </div>
+          <div class="project-content">
+            <h2 class="project-title"><%= project.title %></h2>
+            <p class="project-description"><%= project.description %></p>
+            <div class="project-meta">
+              <span class="project-year"><%= project.year %></span>
+              <ul class="project-categories">
+                <% project.categories.forEach(category => { %>
+                <li><%= category %></li>
+                <% }) %>
+              </ul>
+            </div>
+          </div>
+        </a>
+      </article>
+      <% }) %>
+    </div>
+  </div>
+</section>
