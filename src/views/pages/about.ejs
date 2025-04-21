@@ -1,86 +1,140 @@
-<!-- Bio Section -->
-  <div class="bio-section">
-    <h2>Hello! I'm Your Name</h2>
-    <p>
-      I'm a passionate UX/UI designer and developer with a focus on creating
-      intuitive and beautiful digital experiences. With expertise in both
-      design principles and front-end development, I bridge the gap between
-      aesthetics and functionality.
-    </p>
-    <p>
-      My approach combines user-centered design thinking with technical
-      proficiency, allowing me to create solutions that not only look great
-      but also perform exceptionally well.
-    </p>
-  </div>
-</div>
+<!-- About Hero Section -->
+<section class="about-section">
+  <h1 class="page-title">About Me</h1>
+  <p class="page-description">
+    Passionate UX/UI designer and developer creating intuitive digital
+    experiences
+  </p>
 
-<!-- Skills Section -->
-<% if (skills && skills.length > 0) { %>
-<div class="skills-section">
-  <h2>Skills & Expertise</h2>
-  <div class="skills-grid">
-    <% skills.forEach(skill => { %>
-    <div class="skill-item">
-      <div class="skill-icon">
-        <i class="<%= skill.icon %>"></i>
+  <!-- About Main Content -->
+  <div class="container">
+    <div class="about-grid">
+      <!-- Main Content Column -->
+      <div class="about-main-content">
+        <div class="about-card">
+          <img src="../assets/images/profile.jpg" alt="Joshua Bonham" />
+          <h2>Hello! I'm Joshua Bonham</h2>
+          <p>
+            I'm a passionate UX/UI designer and developer with a focus on
+            creating intuitive and beautiful digital experiences. With expertise
+            in both design principles and front-end development, I bridge the
+            gap between aesthetics and functionality.
+          </p>
+          <p>
+            My approach combines user-centered design thinking with technical
+            proficiency, allowing me to create solutions that not only look
+            great but also perform exceptionally well.
+          </p>
+        </div>
       </div>
-      <h3><%= skill.name %></h3>
-      <p><%= skill.description %></p>
-    </div>
-    <% }); %>
-  </div>
-</div>
-<% } %>
 
-<!-- Experience Section -->
-<% if (experience && experience.length > 0) { %>
-<div class="experience-section">
-  <h2>Professional Experience</h2>
-  <div class="timeline">
-    <% experience.forEach(job => { %>
-    <div class="timeline-item">
-      <div class="timeline-date"><%= job.startDate %> - <%= job.endDate || 'Present' %></div>
-      <div class="timeline-content">
-        <h3><%= job.position %></h3>
-        <h4><%= job.company %></h4>
-        <p><%= job.description %></p>
-        <% if (job.achievements) { %>
-        <ul class="achievements">
-          <% job.achievements.forEach(achievement => { %>
-          <li><%= achievement %></li>
-          <% }); %>
-        </ul>
+      <!-- Side Content Column -->
+      <div class="about-side-content">
+        <% if (typeof interests !== 'undefined' && interests.length > 0) { %>
+        <div class="interests-section">
+          <h3>Personal Interests</h3>
+          <div class="interests-grid">
+            <% interests.forEach(interest => { %>
+            <div class="interest-item">
+              <div class="interest-icon">
+                <i class="<%= interest.icon %>"></i>
+              </div>
+              <span class="interest-label"><%= interest.name %></span>
+            </div>
+            <% }); %>
+          </div>
+        </div>
         <% } %>
       </div>
     </div>
-    <% }); %>
-  </div>
-</div>
-<% } %>
 
-<!-- Education Section -->
-<% if (education && education.length > 0) { %>
-<div class="education-section">
-  <h2>Education</h2>
-  <div class="education-grid">
-    <% education.forEach(edu => { %>
-    <div class="education-item">
-      <h3><%= edu.degree %></h3>
-      <h4><%= edu.institution %></h4>
-      <p class="education-date"><%= edu.graduationYear %></p>
-      <% if (edu.description) { %>
-      <p><%= edu.description %></p>
-      <% } %>
+    <!-- Skills Section -->
+    <% if (typeof skills !== 'undefined' && skills.length > 0) { %>
+    <div class="skills-section">
+      <h2>Skills & Expertise</h2>
+      <div class="skills-grid">
+        <% skills.forEach(skill => { %>
+        <div class="skill-card">
+          <i class="<%= skill.icon %>"></i>
+          <h3><%= skill.name %></h3>
+          <p><%= skill.description %></p>
+        </div>
+        <% }); %>
+      </div>
     </div>
-    <% }); %>
-  </div>
-</div>
-<% } %>
+    <% } %>
 
-<!-- Call to Action -->
-<div class="cta-section">
-  <h2>Let's Work Together</h2>
-  <p>Interested in collaborating on a project? I'd love to hear from you!</p>
-  <a href="/contact" class="btn btn-primary">Get in Touch</a>
-</div>
+    <!-- Experience Section -->
+    <% if (typeof experience !== 'undefined' && experience.length > 0) { %>
+    <div class="timeline-section">
+      <h2>Professional Experience</h2>
+      <div class="timeline">
+        <% experience.forEach(job => { %>
+        <div class="timeline-item">
+          <div class="timeline-date">
+            <%= job.startDate %> - <%= job.endDate || 'Present' %>
+          </div>
+          <h3 class="timeline-title"><%= job.position %></h3>
+          <div class="timeline-company"><%= job.company %></div>
+          <p class="timeline-description"><%= job.description %></p>
+          <% if (job.achievements) { %>
+          <ul class="achievements">
+            <% job.achievements.forEach(achievement => { %>
+            <li><%= achievement %></li>
+            <% }); %>
+          </ul>
+          <% } %>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Education Section -->
+    <% if (typeof education !== 'undefined' && education.length > 0) { %>
+    <div class="education-section">
+      <h2>Education</h2>
+      <div class="skills-grid">
+        <% education.forEach(edu => { %>
+        <div class="skill-card">
+          <h3><%= edu.degree %></h3>
+          <h4><%= edu.institution %></h4>
+          <p class="timeline-date"><%= edu.graduationYear %></p>
+          <% if (edu.description) { %>
+          <p><%= edu.description %></p>
+          <% } %>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Certifications Section -->
+    <% if (typeof certifications !== 'undefined' && certifications.length > 0) {
+    %>
+    <div class="certifications">
+      <h2>Certifications</h2>
+      <div class="certification-gallery">
+        <% certifications.forEach(cert => { %>
+        <div class="certification-card">
+          <div class="certification-logo">
+            <img src="<%= cert.logo %>" alt="<%= cert.name %> logo" />
+          </div>
+          <div class="certification-name"><%= cert.name %></div>
+          <div class="certification-issuer"><%= cert.issuer %></div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Call to Action -->
+    <div class="cta-section">
+      <h2>Let's Work Together</h2>
+      <p>
+        Interested in collaborating on a project? I'd love to hear from you!
+      </p>
+      <a href="/contact" class="cta-button">Get in Touch</a>
+    </div>
+  </div>
+</section>
