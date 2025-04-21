@@ -6,7 +6,7 @@ const ContactController = {
     const { socialLinks } = data.personal;
 
     res.render("pages/contact", {
-      title: "Contact Me",
+      title: "Contact",
       socialLinks: {
         linkedin: socialLinks.linkedin,
         github: socialLinks.github,
