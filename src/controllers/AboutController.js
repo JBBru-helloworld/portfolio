@@ -12,7 +12,7 @@ const AboutController = {
 
       // Render the about page with data
       res.render("pages/about", {
-        title: "About Me",
+        title: "About",
         socialLinks,
         skills,
         experience,
