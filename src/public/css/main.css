@@ -150,9 +150,21 @@ a:hover {
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 10px;
   font-size: var(--font-size-xl);
   font-weight: 700;
   color: var(--color-black);
+}
+
+.logo-image {
+  height: 40px; /* Adjust as needed */
+  width: 40px; /* Set width to match height for perfect circle */
+  display: block;
+  border-radius: 50%; /* Makes the image circular */
+  object-fit: cover; /* Ensures the image fills the circle properly */
 }
 
 .nav-menu {
@@ -606,4 +618,375 @@ a:hover {
 
 .footer-links a:hover {
   color: var(--color-black);
+}
+
+/* About page specific styles */
+.about-section {
+  padding: var(--space-3xl) 0;
+  margin-top: 80px;
+}
+
+.page-title {
+  font-size: var(--font-size-5xl);
+  text-align: center;
+  margin-bottom: var(--space-md);
+}
+
+.page-description {
+  font-size: var(--font-size-xl);
+  text-align: center;
+  color: var(--color-gray-400);
+  max-width: 600px;
+  margin: 0 auto var(--space-3xl);
+}
+
+/* About grid layout */
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--space-xl);
+  margin-bottom: var(--space-3xl);
+}
+
+.about-main-content {
+  grid-column: span 7;
+}
+
+.about-side-content {
+  grid-column: span 5;
+}
+
+/* About Content Card */
+.about-card {
+  background: var(--color-white);
+  border-radius: 24px;
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+}
+
+.about-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.about-card img {
+  width: 100%;
+  border-radius: 16px;
+  margin-bottom: var(--space-lg);
+  aspect-ratio: 1/1;
+  object-fit: cover;
+}
+
+.about-card h2 {
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--space-md);
+}
+
+.about-card p {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-500);
+  line-height: 1.8;
+}
+
+/* Skills Section */
+.skills-section {
+  margin-bottom: var(--space-3xl);
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-md);
+}
+
+.skill-card {
+  background: var(--color-gray-100);
+  border-radius: 16px;
+  padding: var(--space-lg);
+  text-align: center;
+  transition: all var(--transition-base);
+}
+
+.skill-card:hover {
+  background: var(--color-primary);
+  color: var(--color-white);
+  transform: translateY(-4px);
+}
+
+.skill-card i {
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--space-sm);
+  color: var(--color-primary);
+  transition: color var(--transition-base);
+}
+
+.skill-card:hover i {
+  color: var(--color-white);
+}
+
+.skill-card h3 {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--space-xs);
+}
+
+.skill-card:hover h3 {
+  color: var(--color-white);
+}
+
+.skill-card p {
+  font-size: var(--font-size-sm);
+  opacity: 0.8;
+}
+
+/* Timeline Section */
+.timeline-section {
+  margin-bottom: var(--space-3xl);
+}
+
+.timeline {
+  position: relative;
+  padding-left: var(--space-lg);
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-gray-200);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: var(--space-xl);
+  padding-left: var(--space-xl);
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: 4px solid var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.timeline-date {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-400);
+  margin-bottom: var(--space-xs);
+}
+
+.timeline-title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+
+.timeline-company {
+  font-size: var(--font-size-base);
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.timeline-description {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-500);
+  line-height: 1.6;
+}
+
+/* Certification Gallery */
+.certifications {
+  margin-bottom: var(--space-3xl);
+}
+
+.certification-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-lg);
+}
+
+.certification-card {
+  background: var(--color-white);
+  border-radius: 16px;
+  padding: var(--space-md);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  transition: all var(--transition-base);
+}
+
+.certification-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.certification-logo {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto var(--space-sm);
+}
+
+.certification-name {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+
+.certification-issuer {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-400);
+}
+
+/* Personal Interests Section */
+.interests-section {
+  background: var(--color-gray-100);
+  border-radius: 24px;
+  padding: var(--space-2xl);
+  margin-bottom: var(--space-3xl);
+}
+
+.interests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-md);
+}
+
+.interest-item {
+  text-align: center;
+  padding: var(--space-md);
+  border-radius: 12px;
+  transition: all var(--transition-base);
+}
+
+.interest-item:hover {
+  background: var(--color-white);
+  transform: translateY(-2px);
+}
+
+.interest-icon {
+  font-size: var(--font-size-2xl);
+  color: var(--color-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.interest-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+/*cta section*/
+.cta-section {
+  margin-bottom: var(--space-3xl);
+}
+
+/* Responsive adjustments for About page */
+@media (max-width: 1024px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-main-content,
+  .about-side-content {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-hero h1 {
+    font-size: var(--font-size-4xl);
+  }
+
+  .about-hero p {
+    font-size: var(--font-size-lg);
+  }
+
+  .skills-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .timeline {
+    padding-left: var(--space-md);
+  }
+
+  .timeline-item {
+    padding-left: var(--space-lg);
+  }
+
+  .certification-gallery {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .interests-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .about-section {
+    padding: var(--space-2xl) 0;
+  }
+
+  .about-hero {
+    padding: var(--space-lg) 0;
+  }
+
+  .about-hero h1 {
+    font-size: var(--font-size-3xl);
+  }
+
+  .skills-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .certification-gallery {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .interests-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+}
+
+/* Animations for About page elements */
+.about-card,
+.skill-card,
+.timeline-item,
+.certification-card,
+.interest-item {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.about-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.about-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.skill-card:nth-child(1) {
+  animation-delay: 0.3s;
+}
+.skill-card:nth-child(2) {
+  animation-delay: 0.4s;
+}
+.skill-card:nth-child(3) {
+  animation-delay: 0.5s;
+}
+.skill-card:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
