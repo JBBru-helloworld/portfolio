@@ -1,9 +1,9 @@
 // src/controllers/ContactController.js
-const dataModel = require("../models/data");
+const data = require("../models/data");
 
 const ContactController = {
   index: (req, res) => {
-    const { socialLinks } = dataModel;
+    const { socialLinks } = data.personal;
 
     res.render("pages/contact", {
       title: "Contact Me",
