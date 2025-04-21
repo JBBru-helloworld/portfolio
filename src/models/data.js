@@ -1,5 +1,5 @@
 // models/data.js
-const portfolioData = {
+const data = {
   personal: {
     name: "Joshua Bonham",
     title: "UX/UI Designer & Developer",
@@ -59,15 +59,7 @@ const portfolioData = {
       position: "CEO, StartupX",
     },
   ],
-};
 
-// src/models/data.js
-const dataModel = {
-  socialLinks: {
-    linkedin: "https://www.linkedin.com/in/yourprofile",
-    github: "https://github.com/yourusername",
-    instagram: "https://www.instagram.com/yourusername",
-  },
   skills: [
     {
       name: "UI/UX Design",
@@ -126,6 +118,4 @@ const dataModel = {
   ],
 };
 
-module.exports = dataModel;
-
-module.exports = portfolioData;
+module.exports = data;
