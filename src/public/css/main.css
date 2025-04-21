@@ -881,6 +881,11 @@ a:hover {
   font-weight: 500;
 }
 
+/*education section*/
+.education-section {
+  margin-bottom: var(--space-3xl);
+}
+
 /*cta section*/
 .cta-section {
   margin-bottom: var(--space-3xl);
