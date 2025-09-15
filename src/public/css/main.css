@@ -2021,7 +2021,7 @@ a:hover {
 .about-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: var(--space-xl);
+  gap: var(--space-lg);
   margin-bottom: var(--space-3xl);
   height: auto;
   overflow: visible;
@@ -2207,7 +2207,7 @@ a:hover {
 /* Skills Section */
 .skills-section {
   grid-column: span 12;
-  margin-bottom: var(--space-3xl);
+  margin-bottom: var(--space-lg);
 }
 
 @media (max-width: 1024px) {
