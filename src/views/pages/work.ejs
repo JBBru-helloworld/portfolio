@@ -3,13 +3,19 @@
   <div class="container">
     <h1 class="page-title">Selected Work</h1>
     <p class="page-description">
-      A collection of my recent projects and case studies.
+      A collection of my recent projects showcasing modern web development, AI
+      integration, and innovative solutions.
     </p>
 
-    <div class="project-grid">
-      <% projects.forEach(project => { %>
-      <article class="project-card">
-        <a href="/work/<%= project.id %>" class="project-link">
+    <div class="project-grid" id="projectGrid">
+      <% 
+        const projectsPerPage = 4;
+        const totalPages = Math.ceil(data.projects.length / projectsPerPage);
+      %>
+      
+      <% data.projects.forEach((project, index) => { %>
+        <% const pageNumber = Math.floor(index / projectsPerPage) + 1; %>
+        <article class="project-card" data-page="<%= pageNumber %>">
           <div class="project-image">
             <img
               src="<%= project.thumbnail %>"
@@ -20,18 +26,119 @@
           <div class="project-content">
             <h2 class="project-title"><%= project.title %></h2>
             <p class="project-description"><%= project.description %></p>
+
+            <!-- Technology Stack -->
+            <div class="project-technologies">
+              <% project.technologies.forEach(tech => { %>
+              <span class="tech-badge" title="<%= tech.name %>">
+                <%= tech.name %>
+              </span>
+              <% }) %>
+            </div>
+
             <div class="project-meta">
-              <span class="project-year"><%= project.year %></span>
-              <ul class="project-categories">
-                <% project.categories.forEach(category => { %>
-                <li><%= category %></li>
-                <% }) %>
-              </ul>
+              <span class="project-period"><%= project.period %></span>
+              <% if (project.association) { %>
+              <span class="project-association"><%= project.association %></span>
+              <% } %>
+            </div>
+
+            <!-- Project Links -->
+            <div class="project-links">
+              <% if (project.githubLink) { %>
+              <a
+                href="<%= project.githubLink %>"
+                class="project-link-btn github"
+                target="_blank"
+              >
+                <span class="icon-text">📂</span>
+                GitHub
+              </a>
+              <% } %> <% if (project.liveLink) { %>
+              <a
+                href="<%= project.liveLink %>"
+                class="project-link-btn live"
+                target="_blank"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"
+                  />
+                </svg>
+                Live Demo
+              </a>
+              <% } %> <% if (project.youtubeLink) { %>
+              <a
+                href="<%= project.youtubeLink %>"
+                class="project-link-btn youtube"
+                target="_blank"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"
+                  />
+                </svg>
+                Watch Demo
+              </a>
+              <% } %> <% if (project.figmaLink) { %>
+              <a
+                href="<%= project.figmaLink %>"
+                class="project-link-btn figma"
+                target="_blank"
+              >
+                <span class="icon-text">🎨</span>
+                Figma
+              </a>
+              <% } %>
             </div>
           </div>
-        </a>
-      </article>
+        </article>
       <% }) %>
     </div>
+
+    <!-- Pagination Controls -->
+    <% if (totalPages > 1) { %>
+    <div class="pagination-wrapper">
+      <nav class="pagination" aria-label="Project pagination">
+        <button class="pagination-btn pagination-prev" id="prevBtn" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"/>
+          </svg>
+          <span>Previous</span>
+          <span class="sr-only">Go to previous page</span>
+        </button>
+        
+        <div class="pagination-numbers" id="paginationNumbers">
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <button class="pagination-number <%= i === 1 ? 'active' : '' %>" data-page="<%= i %>">
+              <%= i %>
+            </button>
+          <% } %>
+        </div>
+        
+        <button class="pagination-btn pagination-next" id="nextBtn" <%= totalPages <= 1 ? 'disabled' : '' %>>
+          <span>Next</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
+          </svg>
+          <span class="sr-only">Go to next page</span>
+        </button>
+      </nav>
+      
+      <div class="pagination-info">
+        <span id="pageInfo">Page 1 of <%= totalPages %></span>
+      </div>
+    </div>
+    <% } %>
   </div>
 </section>
