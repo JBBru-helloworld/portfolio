@@ -1,0 +1,318 @@
+<!-- views/pages/home.ejs -->
+<section class="hero-section relative overflow-hidden">
+  <!-- Aurora Background -->
+  <div
+    class="absolute inset-0"
+    style="
+      --aurora: repeating-linear-gradient(
+        100deg,
+        #1e3a8a 10%,
+        #4f46e5 15%,
+             <!-- Contact CTA -->
+      <div class="bento-item contact-cta">
+        <div class="bento-content">
+          <h3 class="bento-title">Let's Work Together</h3>
+          <p class="bento-description">
+            I'm currently available for freelance projects, internships, and exciting collaborations.
+            Let's create something amazing together!
+          </p>
+          <a href="/contact" class="cta-button">Get in Touch</a>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="bento-item stats">
+        <div class="bento-content">
+          <span class="bento-label">Quick Stats</span>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-number"><%= data.projects.length %></div>
+              <div class="stat-label">Projects Completed</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">5+</div>
+              <div class="stat-label">Technologies Mastered</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">2+</div>
+              <div class="stat-label">Years Experience</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>        #7c3aed 25%,
+        #0891b2 30%
+      );
+      --dark-gradient: repeating-linear-gradient(
+        100deg,
+        rgba(0, 0, 0, 0.3) 0%,
+        rgba(0, 0, 0, 0.3) 7%,
+        transparent 10%,
+        transparent 12%,
+        rgba(0, 0, 0, 0.3) 16%
+      );
+    "
+  >
+    <div
+      class="aurora-background"
+      style="
+        position: absolute;
+        inset: -10px;
+        pointer-events: none;
+        background-image: var(--dark-gradient), var(--aurora);
+        background-size: 300%, 200%;
+        background-position: 50% 50%, 50% 50%;
+        opacity: 0.8;
+        filter: blur(15px);
+        will-change: transform;
+        animation: aurora 60s linear infinite;
+        mask-image: radial-gradient(
+          ellipse at 50% 0%,
+          black 30%,
+          transparent 80%
+        );
+        -webkit-mask-image: radial-gradient(
+          ellipse at 50% 0%,
+          black 30%,
+          transparent 80%
+        );
+      "
+    ></div>
+    <div
+      class="aurora-background-2"
+      style="
+        position: absolute;
+        inset: -20px;
+        pointer-events: none;
+        background: linear-gradient(
+          45deg,
+          #1e3a8a,
+          #4f46e5,
+          #2563eb,
+          #7c3aed,
+          #0891b2
+        );
+        background-size: 400% 400%;
+        opacity: 0.6;
+        filter: blur(20px);
+        will-change: transform;
+        animation: aurora 45s linear infinite reverse;
+        mask-image: radial-gradient(
+          ellipse at 50% 50%,
+          black 20%,
+          transparent 70%
+        );
+        -webkit-mask-image: radial-gradient(
+          ellipse at 50% 50%,
+          black 20%,
+          transparent 70%
+        );
+      "
+    ></div>
+  </div>
+
+  <div class="container hero-container relative z-10">
+    <div class="hero-grid">
+      <!-- Left Side - Large Name -->
+      <div class="hero-name-section">
+        <h1 class="hero-large-name"><%= data.personal.name.split(' ')[0] %></h1>
+        <h1 class="hero-large-name"><%= data.personal.name.split(' ')[1] %></h1>
+      </div>
+
+      <!-- Right Side - Profile and Info -->
+      <div class="hero-info-section">
+        <div class="hero-profile-container">
+          <div class="hero-profile-image">
+            <img
+              src="/assets/images/profile.jpg"
+              alt="<%= data.personal.name %>"
+            />
+          </div>
+
+          <div class="hero-info-content">
+            <p class="hero-subtitle"><%= data.personal.title %></p>
+            <p class="hero-description"><%= data.personal.bio %></p>
+            <a href="/work" class="cta-button">View My Work</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bento-section">
+  <div class="container">
+    <div class="bento-grid">
+      <!-- Featured project -->
+      <div class="bento-item medium">
+        <div class="bento-content">
+          <span class="bento-label">Featured Project</span>
+          <h3 class="bento-title"><%= data.projects[0].title %></h3>
+          <p class="bento-description"><%= data.projects[0].description %></p>
+          <div class="tech-stack">
+            <% data.projects[0].technologies.forEach(tech => { %>
+              <span class="tech-badge-small" title="<%= tech.name %>"><%= tech.name %></span>
+            <% }) %>
+          </div>
+          <% if (data.projects[0].githubLink) { %>
+            <a href="<%= data.projects[0].githubLink %>" class="bento-link" target="_blank">View Project</a>
+          <% } %>
+        </div>
+        <div class="bento-image">
+          <img
+            src="<%= data.projects[0].thumbnail %>"
+            alt="<%= data.projects[0].title %>"
+            loading="lazy"
+          />
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="bento-item small skills">
+        <div class="bento-content">
+          <span class="bento-label">Skills & Expertise</span>
+          <h3 class="bento-title">Core Technologies</h3>
+          <ul class="skill-list">
+            <% data.personal.skills.slice(0, 6).forEach(skill => { %>
+            <li><%= skill %></li>
+            <% }) %>
+          </ul>
+          <a href="/about" class="bento-link">View All Skills</a>
+        </div>
+      </div>
+
+      <!-- Latest project -->
+      <div class="bento-item medium latest-project">
+        <div class="bento-content">
+          <span class="bento-label">Latest Project</span>
+          <h3 class="bento-title"><%= data.projects[1].title %></h3>
+          <p class="bento-description"><%= data.projects[1].description.substring(0, 120) %>...</p>
+          <div class="tech-stack">
+            <% data.projects[1].technologies.slice(0, 4).forEach(tech => { %>
+              <span class="tech-badge-small" title="<%= tech.name %>"><%= tech.name %></span>
+            <% }) %>
+          </div>
+          <a href="/work" class="bento-link">View Project</a>
+        </div>
+      </div>
+
+      <!-- About Me -->
+      <div class="bento-item small about-me">
+        <div class="bento-content">
+          <span class="bento-label">About Me</span>
+          <h3 class="bento-title">Passionate Developer</h3>
+          <p class="bento-description">
+            <%= data.personal.bio %> Currently pursuing Computer Science at Sunway University 
+            with a focus on full-stack development and AI integration.
+          </p>
+          <a href="/about" class="bento-link">Learn More</a>
+        </div>
+      </div>
+
+      <!-- Contact CTA -->
+      <div class="bento-item contact-cta">
+        <div class="bento-content">
+          <h3 class="bento-title">Let's Work Together</h3>
+          <p class="bento-description">
+            I'm currently available for freelance projects, internships, and exciting collaborations.
+            Let's create something amazing together!
+          </p>
+          <a href="/contact" class="cta-button">Get in Touch</a>
+        </div>
+      </div>
+
+            <!-- Contact CTA -->      <!-- Skills -->
+      <div class="bento-item small skills">
+        <div class="bento-content">
+          <span class="bento-label">Skills & Expertise</span>
+          <h3 class="bento-title">Core Technologies</h3>
+          <ul class="skill-list">
+            <% data.personal.skills.slice(0, 6).forEach(skill => { %>
+            <li><%= skill %></li>
+            <% }) %>
+          </ul>
+          <a href="/about" class="bento-link">View All Skills</a>
+        </div>
+      </div>
+
+      <!-- Latest project -->
+      <div class="bento-item small latest-project">
+        <div class="bento-content">
+          <span class="bento-label">Latest Project</span>
+          <h3 class="bento-title"><%= data.projects[1].title %></h3>
+          <p class="bento-description"><%= data.projects[1].description.substring(0, 120) %>...</p>
+          <div class="tech-stack">
+            <% data.projects[1].technologies.slice(0, 4).forEach(tech => { %>
+              <span class="tech-badge-small" title="<%= tech.name %>"><%= tech.name %></span>
+            <% }) %>
+          </div>
+          <a href="/work" class="bento-link">View Project</a>
+        </div>
+      </div>
+
+      <!-- Testimonial -->
+      <div class="bento-item small testimonial">
+        <div class="bento-content">
+          <span class="bento-label">Testimonial</span>
+          <blockquote class="testimonial">
+            <p>"<%= data.testimonials[0].quote %>"</p>
+            <footer>
+              <cite
+                ><%= data.testimonials[0].author %><br>
+                <small><%= data.testimonials[0].position %></small></cite
+              >
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="bento-item medium">
+        <div class="bento-content">
+          <span class="bento-label">Quick Stats</span>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-number"><%= data.projects.length %></div>
+              <div class="stat-label">Projects Completed</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">5+</div>
+              <div class="stat-label">Technologies Mastered</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">2+</div>
+              <div class="stat-label">Years Experience</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- About Preview -->
+      <div class="bento-item medium">
+        <div class="bento-content">
+          <span class="bento-label">About Me</span>
+          <h3 class="bento-title">Passionate Developer</h3>
+          <p class="bento-description">
+            <%= data.personal.bio %> Currently pursuing Computer Science at Sunway University 
+            with a focus on full-stack development and AI integration.
+          </p>
+          <a href="/about" class="bento-link">Learn More</a>
+        </div>
+      </div>
+
+      <!-- Contact CTA */
+      <div class="bento-item contact-cta">
+        <div class="bento-content">
+          <h3 class="bento-title">Let's Work Together</h3>
+          <p class="bento-description">
+            I'm currently available for freelance projects, internships, and exciting collaborations.
+            Let's create something amazing together!
+          </p>
+          <a href="/contact" class="cta-button">Get in Touch</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
