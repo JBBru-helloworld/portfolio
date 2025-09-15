@@ -1,0 +1,56 @@
+<!-- views/pages/thank-you.ejs -->
+<section class="thank-you-section">
+  <div class="container">
+    <div class="thank-you-content">
+      <h1 class="page-title">Thank You!</h1>
+      <p class="page-description">
+        Your message has been sent successfully. I'll get back to you as soon as
+        possible.
+      </p>
+
+      <div class="thank-you-actions">
+        <a href="index.html" class="cta-button">Back to Home</a>
+        <a href="work.html" class="secondary-button">View My Work</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .thank-you-section {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .thank-you-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .thank-you-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .secondary-button {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid var(--primary-color);
+    background: transparent;
+    color: var(--primary-color);
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .secondary-button:hover {
+    background: var(--primary-color);
+    color: white;
+  }
+</style>
