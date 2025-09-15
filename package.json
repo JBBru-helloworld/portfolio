@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "NODE_ENV=development nodemon src/app.js",
+    "build-css": "tailwindcss -i ./src/public/css/main.css -o ./src/public/css/output.css --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -17,6 +18,7 @@
   "author": "Your Name",
   "license": "ISC",
   "dependencies": {
+    "clsx": "^2.1.1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -28,10 +30,13 @@
     "express-rate-limit": "^7.1.5",
     "express-validator": "^7.0.1",
     "helmet": "^7.1.0",
+    "motion": "^12.23.12",
     "sanitize-html": "^2.11.0",
+    "tailwind-merge": "^3.3.1",
     "xss": "^1.0.14"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.2",
+    "tailwindcss": "^4.1.12"
   }
 }
