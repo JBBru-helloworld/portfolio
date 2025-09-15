@@ -7,7 +7,6 @@ class HomeController {
       res.render("pages/home", {
         title: "Home",
         data: portfolioData,
-        csrfToken: req.csrfToken(),
       });
     } catch (error) {
       console.error("Error in HomeController:", error);
