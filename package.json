@@ -16,7 +16,7 @@
     "express",
     "ejs"
   ],
-  "author": "Your Name",
+  "author": "Joshua Bonham",
   "license": "ISC",
   "dependencies": {
     "clsx": "^2.1.1",
