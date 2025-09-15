@@ -147,6 +147,18 @@
   }
 
   /* About page mobile adjustments */
+  .about-section {
+    min-height: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding-bottom: var(--space-3xl) !important;
+  }
+
+  .about-grid {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
   .about-hero-section {
     grid-template-columns: 1fr;
     gap: var(--space-md);
@@ -167,14 +179,24 @@
   }
 
   /* Fix skills section for mobile */
+  .skills-section {
+    overflow: visible !important;
+    height: auto !important;
+    margin-bottom: var(--space-xl) !important;
+  }
+
   .skills-grid-simple {
     grid-template-columns: 1fr !important;
     gap: var(--space-md);
+    overflow: visible !important;
+    height: auto !important;
   }
 
   .skill-category {
     padding: var(--space-md);
     margin-bottom: var(--space-md);
+    overflow: visible !important;
+    height: auto !important;
   }
 
   .skill-category h3 {
@@ -189,6 +211,8 @@
     border-radius: 16px;
     border: 1px solid rgba(16, 185, 129, 0.1);
     margin: var(--space-lg) 0;
+    overflow: visible !important;
+    height: auto !important;
   }
 
   .cta-section h2 {
@@ -455,6 +479,9 @@
 
   .about-section {
     padding: var(--space-2xl) 0;
+    min-height: auto !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 
   .about-hero {
@@ -470,13 +497,22 @@
   }
 
   /* Fix skills-grid-simple for small mobile */
+  .skills-section {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
   .skills-grid-simple {
     grid-template-columns: 1fr;
     gap: var(--space-md);
+    overflow: visible !important;
+    height: auto !important;
   }
 
   .skill-category {
     padding: var(--space-md);
+    overflow: visible !important;
+    height: auto !important;
   }
 
   .skill-category h3 {
@@ -488,6 +524,8 @@
     text-align: center;
     padding: var(--space-lg);
     margin: var(--space-lg) 0;
+    overflow: visible !important;
+    height: auto !important;
   }
 
   .cta-section h2 {
