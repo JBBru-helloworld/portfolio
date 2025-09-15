@@ -8,11 +8,18 @@
 
   <!-- About Main Content -->
   <div class="container">
-    <div class="about-grid">
-      <!-- Main Content Column -->
-      <div class="about-main-content">
-        <div class="about-card">
+    <div class="about-hero-section">
+      <!-- Profile Image Section -->
+      <div class="about-profile-section">
+        <div class="about-profile-image">
           <img src="../assets/images/profile.jpg" alt="Joshua Bonham" />
+        </div>
+      </div>
+
+      <!-- About Content + Resume Bento -->
+      <div class="about-content-section">
+        <!-- About Text -->
+        <div class="about-text-card">
           <h2>Hello! I'm Joshua Bonham</h2>
           <p>
             I'm a passionate UX/UI designer and developer with a focus on
@@ -26,43 +33,91 @@
             great but also perform exceptionally well.
           </p>
         </div>
-      </div>
 
-      <!-- Side Content Column -->
-      <div class="about-side-content">
-        <% if (typeof interests !== 'undefined' && interests.length > 0) { %>
-        <div class="interests-section">
-          <h3>Personal Interests</h3>
-          <div class="interests-grid">
-            <% interests.forEach(interest => { %>
-            <div class="interest-item">
-              <div class="interest-icon">
-                <i class="<%= interest.icon %>"></i>
-              </div>
-              <span class="interest-label"><%= interest.name %></span>
-            </div>
-            <% }); %>
+        <!-- Resume Bento -->
+        <div class="resume-bento">
+          <div class="bento-content">
+            <span class="bento-label">Resume</span>
+            <h3 class="bento-title">Download CV</h3>
+            <p class="bento-description">
+              Get a detailed overview of my experience, skills, and qualifications.
+            </p>
+            <a href="/assets/resume/Joshua Edwin Rene Bonham_Resume.pdf" 
+               class="resume-download-btn" 
+               download="Joshua_Bonham_Resume.pdf"
+               target="_blank">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 15L7 10H11V3H13V10H17L12 15Z" fill="currentColor"/>
+                <path d="M20 18H4V20H20V18Z" fill="currentColor"/>
+              </svg>
+              Download PDF
+            </a>
           </div>
         </div>
-        <% } %>
       </div>
     </div>
 
+    <div class="about-grid">
+
     <!-- Skills Section -->
-    <% if (typeof skills !== 'undefined' && skills.length > 0) { %>
     <div class="skills-section">
       <h2>Skills & Expertise</h2>
-      <div class="skills-grid">
-        <% skills.forEach(skill => { %>
-        <div class="skill-card">
-          <i class="<%= skill.icon %>"></i>
-          <h3><%= skill.name %></h3>
-          <p><%= skill.description %></p>
+      <div class="skills-grid-simple">
+        <div class="skill-category">
+          <h3>Frontend Development</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">React.js</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">HTML5</span>
+            <span class="skill-tag">CSS3</span>
+            <span class="skill-tag">Tailwind CSS</span>
+          </div>
         </div>
-        <% }); %>
+
+        <div class="skill-category">
+          <h3>Backend Development</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Node.js</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">Scala</span>
+            <span class="skill-tag">Express.js</span>
+            <span class="skill-tag">Firebase</span>
+            <span class="skill-tag">MongoDB</span>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h3>Cloud & DevOps</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">AWS</span>
+            <span class="skill-tag">Git</span>
+            <span class="skill-tag">Docker</span>
+            <span class="skill-tag">CI/CD</span>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h3>Design & Tools</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">UI/UX Design</span>
+            <span class="skill-tag">Figma</span>
+            <span class="skill-tag">Adobe Creative Suite</span>
+            <span class="skill-tag">Sketch</span>
+            <span class="skill-tag">Wireframing</span>
+            <span class="skill-tag">Prototyping</span>
+          </div>
+        </div>
       </div>
     </div>
-    <% } %>
+
+    <!-- Call to Action -->
+    <div class="cta-section">
+      <h2>Let's Work Together</h2>
+      <p>
+        Interested in collaborating on a project? I'd love to hear from you!
+      </p>
+      <a href="/contact" class="cta-button">Get in Touch</a>
+    </div>
 
     <!-- Experience Section -->
     <% if (typeof experience !== 'undefined' && experience.length > 0) { %>
@@ -127,14 +182,5 @@
       </div>
     </div>
     <% } %>
-
-    <!-- Call to Action -->
-    <div class="cta-section">
-      <h2>Let's Work Together</h2>
-      <p>
-        Interested in collaborating on a project? I'd love to hear from you!
-      </p>
-      <a href="/contact" class="cta-button">Get in Touch</a>
-    </div>
   </div>
 </section>
