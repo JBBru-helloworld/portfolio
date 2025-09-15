@@ -1,0 +1,465 @@
+<!-- views/layouts/main.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Portfolio of Your Name - UX/UI Designer & Developer specializing in creating intuitive digital experiences"
+    />
+    <meta
+      name="keywords"
+      content="UX Design, UI Design, Web Development, Portfolio, User Experience"
+    />
+    <meta name="author" content="Your Name" />
+    <meta
+      property="og:title"
+      content="Your Name - UX/UI Designer & Developer"
+    />
+    <meta
+      property="og:description"
+      content="Crafting digital experiences that blend functionality with aesthetics"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://yourwebsite.com" />
+    <meta
+      property="og:image"
+      content="https://yourwebsite.com/assets/images/og-image.jpg"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Your Name - UX/UI Designer & Developer"
+    />
+    <meta
+      name="twitter:description"
+      content="Crafting digital experiences that blend functionality with aesthetics"
+    />
+    <meta
+      name="twitter:image"
+      content="https://yourwebsite.com/assets/images/twitter-card.jpg"
+    />
+
+    <link rel="canonical" href="https://yourwebsite.com" />
+    <link rel="icon" href="/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+
+    <title>Home | Your Name - Portfolio</title>
+  </head>
+  <body>
+    <!-- views/components/header.ejs -->
+<header class="header">
+  <nav class="navbar">
+    <div class="container">
+      <button
+        class="nav-toggle"
+        aria-label="Toggle navigation"
+        aria-expanded="false"
+      >
+        <div class="hamburger">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </div>
+      </button>
+
+      <ul class="nav-menu">
+        <li>
+          <a
+            href="index.html"
+            class="nav-link"
+            aria-current="page"
+            >Home</a
+          >
+        </li>
+        <li>
+          <a
+            href="work.html"
+            class="nav-link"
+            aria-current="false"
+            >Work</a
+          >
+        </li>
+        <li>
+          <a
+            href="about.html"
+            class="nav-link"
+            aria-current="false"
+            >About</a
+          >
+        </li>
+        <li>
+          <a
+            href="contact.html"
+            class="nav-link cta-nav"
+            aria-current="false"
+            >Contact</a
+          >
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+
+    <main class="main-content"><!-- views/pages/home.ejs -->
+<section class="hero-section relative overflow-hidden">
+  <!-- Aurora Background -->
+  <div
+    class="absolute inset-0"
+    style="
+      --aurora: repeating-linear-gradient(
+        100deg,
+        #1e3a8a 10%,
+        #4f46e5 15%,
+        #2563eb 20%,
+        #7c3aed 25%,
+        #0891b2 30%
+      );
+      --dark-gradient: repeating-linear-gradient(
+        100deg,
+        rgba(0, 0, 0, 0.3) 0%,
+        rgba(0, 0, 0, 0.3) 7%,
+        transparent 10%,
+        transparent 12%,
+        rgba(0, 0, 0, 0.3) 16%
+      );
+    "
+  >
+    <div
+      class="aurora-background"
+      style="
+        position: absolute;
+        inset: -10px;
+        pointer-events: none;
+        background-image: var(--dark-gradient), var(--aurora);
+        background-size: 300%, 200%;
+        background-position: 50% 50%, 50% 50%;
+        opacity: 0.8;
+        filter: blur(15px);
+        will-change: transform;
+        animation: aurora 60s linear infinite;
+        mask-image: radial-gradient(
+          ellipse at 50% 0%,
+          black 30%,
+          transparent 80%
+        );
+        -webkit-mask-image: radial-gradient(
+          ellipse at 50% 0%,
+          black 30%,
+          transparent 80%
+        );
+      "
+    ></div>
+    <div
+      class="aurora-background-2"
+      style="
+        position: absolute;
+        inset: -20px;
+        pointer-events: none;
+        background: linear-gradient(
+          45deg,
+          #1e3a8a,
+          #4f46e5,
+          #2563eb,
+          #7c3aed,
+          #0891b2
+        );
+        background-size: 400% 400%;
+        opacity: 0.6;
+        filter: blur(20px);
+        will-change: transform;
+        animation: aurora 45s linear infinite reverse;
+        mask-image: radial-gradient(
+          ellipse at 50% 50%,
+          black 20%,
+          transparent 70%
+        );
+        -webkit-mask-image: radial-gradient(
+          ellipse at 50% 50%,
+          black 20%,
+          transparent 70%
+        );
+      "
+    ></div>
+  </div>
+
+  <div class="container hero-container relative z-10">
+    <div class="hero-grid">
+      <!-- Left Side - Large Title -->
+      <div class="hero-title-section">
+        <h1 class="hero-large-title">FULL STACK</h1>
+        <h1 class="hero-large-title">DEVELOPER &</h1>
+        <h1 class="hero-large-title">UI/UX DESIGNER</h1>
+      </div>
+
+      <!-- Right Side - Profile and Info -->
+      <div class="hero-info-section">
+        <div class="hero-profile-container">
+          <div class="hero-profile-image">
+            <img
+              src="assets/images/profile.jpg"
+              alt="Joshua Edwin Rene Bonham"
+            />
+          </div>
+
+          <div class="hero-info-content">
+            <h2 class="hero-name-title">Joshua Edwin Rene Bonham</h2>
+            <p class="hero-description">Passionate developer and designer creating innovative solutions with modern technologies.</p>
+            <a href="work.html" class="cta-button">View My Work</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bento-section">
+  <div class="container">
+    <div class="bento-grid">
+      <!-- Featured Project - 8 cols -->
+      <div class="bento-item large">
+        <div class="bento-content">
+          <span class="bento-label">Featured Project</span>
+          <h3 class="bento-title">Budget Tracker</h3>
+          <p class="bento-description">A comprehensive financial management tool that combines receipt scanning technology with expense tracking and budget analytics. Users can upload or scan their receipts, which are then processed using AI to extract individual items.</p>
+          <div class="tech-stack">
+            
+            <span class="tech-badge-small" title="React.js"
+              >React.js</span
+            >
+            
+            <span class="tech-badge-small" title="Tailwind CSS"
+              >Tailwind CSS</span
+            >
+            
+            <span class="tech-badge-small" title="Firebase"
+              >Firebase</span
+            >
+            
+            <span class="tech-badge-small" title="MongoDB"
+              >MongoDB</span
+            >
+            
+            <span class="tech-badge-small" title="Python"
+              >Python</span
+            >
+            
+            <span class="tech-badge-small" title="JavaScript"
+              >JavaScript</span
+            >
+            
+            <span class="tech-badge-small" title="Vite"
+              >Vite</span
+            >
+            
+          </div>
+          
+          <a
+            href="https://github.com/JBBru-helloworld/Budget-Tracker"
+            class="bento-link"
+            target="_blank"
+            >View Project</a
+          >
+          
+        </div>
+        <div class="bento-image">
+          <img
+            src="/assets/images/projects/Budget.png"
+            alt="Budget Tracker"
+            loading="lazy"
+          />
+        </div>
+      </div>
+
+      <!-- Skills & Expertise - 4 cols -->
+      <div class="bento-item small skills">
+        <div class="bento-content">
+          <span class="bento-label">Skills & Expertise</span>
+          <h3 class="bento-title">Core Technologies</h3>
+          <ul class="skill-list">
+            
+            <li>React.js</li>
+            
+            <li>JavaScript</li>
+            
+            <li>Python</li>
+            
+            <li>UI/UX Design</li>
+            
+            <li>AWS</li>
+            
+            <li>Firebase</li>
+            
+          </ul>
+          <a href="about.html" class="bento-link">View All Skills</a>
+        </div>
+      </div>
+
+      <!-- Latest Project - 8 cols -->
+      <div class="bento-item large latest-project">
+        <div class="bento-content">
+          <span class="bento-label">Latest Project</span>
+          <h3 class="bento-title">Harvest For All - Agricultural Management System</h3>
+          <p class="bento-description">
+            A fully OOP 2D pixel-art farming simulator in Scala with ScalaFX GUI, featuring core class hierarchy that leverages inhe...
+          </p>
+          <div class="tech-stack">
+            
+            <span class="tech-badge-small" title="Scala"
+              >Scala</span
+            >
+            
+            <span class="tech-badge-small" title="ScalaFX"
+              >ScalaFX</span
+            >
+            
+          </div>
+          <a href="work.html" class="bento-link">View Project</a>
+        </div>
+        <div class="bento-image">
+          <img
+            src="/assets/images/projects/Harvest For All.png"
+            alt="Harvest For All - Agricultural Management System"
+            loading="lazy"
+          />
+        </div>
+      </div>
+
+      <!-- About Me - 4 cols -->
+      <div class="bento-item small about-me">
+        <div class="bento-content">
+          <span class="bento-label">About Me</span>
+          <h3 class="bento-title">Passionate Developer</h3>
+          <p class="bento-description">
+            Passionate developer and designer creating innovative solutions with modern technologies. Currently pursuing Computer Science at
+            Sunway University with a focus on full-stack development and AI
+            integration.
+          </p>
+          <a href="about.html" class="bento-link">Learn More</a>
+        </div>
+      </div>
+
+      <!-- Quick Stats - 12 cols (full width) -->
+      <div class="bento-item stats">
+        <div class="bento-content">
+          <span class="bento-label">Quick Stats</span>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-number">11</div>
+              <div class="stat-label">Projects Completed</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">5+</div>
+              <div class="stat-label">Technologies Mastered</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">2+</div>
+              <div class="stat-label">Years Experience</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact CTA - 8 cols -->
+      <div class="bento-item contact-cta">
+        <div class="bento-content">
+          <h3 class="bento-title">Let's Work Together</h3>
+          <p class="bento-description">
+            I'm currently available for freelance projects, internships, and
+            exciting collaborations. Let's create something amazing together!
+          </p>
+          <a href="contact.html" class="cta-button">Get in Touch</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+    <!-- views/components/footer.ejs -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-links">
+        <ul class="footer-nav">
+          <li><a href="index.html" class="footer-link">Home</a></li>
+          <li><a href="work.html" class="footer-link">Work</a></li>
+          <li><a href="about.html" class="footer-link">About</a></li>
+          <li><a href="contact.html" class="footer-link">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-social">
+        <a
+          href="https://github.com/JBBru-helloworld"
+          class="social-link"
+          aria-label="GitHub"
+          target="_blank"
+        >
+          <img
+            src="assets/images/github-svgrepo-com.svg"
+            alt="GitHub"
+            class="social-icon"
+          />
+        </a>
+        <a
+          href="https://www.linkedin.com/in/joshuabonham03"
+          class="social-link"
+          aria-label="LinkedIn"
+          target="_blank"
+        >
+          <img
+            src="assets/images/linkedin-round-svgrepo-com.svg"
+            alt="LinkedIn"
+            class="social-icon"
+          />
+        </a>
+        
+        <a
+          href="https://www.instagram.com/jb_bru/"
+          class="social-link"
+          aria-label="Instagram"
+          target="_blank"
+        >
+          <img
+            src="assets/images/instagram-round-svgrepo-com.svg"
+            alt="Instagram"
+            class="social-icon"
+          />
+        </a>
+         
+        <a
+          href="mailto:jb.brubusiness3@gmail.com"
+          class="social-link"
+          aria-label="Email"
+        >
+          <img
+            src="assets/images/email-circle-fill-svgrepo-com.svg"
+            alt="Email"
+            class="social-icon"
+          />
+        </a>
+        
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="copyright">
+        &copy; 2025 Joshua Edwin Rene Bonham.
+        Crafted with passion and modern web technologies.
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="js/main.js"></script>
+  </body>
+</html>
