@@ -6,8 +6,7 @@ class WorkController {
     try {
       res.render("pages/work", {
         title: "Work",
-        projects: portfolioData.projects,
-        csrfToken: req.csrfToken(),
+        data: portfolioData,
       });
     } catch (error) {
       console.error("Error in WorkController:", error);
@@ -29,7 +28,7 @@ class WorkController {
       res.render("pages/project-detail", {
         title: project.title,
         project,
-        csrfToken: req.csrfToken(),
+        data: portfolioData,
       });
     } catch (error) {
       console.error("Error in WorkController:", error);
