@@ -1,18 +1,11 @@
 // src/controllers/ContactController.js
-const data = require("../models/data");
+const portfolioData = require("../models/data");
 
 const ContactController = {
   index: (req, res) => {
-    const { socialLinks } = data.personal;
-
     res.render("pages/contact", {
       title: "Contact",
-      socialLinks: {
-        linkedin: socialLinks.linkedin,
-        github: socialLinks.github,
-        instagram: socialLinks.instagram,
-      },
-      csrfToken: req.csrfToken(), // For form security
+      data: portfolioData,
     });
   },
 
@@ -28,12 +21,22 @@ const ContactController = {
         });
       }
 
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({
+          success: false,
+          message: "Please provide a valid email address",
+        });
+      }
+
       // For now, just log the submission and send a success response
       console.log("Contact form submission:", {
         name,
         email,
         subject,
         message,
+        timestamp: new Date().toISOString(),
       });
 
       res.json({
