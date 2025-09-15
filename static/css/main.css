@@ -527,6 +527,7 @@ a:hover {
     visibility: hidden;
     transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out,
       visibility 0.3s ease-in-out;
+    pointer-events: auto;
   }
 
   .nav-menu.active {

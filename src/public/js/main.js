@@ -41,12 +41,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Close menu when clicking a link
+    // Close menu when clicking a link (allow navigation to complete)
     navMenu.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        navToggle.setAttribute("aria-expanded", "false");
-        navMenu.classList.remove("active");
-        document.body.classList.remove("nav-open");
+      link.addEventListener("click", (e) => {
+        console.log("Navigation link clicked:", link.href);
+        // Don't prevent default - let the navigation happen
+        // Add a small delay to allow the click to register before closing menu
+        setTimeout(() => {
+          console.log("Closing menu after navigation");
+          navToggle.setAttribute("aria-expanded", "false");
+          navMenu.classList.remove("active");
+          document.body.classList.remove("nav-open");
+        }, 100);
       });
     });
 
@@ -164,34 +170,46 @@ if (contactForm) {
 
     const formData = new FormData(contactForm);
     const submitButton = contactForm.querySelector('button[type="submit"]');
-    const originalText = submitButton.textContent;
+    const submitText = submitButton.querySelector(".submit-text");
+    const submitLoading = submitButton.querySelector(".submit-loading");
 
     // Disable button during submission
     submitButton.disabled = true;
-    submitButton.textContent = "Sending...";
+    if (submitText && submitLoading) {
+      submitText.style.display = "none";
+      submitLoading.style.display = "inline";
+    } else {
+      submitButton.textContent = "Sending...";
+    }
     submitButton.classList.add("loading");
 
     try {
-      const response = await fetch("/contact", {
+      // Submit directly to Formspree
+      const response = await fetch(contactForm.action, {
         method: "POST",
+        body: formData,
         headers: {
-          "Content-Type": "application/json",
+          Accept: "application/json",
         },
-        body: JSON.stringify({
-          name: formData.get("name"),
-          email: formData.get("email"),
-          message: formData.get("message"),
-        }),
       });
 
       if (response.ok) {
         showSuccessMessage();
         contactForm.reset();
+
+        // Redirect to thank you page after a brief delay
+        setTimeout(() => {
+          window.location.href = "/thank-you.html";
+        }, 2000);
       } else {
         const data = await response.json();
-        showErrorMessage(
-          data.message || "An error occurred. Please try again."
-        );
+        if (data.errors) {
+          showErrorMessage(
+            data.errors.map((error) => error.message).join(", ")
+          );
+        } else {
+          showErrorMessage("An error occurred. Please try again.");
+        }
       }
     } catch (error) {
       console.error("Error:", error);
@@ -201,7 +219,12 @@ if (contactForm) {
     } finally {
       // Re-enable button
       submitButton.disabled = false;
-      submitButton.textContent = originalText;
+      if (submitText && submitLoading) {
+        submitText.style.display = "inline";
+        submitLoading.style.display = "none";
+      } else {
+        submitButton.textContent = "Send Message";
+      }
       submitButton.classList.remove("loading");
     }
   });

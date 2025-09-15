@@ -122,14 +122,16 @@
         id="contactForm"
         action="https://formspree.io/f/mzzaqgyy"
         method="POST"
+        accept-charset="UTF-8"
       >
         <!-- Formspree configuration -->
         <input
           type="hidden"
           name="_subject"
-          value="New contact form submission"
+          value="New contact form submission from Portfolio"
         />
-        <input type="hidden" name="_next" value="thank-you.html" />
+        <input type="hidden" name="_next" value="/thank-you.html" />
+        <input type="hidden" name="_captcha" value="false" />
 
         <div class="form-group">
           <label for="name">Name</label>
@@ -140,12 +142,19 @@
             required
             minlength="2"
             maxlength="50"
+            placeholder="Your full name"
           />
         </div>
 
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" required />
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="your.email@example.com"
+          />
         </div>
 
         <div class="form-group">
@@ -157,10 +166,14 @@
             minlength="10"
             maxlength="1000"
             rows="5"
+            placeholder="Tell me about your project or idea..."
           ></textarea>
         </div>
 
-        <button type="submit" class="submit-button">Send Message</button>
+        <button type="submit" class="submit-button" id="submitBtn">
+          <span class="submit-text">Send Message</span>
+          <span class="submit-loading" style="display: none">Sending...</span>
+        </button>
       </form>
 
       <div class="contact-info">
