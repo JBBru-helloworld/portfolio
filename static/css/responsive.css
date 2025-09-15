@@ -151,12 +151,15 @@
     min-height: auto !important;
     height: auto !important;
     overflow: visible !important;
-    padding-bottom: var(--space-3xl) !important;
+    padding: var(--space-xl) 0 var(--space-3xl) 0 !important;
+    margin-top: 0 !important;
   }
 
   .about-grid {
     overflow: visible !important;
     height: auto !important;
+    grid-template-columns: 1fr !important;
+    gap: var(--space-lg) !important;
   }
 
   .about-hero-section {
@@ -183,6 +186,8 @@
     overflow: visible !important;
     height: auto !important;
     margin-bottom: var(--space-xl) !important;
+    width: 100% !important;
+    padding: 0 !important;
   }
 
   .skills-grid-simple {
@@ -190,6 +195,7 @@
     gap: var(--space-md);
     overflow: visible !important;
     height: auto !important;
+    width: 100% !important;
   }
 
   .skill-category {
@@ -197,6 +203,8 @@
     margin-bottom: var(--space-md);
     overflow: visible !important;
     height: auto !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .skill-category h3 {
@@ -213,6 +221,8 @@
     margin: var(--space-lg) 0;
     overflow: visible !important;
     height: auto !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .cta-section h2 {
@@ -544,6 +554,131 @@
 
   .interests-grid {
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+}
+
+/* Very Small Mobile (300px - 380px) */
+@media (max-width: 380px) {
+  :root {
+    --font-size-5xl: 1.75rem;
+    --font-size-4xl: 1.5rem;
+    --font-size-3xl: 1.25rem;
+    --font-size-2xl: 1.125rem;
+    --font-size-xl: 1rem;
+    --font-size-lg: 0.9rem;
+    --space-md: 0.75rem;
+    --space-lg: 1rem;
+    --space-xl: 1.5rem;
+  }
+
+  .container {
+    padding: 0 var(--space-sm);
+  }
+
+  /* About section for very small screens */
+  .about-section {
+    padding: var(--space-lg) 0;
+  }
+
+  .page-title {
+    font-size: var(--font-size-3xl) !important;
+    margin-bottom: var(--space-sm);
+  }
+
+  .page-description {
+    font-size: var(--font-size-base) !important;
+    margin-bottom: var(--space-lg);
+  }
+
+  /* Skills section for very small screens */
+  .skills-section {
+    padding: 0 var(--space-xs);
+    margin-bottom: var(--space-lg);
+  }
+
+  .skills-section h2 {
+    font-size: var(--font-size-xl) !important;
+    margin-bottom: var(--space-sm);
+  }
+
+  .skills-grid-simple {
+    gap: var(--space-sm) !important;
+  }
+
+  .skill-category {
+    padding: var(--space-sm) !important;
+    margin-bottom: var(--space-sm) !important;
+  }
+
+  .skill-category h3 {
+    font-size: var(--font-size-base) !important;
+    margin-bottom: var(--space-xs);
+  }
+
+  .skill-tags {
+    gap: 0.25rem;
+  }
+
+  .skill-tag {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* CTA section for very small screens */
+  .cta-section {
+    padding: var(--space-sm) !important;
+    margin: var(--space-sm) 0 !important;
+  }
+
+  .cta-section h2 {
+    font-size: var(--font-size-lg) !important;
+    margin-bottom: var(--space-xs);
+  }
+
+  .cta-section p {
+    font-size: var(--font-size-sm) !important;
+    margin-bottom: var(--space-sm);
+  }
+
+  .cta-button {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-size-sm);
+  }
+
+  /* About profile and content adjustments */
+  .about-hero-section {
+    gap: var(--space-sm);
+  }
+
+  .about-text-card,
+  .resume-bento {
+    padding: var(--space-sm) !important;
+  }
+
+  .about-text-card h2 {
+    font-size: var(--font-size-lg) !important;
+    margin-bottom: var(--space-xs);
+  }
+
+  .about-text-card p {
+    font-size: var(--font-size-sm) !important;
+    margin-bottom: var(--space-sm);
+  }
+
+  /* Navigation adjustments */
+  .nav-toggle {
+    right: var(--space-sm) !important;
+    top: var(--space-sm) !important;
+    padding: 6px !important;
+  }
+
+  .hamburger {
+    width: 20px;
+    height: 15px;
+  }
+
+  .hamburger-line {
+    height: 1.5px;
   }
 }
 

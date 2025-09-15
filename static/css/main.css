@@ -438,33 +438,35 @@ a:hover {
 /* Mobile navigation */
 @media (max-width: 768px) {
   .header {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
     transform: none;
     width: 100%;
     max-width: none;
-    background: none !important;
+    background: transparent !important;
     backdrop-filter: none !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0;
     z-index: 999;
-    height: auto;
+    height: 0;
     border-radius: 0 !important;
+    pointer-events: none;
   }
 
   .navbar {
     position: relative;
-    background: none !important;
+    background: transparent !important;
     backdrop-filter: none !important;
     border: none !important;
     border-radius: 0;
     margin: 0;
     padding: 0;
-    height: auto;
+    height: 0;
     box-shadow: none !important;
+    pointer-events: none;
   }
 
   .navbar .container {
@@ -474,17 +476,18 @@ a:hover {
     align-items: flex-start;
     padding: var(--space-md);
     max-width: none;
-    background: none !important;
+    background: transparent !important;
+    pointer-events: none;
   }
 
   .nav-toggle {
     display: flex;
-    position: relative;
-    right: 0;
-    top: 0;
+    position: fixed;
+    right: var(--space-md);
+    top: var(--space-md);
     transform: none;
     z-index: 1002;
-    background: none !important;
+    background: transparent !important;
     backdrop-filter: none !important;
     border-radius: 0 !important;
     padding: 8px;
@@ -494,6 +497,7 @@ a:hover {
     transition: none !important;
     -webkit-appearance: none !important;
     appearance: none !important;
+    pointer-events: auto;
   }
 
   .nav-toggle:hover {
@@ -2257,6 +2261,9 @@ a:hover {
   border-radius: 16px;
   padding: var(--space-lg);
   border: 1px solid rgba(16, 185, 129, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: var(--space-md);
 }
 
 .skill-category h3 {
@@ -2285,6 +2292,83 @@ a:hover {
 .skill-tag:hover {
   background: rgba(16, 185, 129, 0.2);
   transform: translateY(-2px);
+}
+
+/* Skills grid improvements */
+.skills-grid-simple {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-lg);
+  width: 100%;
+  margin-bottom: var(--space-xl);
+}
+
+/* Mobile-specific overrides for skills */
+@media (max-width: 768px) {
+  .skills-section {
+    width: 100%;
+    padding: 0 var(--space-md);
+    margin-bottom: var(--space-xl);
+  }
+
+  .skills-grid-simple {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-md) !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .skill-category {
+    width: 100% !important;
+    max-width: none !important;
+    padding: var(--space-md) !important;
+    margin-bottom: var(--space-md) !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .skills-section {
+    padding: 0 var(--space-sm);
+  }
+
+  .skill-category {
+    padding: var(--space-sm) !important;
+  }
+
+  .skill-category h3 {
+    font-size: var(--font-size-base) !important;
+  }
+}
+
+/* Very small mobile screens */
+@media (max-width: 380px) {
+  .skills-section {
+    padding: 0 var(--space-xs);
+  }
+
+  .skills-grid-simple {
+    gap: var(--space-sm) !important;
+  }
+
+  .skill-category {
+    padding: var(--space-xs) !important;
+    margin-bottom: var(--space-xs) !important;
+  }
+
+  .skill-category h3 {
+    font-size: 0.9rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .skill-tags {
+    gap: 0.25rem !important;
+  }
+
+  .skill-tag {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.75rem !important;
+  }
 }
 
 .skills-grid {
@@ -2484,6 +2568,13 @@ a:hover {
 .cta-section {
   grid-column: span 12;
   margin-bottom: var(--space-3xl);
+  padding: var(--space-xl);
+  background: var(--color-dark-card);
+  border-radius: 16px;
+  border: 1px solid rgba(16, 185, 129, 0.1);
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Force CTA responsive behavior */
@@ -2494,43 +2585,80 @@ a:hover {
     background: var(--color-dark-card) !important;
     border-radius: 16px !important;
     border: 1px solid rgba(16, 185, 129, 0.1) !important;
+    width: 100% !important;
+    max-width: none !important;
   }
 }
 
 @media (max-width: 767px) {
-  .about-grid .cta-section {
+  .about-grid .cta-section,
+  .cta-section {
     text-align: center !important;
     padding: var(--space-lg) !important;
     background: var(--color-dark-card) !important;
     border-radius: 16px !important;
     border: 1px solid rgba(16, 185, 129, 0.1) !important;
     margin: var(--space-lg) 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
   }
 
-  .about-grid .cta-section h2 {
+  .about-grid .cta-section h2,
+  .cta-section h2 {
     font-size: var(--font-size-xl) !important;
     margin-bottom: var(--space-md) !important;
   }
 
-  .about-grid .cta-section p {
+  .about-grid .cta-section p,
+  .cta-section p {
     font-size: var(--font-size-base) !important;
     margin-bottom: var(--space-lg) !important;
   }
 }
 
 @media (max-width: 480px) {
-  .about-grid .cta-section {
+  .about-grid .cta-section,
+  .cta-section {
     padding: var(--space-md) !important;
   }
 
-  .about-grid .cta-section h2 {
+  .about-grid .cta-section h2,
+  .cta-section h2 {
     font-size: var(--font-size-lg) !important;
     margin-bottom: var(--space-sm) !important;
   }
 
-  .about-grid .cta-section p {
+  .about-grid .cta-section p,
+  .cta-section p {
     font-size: var(--font-size-sm) !important;
     margin-bottom: var(--space-md) !important;
+  }
+}
+
+/* Very small screens for CTA */
+@media (max-width: 380px) {
+  .about-grid .cta-section,
+  .cta-section {
+    padding: var(--space-sm) !important;
+    margin: var(--space-sm) 0 !important;
+  }
+
+  .about-grid .cta-section h2,
+  .cta-section h2 {
+    font-size: 1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .about-grid .cta-section p,
+  .cta-section p {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .cta-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
   }
 }
 
