@@ -2,21 +2,16 @@
 <header class="header">
   <nav class="navbar">
     <div class="container">
-      <a href="/" class="logo" aria-label="Home">
-        <img
-          src="../assets/images/Profile.png"
-          alt="JB BRU Logo"
-          class="logo-image"
-        />
-        <span class="logo-text">JB BRU</span>
-      </a>
-
       <button
         class="nav-toggle"
         aria-label="Toggle navigation"
         aria-expanded="false"
       >
-        <span class="hamburger"></span>
+        <div class="hamburger">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </div>
       </button>
 
       <ul class="nav-menu">
@@ -47,7 +42,7 @@
         <li>
           <a
             href="/contact"
-            class="nav-link"
+            class="nav-link cta-nav"
             aria-current="<%= title === 'Contact' ? 'page' : 'false' %>"
             >Contact</a
           >
