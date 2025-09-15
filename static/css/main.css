@@ -2196,6 +2196,18 @@ a:hover {
   margin-bottom: var(--space-3xl);
 }
 
+@media (max-width: 1024px) {
+  .skills-section {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 768px) {
+  .skills-section {
+    grid-column: span 12;
+  }
+}
+
 .skills-grid-simple {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -2436,6 +2448,18 @@ a:hover {
   margin-bottom: var(--space-3xl);
 }
 
+@media (max-width: 1024px) {
+  .cta-section {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 768px) {
+  .cta-section {
+    grid-column: span 12;
+  }
+}
+
 /* Responsive adjustments for About page */
 @media (max-width: 1024px) {
   .about-grid {
@@ -2445,6 +2469,11 @@ a:hover {
   .about-main-content,
   .about-side-content {
     grid-column: span 12;
+  }
+
+  .skills-grid-simple {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-lg);
   }
 }
 
@@ -2459,6 +2488,23 @@ a:hover {
 
   .skills-grid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .skills-grid-simple {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .skill-category {
+    padding: var(--space-md);
+  }
+
+  .cta-section {
+    text-align: center;
+    padding: var(--space-lg);
+    background: var(--color-dark-card);
+    border-radius: 16px;
+    border: 1px solid rgba(16, 185, 129, 0.1);
   }
 
   .timeline {

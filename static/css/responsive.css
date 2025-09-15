@@ -93,10 +93,17 @@
     gap: var(--space-md);
   }
 
+  .skill-category {
+    padding: var(--space-lg);
+  }
+
   /* Fix CTA section for tablet */
   .cta-section {
     text-align: center;
     padding: var(--space-xl);
+    background: var(--color-dark-card);
+    border-radius: 16px;
+    border: 1px solid rgba(16, 185, 129, 0.1);
   }
 }
 
@@ -157,6 +164,41 @@
 
   .about-text-card h2 {
     font-size: var(--font-size-xl);
+  }
+
+  /* Fix skills section for mobile */
+  .skills-grid-simple {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-md);
+  }
+
+  .skill-category {
+    padding: var(--space-md);
+    margin-bottom: var(--space-md);
+  }
+
+  .skill-category h3 {
+    font-size: var(--font-size-lg);
+  }
+
+  /* Fix CTA section for mobile */
+  .cta-section {
+    text-align: center;
+    padding: var(--space-lg);
+    background: var(--color-dark-card);
+    border-radius: 16px;
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    margin: var(--space-lg) 0;
+  }
+
+  .cta-section h2 {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-md);
+  }
+
+  .cta-section p {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-lg);
   }
 }
 
