@@ -39,7 +39,7 @@ const data = {
         "Python",
         "JavaScript",
         "Vite",
-        "AI",
+        "Gemini AI",
       ],
       technologies: [
         {
@@ -67,6 +67,10 @@ const data = {
           icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
         },
         { name: "Vite", icon: "https://vitejs.dev/logo.svg" },
+        {
+          name: "Gemini AI",
+          icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/openai.svg",
+        },
       ],
       year: "2025",
       period: "Apr 2025 - Present",
