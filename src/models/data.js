@@ -72,6 +72,7 @@ const data = {
       period: "Apr 2025 - Present",
       githubLink: "https://github.com/JBBru-helloworld/Budget-Tracker",
       featured: true,
+      association: "Personal Project",
     },
     {
       id: 2,
@@ -132,6 +133,7 @@ const data = {
       ],
       year: "2025",
       period: "May 2025",
+      association: "Personal Project",
     },
     {
       id: 4,
@@ -161,10 +163,11 @@ const data = {
       githubLink: "https://github.com/Spimy/UMHackathon",
       figmaLink:
         "https://www.figma.com/file/1NRKS2Fl2SR0sYbWPWOrhZ/UM-Hackathon",
+      association: "UM Hackathon 2025",
     },
     {
       id: 5,
-      title: "SEG2202: Software Engineering",
+      title: "Smart Vehicle Performance System (SVPS)",
       description:
         "Designed a functional mobile application and in-car display interface aimed at enhancing user experience and usability.",
       fullDescription:
@@ -336,7 +339,7 @@ const data = {
     },
     {
       id: 11,
-      title: "ENG1044 Portfolio",
+      title: "English Portfolio",
       description:
         "Research portfolio on Online Gambling created from scratch for complete design control.",
       fullDescription:
