@@ -167,7 +167,7 @@ const data = {
     },
     {
       id: 5,
-      title: "Smart Vehicle Performance System (SVPS)",
+      title: "Smart Vehicle Performance System",
       description:
         "Designed a functional mobile application and in-car display interface aimed at enhancing user experience and usability.",
       fullDescription:
@@ -336,6 +336,7 @@ const data = {
       year: "2024",
       period: "Jun 2024",
       liveLink: "https://pengyou.spimy.dev/",
+      association: "ImagineHack 2024",
     },
     {
       id: 11,
