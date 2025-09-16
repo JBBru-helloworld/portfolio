@@ -229,7 +229,7 @@ const data = {
       year: "2024",
       period: "Nov 2024 - Dec 2024",
       liveLink: "https://recipe-roots.spimy.dev/",
-      association: "Sunway University",
+      association: "School of Engineering and Technology, Sunway University",
     },
     {
       id: 7,
@@ -441,7 +441,7 @@ const data = {
       startDate: "2023",
       endDate: "2025",
       description:
-        "Computer Science student with focus on software engineering and AI",
+        "Software Engineering student with focus on software engineering and AI",
       achievements: [
         "Participated in multiple hackathons with winning solutions",
         "Developed award-winning applications using modern tech stacks",
@@ -452,9 +452,9 @@ const data = {
 
   education: [
     {
-      degree: "Bachelor of Computer Science",
+      degree: "Bachelor of Software Engineering (Hons)",
       institution: "Sunway University",
-      graduationYear: "2025",
+      graduationYear: "2026",
       description:
         "Focused on software engineering, artificial intelligence, and web development with hands-on project experience",
     },
