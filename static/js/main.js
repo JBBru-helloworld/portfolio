@@ -351,7 +351,7 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   // Show projects for specific page
-  function showPage(pageNumber) {
+  function showPage(pageNumber, shouldScroll = true) {
     currentPage = pageNumber;
 
     // Hide all project cards
@@ -377,12 +377,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // Update pagination UI
     updatePaginationUI();
 
-    // Scroll to top of project grid smoothly
-    projectGrid.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-      inline: "nearest",
-    });
+    // Only scroll if explicitly requested (for pagination clicks, not initial load)
+    if (shouldScroll) {
+      // Scroll to top of project grid smoothly
+      projectGrid.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "nearest",
+      });
+    }
   }
 
   // Update pagination button states and info
@@ -443,6 +446,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Initialize first page
-  showPage(1);
+  // Initialize first page without scrolling
+  showPage(1, false);
 });
