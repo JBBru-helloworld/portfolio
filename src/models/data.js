@@ -29,7 +29,7 @@ const data = {
       description:
         "A comprehensive financial management tool that combines receipt scanning technology with expense tracking and budget analytics. Users can upload or scan their receipts, which are then processed using AI to extract individual items.",
       fullDescription:
-        "Budget Tracker is a comprehensive financial management tool that combines receipt scanning technology with expense tracking and budget analytics. Users can upload or scan their receipts, which are then processed using AI to extract individual items. These items can be allocated to different users for shared expenses or categorised for personal budgeting. The application provides visual analytics to help users understand their spending habits and offers personalised money-saving tips.",
+        "Budget Tracker is a comprehensive financial management tool that combines receipt scanning technology with expense tracking and budget analytics. Users can upload or scan their receipts, which are then processed using AI to extract individual items. These items can be allocated to different users for shared expenses or categorised for personal budgeting. The application provides visual analytics to help users understand their spending habits and offers personalised money-saving tips. The application is deployed on Vercel (frontend) and Render (backend), with a React.js frontend and Firebase backend.",
       thumbnail: "assets/images/projects/Budget.png",
       categories: [
         "React.js",
@@ -40,6 +40,8 @@ const data = {
         "JavaScript",
         "Vite",
         "Gemini AI",
+        "Vercel",
+        "Render",
       ],
       technologies: [
         {
@@ -71,9 +73,18 @@ const data = {
           name: "Gemini AI",
           icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/openai.svg",
         },
+        {
+          name: "Vercel",
+          icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/vercel.svg",
+        },
+        {
+          name: "Render",
+          icon: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/render.svg",
+        },
       ],
       year: "2025",
       period: "Apr 2025 - Present",
+      liveLink: "https://budget-tracker.jbbru.com/",
       githubLink: "https://github.com/JBBru-helloworld/Budget-Tracker",
       featured: true,
       association: "Personal Project",
