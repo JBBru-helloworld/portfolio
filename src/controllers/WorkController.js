@@ -1,9 +1,13 @@
 // controllers/WorkController.js
-const portfolioData = require("../models/data");
-
 class WorkController {
   static async index(req, res) {
     try {
+      // Clear module cache in development to see data changes immediately
+      if (process.env.NODE_ENV === "development") {
+        delete require.cache[require.resolve("../models/data")];
+      }
+      const portfolioData = require("../models/data");
+
       res.render("pages/work", {
         title: "Work",
         data: portfolioData,
@@ -16,6 +20,12 @@ class WorkController {
 
   static async getProject(req, res) {
     try {
+      // Clear module cache in development to see data changes immediately
+      if (process.env.NODE_ENV === "development") {
+        delete require.cache[require.resolve("../models/data")];
+      }
+      const portfolioData = require("../models/data");
+
       const projectId = parseInt(req.params.id);
       const project = portfolioData.projects.find((p) => p.id === projectId);
 
