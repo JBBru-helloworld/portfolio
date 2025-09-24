@@ -22,6 +22,18 @@ const cspConfig = {
   },
 };
 
+// HTTPS enforcement middleware
+const httpsRedirect = (req, res, next) => {
+  if (
+    process.env.NODE_ENV === "production" &&
+    req.header("x-forwarded-proto") !== "https"
+  ) {
+    res.redirect(`https://${req.header("host")}${req.url}`);
+  } else {
+    next();
+  }
+};
+
 // XSS protection middleware
 const xssProtection = (req, res, next) => {
   // Sanitize query parameters
@@ -42,4 +54,4 @@ const xssProtection = (req, res, next) => {
   next();
 };
 
-module.exports = { cspConfig, xssProtection };
+module.exports = { cspConfig, xssProtection, httpsRedirect };

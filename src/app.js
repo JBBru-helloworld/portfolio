@@ -8,10 +8,14 @@ const compression = require("compression");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
+const { httpsRedirect } = require("./middleware/security");
 require("dotenv").config();
 
 const app = express();
 const csrf = new CSRF();
+
+// HTTPS enforcement (must be first)
+app.use(httpsRedirect);
 
 // Security Middleware
 app.use(helmet());
