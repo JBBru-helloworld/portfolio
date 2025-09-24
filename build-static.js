@@ -152,7 +152,6 @@ async function buildStatic() {
   if (successCount === pages.length) {
     console.log("");
     console.log("Next steps:");
-    console.log("1. Update contact form to use Formspree");
     console.log("2. Test the static site locally");
     console.log("3. Deploy to GitHub Pages");
   }
