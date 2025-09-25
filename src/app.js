@@ -20,38 +20,42 @@ const csrf = new CSRF();
 // Generate with: node -e "console.log(crypto.randomBytes(32).toString('hex'))"
 const CSRF_COOKIE_KEY = process.env.CSRF_COOKIE_KEY;
 if (!CSRF_COOKIE_KEY) {
-  console.warn('Warning: CSRF_COOKIE_KEY environment variable not set. Using default key for development only.');
+  console.warn(
+    "Warning: CSRF_COOKIE_KEY environment variable not set. Using default key for development only."
+  );
 }
-const encryptionKey = CSRF_COOKIE_KEY ? Buffer.from(CSRF_COOKIE_KEY, 'hex') : crypto.randomBytes(32);
+const encryptionKey = CSRF_COOKIE_KEY
+  ? Buffer.from(CSRF_COOKIE_KEY, "hex")
+  : crypto.randomBytes(32);
 
 // Utility functions for CSRF secret encryption/decryption
 function encryptCsrfSecret(secret) {
   try {
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipher('aes-256-cbc', encryptionKey);
-    let encrypted = cipher.update(secret, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return iv.toString('hex') + ':' + encrypted;
+    const cipher = crypto.createCipher("aes-256-cbc", encryptionKey);
+    let encrypted = cipher.update(secret, "utf8", "hex");
+    encrypted += cipher.final("hex");
+    return iv.toString("hex") + ":" + encrypted;
   } catch (error) {
-    console.error('Error encrypting CSRF secret:', error);
+    console.error("Error encrypting CSRF secret:", error);
     throw error;
   }
 }
 
 function decryptCsrfSecret(encryptedValue) {
   try {
-    const parts = encryptedValue.split(':');
+    const parts = encryptedValue.split(":");
     if (parts.length !== 2) {
-      throw new Error('Invalid encrypted format');
+      throw new Error("Invalid encrypted format");
     }
-    const iv = Buffer.from(parts[0], 'hex');
+    const iv = Buffer.from(parts[0], "hex");
     const encrypted = parts[1];
-    const decipher = crypto.createDecipher('aes-256-cbc', encryptionKey);
-    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
+    const decipher = crypto.createDecipher("aes-256-cbc", encryptionKey);
+    let decrypted = decipher.update(encrypted, "hex", "utf8");
+    decrypted += decipher.final("utf8");
     return decrypted;
   } catch (error) {
-    console.error('Error decrypting CSRF secret:', error);
+    console.error("Error decrypting CSRF secret:", error);
     // Return null to indicate decryption failure - will trigger regeneration
     return null;
   }
@@ -85,29 +89,29 @@ app.use(cookieParser());
 // CSRF protection with encrypted cookies
 app.use((req, res, next) => {
   let secret = null;
-  
+
   // Try to decrypt existing CSRF secret from cookie
   if (req.cookies.csrfSecret) {
     secret = decryptCsrfSecret(req.cookies.csrfSecret);
   }
-  
+
   // Generate new secret if decryption failed or no cookie exists
   if (!secret) {
     secret = csrf.secretSync();
     try {
       const encryptedSecret = encryptCsrfSecret(secret);
-      res.cookie("csrfSecret", encryptedSecret, { 
-        httpOnly: true, 
+      res.cookie("csrfSecret", encryptedSecret, {
+        httpOnly: true,
         sameSite: "strict",
-        secure: process.env.NODE_ENV === 'production' // Only send over HTTPS in production
+        secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
       });
     } catch (error) {
-      console.error('Failed to encrypt CSRF secret:', error);
+      console.error("Failed to encrypt CSRF secret:", error);
       // Fallback: continue with unencrypted secret for this request
       res.cookie("csrfSecret", secret, { httpOnly: true, sameSite: "strict" });
     }
   }
-  
+
   req.csrfSecret = secret;
 
   // Generate token and make it available to views
