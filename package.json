@@ -19,6 +19,7 @@
   "author": "Joshua Bonham",
   "license": "ISC",
   "dependencies": {
+    "brace-expansion": "^2.0.2",
     "clsx": "^2.1.1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
