@@ -108,7 +108,11 @@ app.use((req, res, next) => {
     } catch (error) {
       console.error("Failed to encrypt CSRF secret:", error);
       // Fallback: continue with unencrypted secret for this request
-      res.cookie("csrfSecret", secret, { httpOnly: true, sameSite: "strict" });
+      res.cookie("csrfSecret", secret, {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
+      });
     }
   }
 
