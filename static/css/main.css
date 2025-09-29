@@ -12,6 +12,37 @@
   font-display: swap;
 }
 
+/* Performance optimizations */
+* {
+  backface-visibility: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Optimize animations for 60fps */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-title-animate,
+  .hero-info-animate,
+  .project-card,
+  .bento-item {
+    will-change: transform, opacity;
+  }
+}
+
+/* Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 :root {
   /* Dark theme color palette inspired by modern dark UIs */
   --color-black: #0a0a0a;
@@ -625,7 +656,9 @@ a:hover {
   color: transparent;
   letter-spacing: -0.02em;
   text-transform: uppercase;
-  filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.3));
+  /* Removed expensive drop-shadow filter for performance */
+  will-change: transform, opacity;
+  contain: layout style paint;
 }
 
 /* Keep the old classes for backward compatibility */
@@ -2919,50 +2952,56 @@ a:hover {
   animation: slideInRight 0.6s ease-out;
 }
 
-/* Hero title animations */
+/* Hero title animations - Optimized for performance */
 @keyframes heroTitleSlideUp {
   0% {
     opacity: 0;
-    transform: translateY(60px);
+    transform: translate3d(0, 60px, 0);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes heroInfoFadeIn {
   0% {
     opacity: 0;
-    transform: translateX(40px);
+    transform: translate3d(40px, 0, 0);
   }
   100% {
     opacity: 1;
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 .hero-title-animate {
   opacity: 0;
-  animation: heroTitleSlideUp 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  animation: heroTitleSlideUp 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .hero-title-animate:nth-child(1) {
-  animation-delay: 0.2s;
+  animation-delay: 0.1s;
 }
 
 .hero-title-animate:nth-child(2) {
-  animation-delay: 0.4s;
+  animation-delay: 0.2s;
 }
 
 .hero-title-animate:nth-child(3) {
-  animation-delay: 0.6s;
+  animation-delay: 0.3s;
 }
 
 .hero-info-animate {
   opacity: 0;
-  animation: heroInfoFadeIn 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-  animation-delay: 0.8s;
+  animation: heroInfoFadeIn 0.6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  animation-delay: 0.4s;
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 /* Staggered animations for bento items */

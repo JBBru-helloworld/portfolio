@@ -304,30 +304,52 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Parallax effect for hero section
-window.addEventListener("scroll", () => {
-  const scrolled = window.pageYOffset;
-  const parallaxElements = document.querySelectorAll(
-    ".aurora-background, .aurora-background-2"
-  );
+// Optimized parallax effect with requestAnimationFrame and throttling
+let ticking = false;
+let lastScrollY = 0;
 
-  parallaxElements.forEach((element, index) => {
-    const speed = 0.5 + index * 0.2;
-    element.style.transform = `translateY(${scrolled * speed}px)`;
-  });
+function updateParallax() {
+  const scrolled = window.pageYOffset;
+  
+  // Only update if scroll position changed significantly
+  if (Math.abs(scrolled - lastScrollY) > 1) {
+    const parallaxElements = document.querySelectorAll(
+      ".aurora-background, .aurora-background-2"
+    );
+
+    parallaxElements.forEach((element, index) => {
+      const speed = 0.3 + index * 0.1; // Reduced speed for better performance
+      element.style.transform = `translate3d(0, ${scrolled * speed}px, 0)`;
+    });
+    
+    lastScrollY = scrolled;
+  }
+  
+  ticking = false;
+}
+
+window.addEventListener("scroll", () => {
+  if (!ticking) {
+    requestAnimationFrame(updateParallax);
+    ticking = true;
+  }
 });
 
-// Project card interactions
+// Optimized project card interactions
 document.addEventListener("DOMContentLoaded", () => {
   const projectCards = document.querySelectorAll(".project-card");
 
   projectCards.forEach((card) => {
+    // Add performance hints
+    card.style.willChange = "transform";
+    card.style.backfaceVisibility = "hidden";
+    
     card.addEventListener("mouseenter", (e) => {
-      e.currentTarget.style.transform = "translateY(-12px) scale(1.02)";
+      e.currentTarget.style.transform = "translate3d(0, -12px, 0) scale(1.02)";
     });
 
     card.addEventListener("mouseleave", (e) => {
-      e.currentTarget.style.transform = "translateY(0) scale(1)";
+      e.currentTarget.style.transform = "translate3d(0, 0, 0) scale(1)";
     });
   });
 });
