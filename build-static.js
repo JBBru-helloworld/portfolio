@@ -43,6 +43,21 @@ function copyAssets() {
     fs.cpSync(assetsSource, assetsTarget, { recursive: true });
     console.log("✅ Asset files copied");
   }
+
+  // Copy site.webmanifest and sitemap.xml
+  const manifestSource = path.join(publicDir, "site.webmanifest");
+  const manifestTarget = path.join(outputDir, "site.webmanifest");
+  if (fs.existsSync(manifestSource)) {
+    fs.copyFileSync(manifestSource, manifestTarget);
+    console.log("✅ Site manifest copied");
+  }
+
+  const sitemapSource = path.join(publicDir, "sitemap.xml");
+  const sitemapTarget = path.join(outputDir, "sitemap.xml");
+  if (fs.existsSync(sitemapSource)) {
+    fs.copyFileSync(sitemapSource, sitemapTarget);
+    console.log("✅ Sitemap copied");
+  }
 }
 
 // Render EJS template to HTML with layout
