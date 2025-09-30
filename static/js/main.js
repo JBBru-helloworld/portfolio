@@ -7,26 +7,28 @@
 // Ensure fonts are loaded before showing content
 document.addEventListener("DOMContentLoaded", () => {
   // Check if Font Loading API is supported
-  if ('fonts' in document) {
+  if ("fonts" in document) {
     // Load critical fonts
     Promise.all([
-      document.fonts.load('bold 3rem DrukWide'),
-      document.fonts.load('400 1rem Inter')
-    ]).then(() => {
-      // Fonts are loaded, remove any loading states
-      document.documentElement.classList.add('fonts-loaded');
-    }).catch(() => {
-      // Fallback if font loading fails
-      document.documentElement.classList.add('fonts-loaded');
-    });
-    
+      document.fonts.load("bold 3rem DrukWide"),
+      document.fonts.load("400 1rem Inter"),
+    ])
+      .then(() => {
+        // Fonts are loaded, remove any loading states
+        document.documentElement.classList.add("fonts-loaded");
+      })
+      .catch(() => {
+        // Fallback if font loading fails
+        document.documentElement.classList.add("fonts-loaded");
+      });
+
     // Set a timeout as fallback
     setTimeout(() => {
-      document.documentElement.classList.add('fonts-loaded');
+      document.documentElement.classList.add("fonts-loaded");
     }, 1000);
   } else {
     // Browser doesn't support Font Loading API
-    document.documentElement.classList.add('fonts-loaded');
+    document.documentElement.classList.add("fonts-loaded");
   }
 });
 

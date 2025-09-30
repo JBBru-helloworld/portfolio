@@ -9,50 +9,7 @@
   src: url("../assets/font/primary/DrukWideBold.ttf") format("truetype");
   font-weight: bold;
   font-style: normal;
-  font-display: optional; /* Prevents font swap after initial load */
-}
-
-/* Fallback font styling to match DrukWide closely */
-.hero-large-title,
-.hero-large-name,
-.hero-title,
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-primary), Impact, "Arial Black", Arial, sans-serif;
-}
-
-/* Font loading optimization */
-html:not(.fonts-loaded) .hero-large-title,
-html:not(.fonts-loaded) .hero-large-name,
-html:not(.fonts-loaded) .hero-title,
-html:not(.fonts-loaded) h1,
-html:not(.fonts-loaded) h2,
-html:not(.fonts-loaded) h3,
-html:not(.fonts-loaded) h4,
-html:not(.fonts-loaded) h5,
-html:not(.fonts-loaded) h6 {
-  visibility: hidden;
-}
-
-html.fonts-loaded .hero-large-title,
-html.fonts-loaded .hero-large-name,
-html.fonts-loaded .hero-title,
-html.fonts-loaded h1,
-html.fonts-loaded h2,
-html.fonts-loaded h3,
-html.fonts-loaded h4,
-html.fonts-loaded h5,
-html.fonts-loaded h6 {
-  visibility: visible;
-  animation: fadeInFont 0.3s ease-in-out;
-}
-
-@keyframes fadeInFont {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  font-display: swap;
 }
 
 /* Performance optimizations */
@@ -119,7 +76,8 @@ html {
   --space-3xl: 6rem;
 
   /* Typography */
-  --font-primary: "DrukWide", serif;
+  --font-primary: "DrukWide", "Arial Black", "Trebuchet MS", Impact,
+    "Franklin Gothic Medium", Arial, sans-serif;
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, sans-serif;
   --font-size-sm: 0.875rem;
