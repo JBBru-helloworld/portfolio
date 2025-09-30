@@ -1,0 +1,357 @@
+<!-- views/layouts/main.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Portfolio of Joshua Bonham - UX/UI Designer & Developer specializing in creating intuitive digital experiences"
+    />
+    <meta
+      name="keywords"
+      content="UX Design, UI Design, Web Development, Portfolio, User Experience"
+    />
+    <meta name="author" content="Joshua Bonham" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="upgrade-insecure-requests"
+    />
+    <meta name="theme-color" content="#10b981" />
+    <meta
+      property="og:title"
+      content="Joshua Bonham - UX/UI Designer & Developer"
+    />
+    <meta
+      property="og:description"
+      content="Crafting digital experiences that blend functionality with aesthetics"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://jbbru.com" />
+    <meta
+      property="og:image"
+      content="https://jbbru.com/assets/images/profile.jpg"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Joshua Bonham - UX/UI Designer & Developer"
+    />
+    <meta
+      name="twitter:description"
+      content="Crafting digital experiences that blend functionality with aesthetics"
+    />
+    <meta
+      name="twitter:image"
+      content="https://jbbru.com/assets/images/profile.jpg"
+    />
+
+    <link rel="canonical" href="https://jbbru.com/" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/assets/favicon/favicon1.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/assets/favicon/favicon1.png"
+    />
+    <link rel="shortcut icon" href="/assets/favicon/favicon1.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/favicon/favicon1.png"
+    />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Preload critical fonts -->
+    <link
+      rel="preload"
+      href="/assets/font/primary/DrukWideBold.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+
+    <!-- Load Google Fonts with optimized display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    />
+
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+
+    <title>Contact | Joshua Bonham - Portfolio</title>
+  </head>
+  <body>
+    <!-- views/components/header.ejs -->
+<header class="header">
+  <nav class="navbar">
+    <div class="container">
+      <button
+        class="nav-toggle"
+        aria-label="Toggle navigation"
+        aria-expanded="false"
+      >
+        <div class="hamburger">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </div>
+      </button>
+
+      <ul class="nav-menu">
+        <li>
+          <a
+            href="/"
+            class="nav-link"
+            aria-current="false"
+            >Home</a
+          >
+        </li>
+        <li>
+          <a
+            href="/work/"
+            class="nav-link"
+            aria-current="false"
+            >Work</a
+          >
+        </li>
+        <li>
+          <a
+            href="/about/"
+            class="nav-link"
+            aria-current="false"
+            >About</a
+          >
+        </li>
+        <li>
+          <a
+            href="/contact/"
+            class="nav-link cta-nav"
+            aria-current="page"
+            >Contact</a
+          >
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+
+    <main class="main-content"><!-- views/pages/contact.ejs -->
+<section class="contact-section">
+  <div class="container">
+    <h1 class="page-title">Get in Touch</h1>
+    <p class="page-description">
+      Have a project in mind? Let's work together to bring your ideas to life.
+    </p>
+
+    <div class="contact-grid">
+      <form
+        class="contact-form"
+        id="contactForm"
+        action="https://formspree.io/f/mzzaqgyy"
+        method="POST"
+        accept-charset="UTF-8"
+      >
+        <!-- Formspree configuration -->
+        <input
+          type="hidden"
+          name="_subject"
+          value="New contact form submission from Portfolio"
+        />
+        <input type="hidden" name="_next" value="/thank-you/" />
+        <input type="hidden" name="_captcha" value="false" />
+
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            minlength="2"
+            maxlength="50"
+            placeholder="Your full name"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="your.email@example.com"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea
+            id="message"
+            name="message"
+            required
+            minlength="10"
+            maxlength="1000"
+            rows="5"
+            placeholder="Tell me about your project or idea..."
+          ></textarea>
+        </div>
+
+        <button type="submit" class="submit-button" id="submitBtn">
+          <span class="submit-text">Send Message</span>
+          <span class="submit-loading" style="display: none">Sending...</span>
+        </button>
+      </form>
+
+      <div class="contact-info">
+        <h2>Let's Connect</h2>
+        <p>
+          I'm always interested in hearing about new projects and opportunities.
+        </p>
+
+        <div class="social-links">
+          <a
+            href="https://www.linkedin.com/in/joshuabonham03"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+          >
+            <img
+              src="assets/images/linkedin-round-svgrepo-com.svg"
+              width="24"
+              height="24"
+            />
+          </a>
+          <a
+            href="https://github.com/JBBru-helloworld"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+          >
+            <img
+              src="assets/images/github-svgrepo-com.svg"
+              width="24"
+              height="24"
+            />
+          </a>
+          <a
+            href="https://www.instagram.com/jb_bru/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+          >
+            <img
+              src="assets/images/instagram-round-svgrepo-com.svg"
+              width="24"
+              height="24"
+            />
+          </a>
+          <a
+            href="mailto:jb.brubusiness3@gmail.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Email"
+          >
+            <img
+              src="assets/images/email-circle-fill-svgrepo-com.svg"
+              width="28"
+              height="28"
+            />
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+    <!-- views/components/footer.ejs -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-links">
+        <ul class="footer-nav">
+          <li><a href="/" class="footer-link">Home</a></li>
+          <li><a href="/work/" class="footer-link">Work</a></li>
+          <li><a href="/about/" class="footer-link">About</a></li>
+          <li><a href="/contact/" class="footer-link">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-social">
+        <a
+          href="https://github.com/JBBru-helloworld"
+          class="social-link"
+          aria-label="GitHub"
+          target="_blank"
+        >
+          <img
+            src="assets/images/github-svgrepo-com.svg"
+            alt="GitHub"
+            class="social-icon"
+          />
+        </a>
+        <a
+          href="https://www.linkedin.com/in/joshuabonham03"
+          class="social-link"
+          aria-label="LinkedIn"
+          target="_blank"
+        >
+          <img
+            src="assets/images/linkedin-round-svgrepo-com.svg"
+            alt="LinkedIn"
+            class="social-icon"
+          />
+        </a>
+        
+        <a
+          href="https://www.instagram.com/jb_bru/"
+          class="social-link"
+          aria-label="Instagram"
+          target="_blank"
+        >
+          <img
+            src="assets/images/instagram-round-svgrepo-com.svg"
+            alt="Instagram"
+            class="social-icon"
+          />
+        </a>
+         
+        <a
+          href="mailto:jb.brubusiness3@gmail.com"
+          class="social-link"
+          aria-label="Email"
+        >
+          <img
+            src="assets/images/email-circle-fill-svgrepo-com.svg"
+            alt="Email"
+            class="social-icon"
+          />
+        </a>
+        
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="copyright">
+        &copy; 2025 Joshua Edwin Rene Bonham.
+        Crafted with passion and modern web technologies.
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+    <script src="js/main.js"></script>
+  </body>
+</html>
