@@ -1,5 +1,39 @@
 // public/js/main.js
 
+// ====================================
+// FONT LOADING OPTIMIZATION
+// ====================================
+
+// Ensure fonts are loaded before showing content
+document.addEventListener("DOMContentLoaded", () => {
+  // Check if Font Loading API is supported
+  if ('fonts' in document) {
+    // Load critical fonts
+    Promise.all([
+      document.fonts.load('bold 3rem DrukWide'),
+      document.fonts.load('400 1rem Inter')
+    ]).then(() => {
+      // Fonts are loaded, remove any loading states
+      document.documentElement.classList.add('fonts-loaded');
+    }).catch(() => {
+      // Fallback if font loading fails
+      document.documentElement.classList.add('fonts-loaded');
+    });
+    
+    // Set a timeout as fallback
+    setTimeout(() => {
+      document.documentElement.classList.add('fonts-loaded');
+    }, 1000);
+  } else {
+    // Browser doesn't support Font Loading API
+    document.documentElement.classList.add('fonts-loaded');
+  }
+});
+
+// ====================================
+// MOBILE NAVIGATION
+// ====================================
+
 // Mobile navigation toggle
 document.addEventListener("DOMContentLoaded", () => {
   const navToggle = document.querySelector(".nav-toggle");
@@ -310,7 +344,7 @@ let lastScrollY = 0;
 
 function updateParallax() {
   const scrolled = window.pageYOffset;
-  
+
   // Only update if scroll position changed significantly
   if (Math.abs(scrolled - lastScrollY) > 1) {
     const parallaxElements = document.querySelectorAll(
@@ -321,10 +355,10 @@ function updateParallax() {
       const speed = 0.3 + index * 0.1; // Reduced speed for better performance
       element.style.transform = `translate3d(0, ${scrolled * speed}px, 0)`;
     });
-    
+
     lastScrollY = scrolled;
   }
-  
+
   ticking = false;
 }
 
@@ -343,7 +377,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add performance hints
     card.style.willChange = "transform";
     card.style.backfaceVisibility = "hidden";
-    
+
     card.addEventListener("mouseenter", (e) => {
       e.currentTarget.style.transform = "translate3d(0, -12px, 0) scale(1.02)";
     });
