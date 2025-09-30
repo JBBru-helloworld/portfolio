@@ -83,6 +83,12 @@ async function renderTemplate(templatePath, data, outputPath) {
       }
     );
 
+    // Ensure directory exists for clean URLs
+    const outputDir = path.dirname(outputPath);
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
     fs.writeFileSync(outputPath, html);
     console.log(`✅ Generated: ${outputPath}`);
     return true;
@@ -100,11 +106,11 @@ async function buildStatic() {
   copyAssets();
   console.log("");
 
-  // Define pages to render
+  // Define pages to render with clean URLs
   const pages = [
     {
       template: path.join(viewsDir, "pages/home.ejs"),
-      output: path.join(outputDir, "index.html"),
+      output: path.join(outputDir, "index.html"), // Root stays as index.html
       data: {
         title: "Home",
         data: portfolioData,
@@ -114,7 +120,7 @@ async function buildStatic() {
     },
     {
       template: path.join(viewsDir, "pages/about.ejs"),
-      output: path.join(outputDir, "about.html"),
+      output: path.join(outputDir, "about", "index.html"), // Clean URL: /about/
       data: {
         title: "About",
         data: portfolioData,
@@ -123,7 +129,7 @@ async function buildStatic() {
     },
     {
       template: path.join(viewsDir, "pages/work.ejs"),
-      output: path.join(outputDir, "work.html"),
+      output: path.join(outputDir, "work", "index.html"), // Clean URL: /work/
       data: {
         title: "Work",
         data: portfolioData,
@@ -132,7 +138,7 @@ async function buildStatic() {
     },
     {
       template: path.join(viewsDir, "pages/contact.ejs"),
-      output: path.join(outputDir, "contact.html"),
+      output: path.join(outputDir, "contact", "index.html"), // Clean URL: /contact/
       data: {
         title: "Contact",
         data: portfolioData,
@@ -141,7 +147,7 @@ async function buildStatic() {
     },
     {
       template: path.join(viewsDir, "pages/thank-you.ejs"),
-      output: path.join(outputDir, "thank-you.html"),
+      output: path.join(outputDir, "thank-you", "index.html"), // Clean URL: /thank-you/
       data: {
         title: "Thank You",
         data: portfolioData,
