@@ -30,7 +30,7 @@ const data = {
         "A comprehensive financial management tool that combines receipt scanning technology with expense tracking and budget analytics. Users can upload or scan their receipts, which are then processed using AI to extract individual items.",
       fullDescription:
         "Budget Tracker is a comprehensive financial management tool that combines receipt scanning technology with expense tracking and budget analytics. Users can upload or scan their receipts, which are then processed using AI to extract individual items. These items can be allocated to different users for shared expenses or categorised for personal budgeting. The application provides visual analytics to help users understand their spending habits and offers personalised money-saving tips. The application is deployed on Vercel (frontend) and Render (backend), with a React.js frontend and Firebase backend.",
-      thumbnail: "assets/images/projects/Budget.png",
+      thumbnail: "/assets/images/projects/Budget.png",
       categories: [
         "React.js",
         "Tailwind CSS",
@@ -96,7 +96,7 @@ const data = {
         "A fully OOP 2D pixel-art farming simulator in Scala with ScalaFX GUI, featuring core class hierarchy that leverages inheritance and polymorphism.",
       fullDescription:
         "Developed a fully OOP 2D pixel-art farming simulator in Scala with a ScalaFX GUI, designing a core class hierarchy (Farm, Crop, Player, Village) that leverages inheritance and polymorphism. I implemented farming and trading mechanics — crop growth cycles, resource management (water/fertiliser), inventory, and dynamic market pricing — to enable strategic gameplay, and integrated an SDG-2 educational quiz on agricultural management to reinforce sustainable practices. I also built a robust save/load system and profiled/optimised critical code paths to ensure smooth, responsive performance.",
-      thumbnail: "assets/images/projects/Harvest For All.png",
+      thumbnail: "/assets/images/projects/Harvest For All.png",
       categories: ["Scala", "ScalaFX", "OOP"],
       technologies: [
         {
@@ -120,7 +120,7 @@ const data = {
         "Built a fully serverless AWS pipeline to ingest, OCR, parse and store receipt data - eliminating manual entry and accelerating financial reporting.",
       fullDescription:
         "Built a fully serverless AWS pipeline to ingest, OCR, parse and store receipt data - eliminating manual entry and accelerating financial reporting. Architecture includes Amazon S3 for versioned, encrypted receipt storage, AWS Lambda for workflow orchestration, Amazon Textract for data extraction with >95% accuracy, Amazon DynamoDB for structured storage, and Amazon SES for real-time alerts.",
-      thumbnail: "assets/images/projects/AWS.png",
+      thumbnail: "/assets/images/projects/AWS.png",
       categories: [
         "AWS Lambda",
         "Amazon SES",
@@ -157,7 +157,7 @@ const data = {
         "AI-powered assistant for vendors and merchants, submitted for Grab's challenge at UMHackathon 2025. Leveraged Ollama, Mistral (7B), and Gemini for business insights.",
       fullDescription:
         "Collaborated on the development of an AI-powered assistant for vendors and merchants, submitted for Grab's challenge at UMHackathon 2025. The solution leveraged Ollama, Mistral (7B), and Gemini to enhance decision-making and economic empowerment in the small business sector. As the UI Designer, I was responsible for crafting an intuitive and accessible user interface that presented complex data in a clear, actionable format. The AI-driven dashboard enables merchants to interact naturally with the system, receiving insights in plain language on key aspects like inventory management, receipt processing, and overall store performance. A standout feature includes automated summarisation of competitor reviews, giving merchants a competitive edge by revealing trends and customer expectations.",
-      thumbnail: "assets/images/projects/UMHackathon IMage.png",
+      thumbnail: "/assets/images/projects/UMHackathon IMage.png",
       categories: ["Figma", "AI", "Python", "UI Design"],
       technologies: [
         {
@@ -187,7 +187,7 @@ const data = {
         "Designed a functional mobile application and in-car display interface aimed at enhancing user experience and usability.",
       fullDescription:
         "Designed a functional mobile application and in-car display interface aimed at enhancing user experience and usability. Developed comprehensive UML diagrams to support the planning, definition, and design phases of the Software Development Life Cycle (SDLC), ensuring a structured and user-centered development process.",
-      thumbnail: "assets/images/projects/SEG2202.png",
+      thumbnail: "/assets/images/projects/SEG2202.png",
       categories: [
         "Figma",
         "Software Development",
@@ -217,7 +217,7 @@ const data = {
         "Web application for SDG 2: Zero Hunger theme, allowing users to create and share recipes with convenient access to cooking essentials.",
       fullDescription:
         "This project was undertaken as part of the WEB2202 Web Programming course at Sunway University. The goal was to design and implement a web application using PHP, with a focus on the theme of SDG 2: Zero Hunger. Since PHP was the primary requirement for this project, nearly all website functionalities (99%) are fully operational without JavaScript. The exception lies in the ability to edit recipe ingredients, which requires JavaScript but is supported with fallback options for non-JavaScript users. Most interactive elements, including animations and modal pop-ups, were implemented entirely with HTML and CSS.",
-      thumbnail: "assets/images/projects/Recipe Roots Image.png",
+      thumbnail: "/assets/images/projects/Recipe Roots Image.png",
       categories: [
         "PHP",
         "MySQL",
@@ -256,7 +256,7 @@ const data = {
         "Designed and built the first ever Asia Arts Festival Malaysia website using CSS and Squarespace.",
       fullDescription:
         "Designed and built the first ever Asia Arts Festival Malaysia website using CSS, Squarespace, marketing, design, communication, teamwork and time management skills. Ran and maintained the website, assisting in fixing bugs, adding additional user-friendly resources and updating media and content.",
-      thumbnail: "assets/images/projects/AAF.png",
+      thumbnail: "/assets/images/projects/AAF.png",
       categories: ["CSS", "Squarespace", "Web Design", "Marketing"],
       technologies: [
         {
@@ -280,7 +280,7 @@ const data = {
         "Conceptual event planning website enabling users in Malaysia to book venues and connect with expert planners.",
       fullDescription:
         "This project involved designing a conceptual event planning website that enables users in Malaysia to book venues and connect with expert planners for various event types. The website is fully front-end, with key functionalities simulated using client-side JavaScript to effectively demonstrate the platform's concept without a backend. Simulated authentication was implemented using the browser's built-in Crypto API, which requires a secure (SSL/TLS) context to function.",
-      thumbnail: "assets/images/projects/Eventsphere.jpg",
+      thumbnail: "/assets/images/projects/Eventsphere.jpg",
       categories: ["HTML", "CSS", "JavaScript", "Figma"],
       technologies: [
         {
@@ -312,7 +312,7 @@ const data = {
         "Command-line interface (CLI) game inspired by Pokémon with WASD controls and quick-time events battles.",
       fullDescription:
         "This project is a command-line interface (CLI) game inspired by Pokémon, where players can explore the game world using WASD controls and engage in battles through quick-time events (QTEs), similar to the mechanics in Pokémon Ga-Olé.",
-      thumbnail: "assets/images/projects/Pokemon.png",
+      thumbnail: "/assets/images/projects/Pokemon.png",
       categories: ["Git", "Java"],
       technologies: [
         {
@@ -336,7 +336,7 @@ const data = {
         "48-hour hackathon solution for improving financial status through accessible budgeting with gamification.",
       fullDescription:
         "Pengyou is a solution project for Team Dessert Spoons' 48-hour hackathon 'ImagineHack 2024'. It is a site aimed for people who want to improve their financial status. Pengyou's purpose is to help people to develop excellent budgeting habits by making budgeting more accessible to them. We believe in the importance of developing healthy habits, therefore we've implemented a reward system including a virtual pet to encourage people to actively manage their finances.",
-      thumbnail: "assets/images/projects/Pengyou Image.png",
+      thumbnail: "/assets/images/projects/Pengyou Image.png",
       categories: ["Canva", "MongoDB", "Svelte"],
       technologies: [
         {
@@ -360,7 +360,7 @@ const data = {
         "Research portfolio on Online Gambling created from scratch for complete design control.",
       fullDescription:
         "This portfolio was created as part of an assignment for a research paper on Online Gambling for the ENG1044 English for Computer Technology Studies course at Sunway University. Our team, comprising Mohammad Shaan Ibne Javed Soyfoo, William Law Hong Waye, and myself, dedicated significant time to selecting a colour palette that would best reflect the theme of gambling. We chose to build the portfolio from scratch in order to have complete control over the website's design—something that standard website builders couldn't provide. The portfolio showcases the roadmap of our research journey, along with various drafts and revisions of the paper itself.",
-      thumbnail: "assets/images/projects/ENG1044 Image.png",
+      thumbnail: "/assets/images/projects/ENG1044 Image.png",
       categories: ["MongoDB", "Frontend", "GitHub", "Backend", "Figma"],
       technologies: [
         {
