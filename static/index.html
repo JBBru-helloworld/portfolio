@@ -91,423 +91,402 @@
   </head>
   <body>
     <!-- views/components/header.ejs -->
-<header class="header">
-  <nav class="navbar">
-    <div class="container">
-      <button
-        class="nav-toggle"
-        aria-label="Toggle navigation"
-        aria-expanded="false"
-      >
-        <div class="hamburger">
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-          <span class="hamburger-line"></span>
-        </div>
-      </button>
-
-      <ul class="nav-menu">
-        <li>
-          <a
-            href="/"
-            class="nav-link"
-            aria-current="page"
-            >Home</a
+    <header class="header">
+      <nav class="navbar">
+        <div class="container">
+          <button
+            class="nav-toggle"
+            aria-label="Toggle navigation"
+            aria-expanded="false"
           >
-        </li>
-        <li>
-          <a
-            href="/work/"
-            class="nav-link"
-            aria-current="false"
-            >Work</a
-          >
-        </li>
-        <li>
-          <a
-            href="/about/"
-            class="nav-link"
-            aria-current="false"
-            >About</a
-          >
-        </li>
-        <li>
-          <a
-            href="/contact/"
-            class="nav-link cta-nav"
-            aria-current="false"
-            >Contact</a
-          >
-        </li>
-      </ul>
-    </div>
-  </nav>
-</header>
+            <div class="hamburger">
+              <span class="hamburger-line"></span>
+              <span class="hamburger-line"></span>
+              <span class="hamburger-line"></span>
+            </div>
+          </button>
 
-
-    <main class="main-content"><!-- views/pages/home.ejs -->
-<section class="hero-section relative overflow-hidden">
-  <!-- Aurora Background -->
-  <div
-    class="absolute inset-0"
-    style="
-      --aurora: repeating-linear-gradient(
-        100deg,
-        #1e3a8a 10%,
-        #4f46e5 15%,
-        #2563eb 20%,
-        #7c3aed 25%,
-        #0891b2 30%
-      );
-      --dark-gradient: repeating-linear-gradient(
-        100deg,
-        rgba(0, 0, 0, 0.3) 0%,
-        rgba(0, 0, 0, 0.3) 7%,
-        transparent 10%,
-        transparent 12%,
-        rgba(0, 0, 0, 0.3) 16%
-      );
-    "
-  >
-    <div
-      class="aurora-background"
-      style="
-        position: absolute;
-        inset: -10px;
-        pointer-events: none;
-        background-image: var(--dark-gradient), var(--aurora);
-        background-size: 300%, 200%;
-        background-position: 50% 50%, 50% 50%;
-        opacity: 0.8;
-        filter: blur(15px);
-        will-change: transform;
-        animation: aurora 60s linear infinite;
-        mask-image: radial-gradient(
-          ellipse at 50% 0%,
-          black 30%,
-          transparent 80%
-        );
-        -webkit-mask-image: radial-gradient(
-          ellipse at 50% 0%,
-          black 30%,
-          transparent 80%
-        );
-      "
-    ></div>
-    <div
-      class="aurora-background-2"
-      style="
-        position: absolute;
-        inset: -20px;
-        pointer-events: none;
-        background: linear-gradient(
-          45deg,
-          #1e3a8a,
-          #4f46e5,
-          #2563eb,
-          #7c3aed,
-          #0891b2
-        );
-        background-size: 400% 400%;
-        opacity: 0.6;
-        filter: blur(20px);
-        will-change: transform;
-        animation: aurora 45s linear infinite reverse;
-        mask-image: radial-gradient(
-          ellipse at 50% 50%,
-          black 20%,
-          transparent 70%
-        );
-        -webkit-mask-image: radial-gradient(
-          ellipse at 50% 50%,
-          black 20%,
-          transparent 70%
-        );
-      "
-    ></div>
-  </div>
-
-  <div class="container hero-container relative z-10">
-    <div class="hero-grid">
-      <!-- Left Side - Large Title -->
-      <div class="hero-title-section">
-        <h1 class="hero-large-title hero-title-animate">FULL STACK</h1>
-        <h1 class="hero-large-title hero-title-animate">DEVELOPER &</h1>
-        <h1 class="hero-large-title hero-title-animate">UI/UX DESIGNER</h1>
-      </div>
-
-      <!-- Right Side - Profile and Info -->
-      <div class="hero-info-section">
-        <div class="hero-profile-container hero-info-animate">
-          <div class="hero-profile-image">
-            <img
-              src="/assets/images/profile.jpg"
-              alt="Joshua Edwin Rene Bonham"
-            />
-          </div>
-
-          <div class="hero-info-content">
-            <h2 class="hero-name-title">Joshua Edwin Rene Bonham</h2>
-            <p class="hero-description">Passionate developer and designer creating innovative solutions with modern technologies.</p>
-            <a href="/work/" class="cta-button">View My Work</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="bento-section">
-  <div class="container">
-    <div class="bento-grid">
-      <!-- Featured Project - 8 cols -->
-      <div class="bento-item large">
-        <div class="bento-content">
-          <span class="bento-label">Featured Project</span>
-          <h3 class="bento-title">Budget Tracker</h3>
-          <p class="bento-description">A comprehensive financial management tool that combines receipt scanning technology with expense tracking and budget analytics. Users can upload or scan their receipts, which are then processed using AI to extract individual items.</p>
-          <div class="tech-stack">
-            
-            <span class="tech-badge-small" title="React.js"
-              >React.js</span
-            >
-            
-            <span class="tech-badge-small" title="Tailwind CSS"
-              >Tailwind CSS</span
-            >
-            
-            <span class="tech-badge-small" title="Firebase"
-              >Firebase</span
-            >
-            
-            <span class="tech-badge-small" title="MongoDB"
-              >MongoDB</span
-            >
-            
-            <span class="tech-badge-small" title="Python"
-              >Python</span
-            >
-            
-            <span class="tech-badge-small" title="JavaScript"
-              >JavaScript</span
-            >
-            
-            <span class="tech-badge-small" title="Vite"
-              >Vite</span
-            >
-            
-            <span class="tech-badge-small" title="Gemini AI"
-              >Gemini AI</span
-            >
-            
-            <span class="tech-badge-small" title="Vercel"
-              >Vercel</span
-            >
-            
-            <span class="tech-badge-small" title="Render"
-              >Render</span
-            >
-            
-          </div>
-          
-          <a
-            href="https://budget-tracker.jbbru.com/"
-            class="bento-link"
-            target="_blank"
-            >View Demo</a
-          >
-          
-        </div>
-        <div class="bento-image">
-          <img
-            src="/assets/images/projects/Budget.png"
-            alt="Budget Tracker"
-            loading="lazy"
-          />
-        </div>
-      </div>
-
-      <!-- Skills & Expertise - 4 cols -->
-      <div class="bento-item small skills">
-        <div class="bento-content">
-          <span class="bento-label">Skills & Expertise</span>
-          <h3 class="bento-title">Core Technologies</h3>
-          <ul class="skill-list">
-            
-            <li>React.js</li>
-            
-            <li>JavaScript</li>
-            
-            <li>Python</li>
-            
-            <li>UI/UX Design</li>
-            
-            <li>AWS</li>
-            
-            <li>Firebase</li>
-            
+          <ul class="nav-menu">
+            <li>
+              <a href="/" class="nav-link" aria-current="page">Home</a>
+            </li>
+            <li>
+              <a href="/work/" class="nav-link" aria-current="false">Work</a>
+            </li>
+            <li>
+              <a href="/about/" class="nav-link" aria-current="false">About</a>
+            </li>
+            <li>
+              <a href="/contact/" class="nav-link cta-nav" aria-current="false"
+                >Contact</a
+              >
+            </li>
           </ul>
-          <a href="/about/" class="bento-link">View All Skills</a>
         </div>
-      </div>
+      </nav>
+    </header>
 
-      <!-- Latest Project - 8 cols -->
-      <div class="bento-item large latest-project">
-        <div class="bento-content">
-          <span class="bento-label">Latest Project</span>
-          <h3 class="bento-title">Harvest For All - Agricultural Management System</h3>
-          <p class="bento-description">
-            A fully OOP 2D pixel-art farming simulator in Scala with ScalaFX GUI, featuring core class hierarchy that leverages inhe...
-          </p>
-          <div class="tech-stack">
-            
-            <span class="tech-badge-small" title="Scala"
-              >Scala</span
-            >
-            
-            <span class="tech-badge-small" title="ScalaFX"
-              >ScalaFX</span
-            >
-            
+    <main class="main-content">
+      <!-- views/pages/home.ejs -->
+      <section class="hero-section relative overflow-hidden">
+        <!-- Aurora Background -->
+        <div
+          class="absolute inset-0"
+          style="
+            --aurora: repeating-linear-gradient(
+              100deg,
+              #1e3a8a 10%,
+              #4f46e5 15%,
+              #2563eb 20%,
+              #7c3aed 25%,
+              #0891b2 30%
+            );
+            --dark-gradient: repeating-linear-gradient(
+              100deg,
+              rgba(0, 0, 0, 0.3) 0%,
+              rgba(0, 0, 0, 0.3) 7%,
+              transparent 10%,
+              transparent 12%,
+              rgba(0, 0, 0, 0.3) 16%
+            );
+          "
+        >
+          <div
+            class="aurora-background"
+            style="
+              position: absolute;
+              inset: -10px;
+              pointer-events: none;
+              background-image: var(--dark-gradient), var(--aurora);
+              background-size: 250%, 150%;
+              background-position: 50% 50%, 50% 50%;
+              opacity: 0.6;
+              filter: blur(10px);
+              will-change: transform, background-position;
+              transform: translate3d(0, 0, 0);
+              backface-visibility: hidden;
+              animation: aurora 60s linear infinite;
+              mask-image: radial-gradient(
+                ellipse at 50% 0%,
+                black 30%,
+                transparent 80%
+              );
+              -webkit-mask-image: radial-gradient(
+                ellipse at 50% 0%,
+                black 30%,
+                transparent 80%
+              );
+            "
+          ></div>
+          <div
+            class="aurora-background-2"
+            style="
+              position: absolute;
+              inset: -20px;
+              pointer-events: none;
+              background: linear-gradient(
+                45deg,
+                #1e3a8a,
+                #4f46e5,
+                #2563eb,
+                #7c3aed,
+                #0891b2
+              );
+              background-size: 300% 300%;
+              opacity: 0.4;
+              filter: blur(12px);
+              will-change: transform, background-position;
+              transform: translate3d(0, 0, 0);
+              backface-visibility: hidden;
+              animation: aurora 45s linear infinite reverse;
+              mask-image: radial-gradient(
+                ellipse at 50% 50%,
+                black 20%,
+                transparent 70%
+              );
+              -webkit-mask-image: radial-gradient(
+                ellipse at 50% 50%,
+                black 20%,
+                transparent 70%
+              );
+            "
+          ></div>
+        </div>
+
+        <div class="container hero-container relative z-10">
+          <div class="hero-grid">
+            <!-- Left Side - Large Title -->
+            <div class="hero-title-section">
+              <h1 class="hero-large-title hero-title-animate">FULL STACK</h1>
+              <h1 class="hero-large-title hero-title-animate">DEVELOPER &</h1>
+              <h1 class="hero-large-title hero-title-animate">
+                UI/UX DESIGNER
+              </h1>
+            </div>
+
+            <!-- Right Side - Profile and Info -->
+            <div class="hero-info-section">
+              <div class="hero-profile-container hero-info-animate">
+                <div class="hero-profile-image">
+                  <img
+                    src="/assets/images/profile.jpg"
+                    alt="Joshua Edwin Rene Bonham"
+                  />
+                </div>
+
+                <div class="hero-info-content">
+                  <h2 class="hero-name-title">Joshua Edwin Rene Bonham</h2>
+                  <p class="hero-description">
+                    Passionate developer and designer creating innovative
+                    solutions with modern technologies.
+                  </p>
+                  <a href="/work/" class="cta-button">View My Work</a>
+                </div>
+              </div>
+            </div>
           </div>
-          <a href="/work/" class="bento-link">View Project</a>
         </div>
-        <div class="bento-image">
-          <img
-            src="/assets/images/projects/Harvest For All.png"
-            alt="Harvest For All - Agricultural Management System"
-            loading="lazy"
-          />
-        </div>
-      </div>
+      </section>
 
-      <!-- About Me - 4 cols -->
-      <div class="bento-item small about-me">
-        <div class="bento-content">
-          <span class="bento-label">About Me</span>
-          <h3 class="bento-title">Passionate Developer</h3>
-          <p class="bento-description">
-            Passionate developer and designer creating innovative solutions with modern technologies. Currently pursuing Software Engineering at
-            Sunway University with a focus on full-stack development and AI
-            integration.
-          </p>
-          <a href="/about/" class="bento-link">Learn More</a>
-        </div>
-      </div>
+      <section class="bento-section">
+        <div class="container">
+          <div class="bento-grid">
+            <!-- Featured Project - 8 cols -->
+            <div class="bento-item large">
+              <div class="bento-content">
+                <span class="bento-label">Featured Project</span>
+                <h3 class="bento-title">Budget Tracker</h3>
+                <p class="bento-description">
+                  A comprehensive financial management tool that combines
+                  receipt scanning technology with expense tracking and budget
+                  analytics. Users can upload or scan their receipts, which are
+                  then processed using AI to extract individual items.
+                </p>
+                <div class="tech-stack">
+                  <span class="tech-badge-small" title="React.js"
+                    >React.js</span
+                  >
 
-      <!-- Quick Stats - 12 cols (full width) -->
-      <div class="bento-item stats">
-        <div class="bento-content">
-          <span class="bento-label">Quick Stats</span>
-          <div class="stats-grid">
-            <div class="stat-item">
-              <div class="stat-number">11</div>
-              <div class="stat-label">Projects Completed</div>
+                  <span class="tech-badge-small" title="Tailwind CSS"
+                    >Tailwind CSS</span
+                  >
+
+                  <span class="tech-badge-small" title="Firebase"
+                    >Firebase</span
+                  >
+
+                  <span class="tech-badge-small" title="MongoDB">MongoDB</span>
+
+                  <span class="tech-badge-small" title="Python">Python</span>
+
+                  <span class="tech-badge-small" title="JavaScript"
+                    >JavaScript</span
+                  >
+
+                  <span class="tech-badge-small" title="Vite">Vite</span>
+
+                  <span class="tech-badge-small" title="Gemini AI"
+                    >Gemini AI</span
+                  >
+
+                  <span class="tech-badge-small" title="Vercel">Vercel</span>
+
+                  <span class="tech-badge-small" title="Render">Render</span>
+                </div>
+
+                <a
+                  href="https://budget-tracker.jbbru.com/"
+                  class="bento-link"
+                  target="_blank"
+                  >View Demo</a
+                >
+              </div>
+              <div class="bento-image">
+                <img
+                  src="/assets/images/projects/Budget.png"
+                  alt="Budget Tracker"
+                  loading="lazy"
+                />
+              </div>
             </div>
-            <div class="stat-item">
-              <div class="stat-number">5+</div>
-              <div class="stat-label">Technologies Mastered</div>
+
+            <!-- Skills & Expertise - 4 cols -->
+            <div class="bento-item small skills">
+              <div class="bento-content">
+                <span class="bento-label">Skills & Expertise</span>
+                <h3 class="bento-title">Core Technologies</h3>
+                <ul class="skill-list">
+                  <li>React.js</li>
+
+                  <li>JavaScript</li>
+
+                  <li>Python</li>
+
+                  <li>UI/UX Design</li>
+
+                  <li>AWS</li>
+
+                  <li>Firebase</li>
+                </ul>
+                <a href="/about/" class="bento-link">View All Skills</a>
+              </div>
             </div>
-            <div class="stat-item">
-              <div class="stat-number">2+</div>
-              <div class="stat-label">Years Experience</div>
+
+            <!-- Latest Project - 8 cols -->
+            <div class="bento-item large latest-project">
+              <div class="bento-content">
+                <span class="bento-label">Latest Project</span>
+                <h3 class="bento-title">
+                  Harvest For All - Agricultural Management System
+                </h3>
+                <p class="bento-description">
+                  A fully OOP 2D pixel-art farming simulator in Scala with
+                  ScalaFX GUI, featuring core class hierarchy that leverages
+                  inhe...
+                </p>
+                <div class="tech-stack">
+                  <span class="tech-badge-small" title="Scala">Scala</span>
+
+                  <span class="tech-badge-small" title="ScalaFX">ScalaFX</span>
+                </div>
+                <a href="/work/" class="bento-link">View Project</a>
+              </div>
+              <div class="bento-image">
+                <img
+                  src="/assets/images/projects/Harvest For All.png"
+                  alt="Harvest For All - Agricultural Management System"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+
+            <!-- About Me - 4 cols -->
+            <div class="bento-item small about-me">
+              <div class="bento-content">
+                <span class="bento-label">About Me</span>
+                <h3 class="bento-title">Passionate Developer</h3>
+                <p class="bento-description">
+                  Passionate developer and designer creating innovative
+                  solutions with modern technologies. Currently pursuing
+                  Software Engineering at Sunway University with a focus on
+                  full-stack development and AI integration.
+                </p>
+                <a href="/about/" class="bento-link">Learn More</a>
+              </div>
+            </div>
+
+            <!-- Quick Stats - 12 cols (full width) -->
+            <div class="bento-item stats">
+              <div class="bento-content">
+                <span class="bento-label">Quick Stats</span>
+                <div class="stats-grid">
+                  <div class="stat-item">
+                    <div class="stat-number">11</div>
+                    <div class="stat-label">Projects Completed</div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-number">5+</div>
+                    <div class="stat-label">Technologies Mastered</div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-number">2+</div>
+                    <div class="stat-label">Years Experience</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contact CTA - 8 cols -->
+            <div class="bento-item contact-cta">
+              <div class="bento-content">
+                <h3 class="bento-title">Let's Work Together</h3>
+                <p class="bento-description">
+                  I'm currently available for freelance projects, internships,
+                  and exciting collaborations. Let's create something amazing
+                  together!
+                </p>
+                <a href="/contact/" class="cta-button">Get in Touch</a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Contact CTA - 8 cols -->
-      <div class="bento-item contact-cta">
-        <div class="bento-content">
-          <h3 class="bento-title">Let's Work Together</h3>
-          <p class="bento-description">
-            I'm currently available for freelance projects, internships, and
-            exciting collaborations. Let's create something amazing together!
-          </p>
-          <a href="/contact/" class="cta-button">Get in Touch</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-</main>
+      </section>
+    </main>
 
     <!-- views/components/footer.ejs -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-content">
-      <div class="footer-links">
-        <ul class="footer-nav">
-          <li><a href="/" class="footer-link">Home</a></li>
-          <li><a href="/work/" class="footer-link">Work</a></li>
-          <li><a href="/about/" class="footer-link">About</a></li>
-          <li><a href="/contact/" class="footer-link">Contact</a></li>
-        </ul>
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-links">
+            <ul class="footer-nav">
+              <li><a href="/" class="footer-link">Home</a></li>
+              <li><a href="/work/" class="footer-link">Work</a></li>
+              <li><a href="/about/" class="footer-link">About</a></li>
+              <li><a href="/contact/" class="footer-link">Contact</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-social">
+            <a
+              href="https://github.com/JBBru-helloworld"
+              class="social-link"
+              aria-label="GitHub"
+              target="_blank"
+            >
+              <img
+                src="/assets/images/github-svgrepo-com.svg"
+                alt="GitHub"
+                class="social-icon"
+              />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/joshuabonham03"
+              class="social-link"
+              aria-label="LinkedIn"
+              target="_blank"
+            >
+              <img
+                src="/assets/images/linkedin-round-svgrepo-com.svg"
+                alt="LinkedIn"
+                class="social-icon"
+              />
+            </a>
+
+            <a
+              href="https://www.instagram.com/jb_bru/"
+              class="social-link"
+              aria-label="Instagram"
+              target="_blank"
+            >
+              <img
+                src="/assets/images/instagram-round-svgrepo-com.svg"
+                alt="Instagram"
+                class="social-icon"
+              />
+            </a>
+
+            <a
+              href="mailto:jb.brubusiness3@gmail.com"
+              class="social-link"
+              aria-label="Email"
+            >
+              <img
+                src="/assets/images/email-circle-fill-svgrepo-com.svg"
+                alt="Email"
+                class="social-icon"
+              />
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p class="copyright">
+            &copy; 2025 Joshua Edwin Rene Bonham. Crafted with passion and
+            modern web technologies.
+          </p>
+        </div>
       </div>
-
-      <div class="footer-social">
-        <a
-          href="https://github.com/JBBru-helloworld"
-          class="social-link"
-          aria-label="GitHub"
-          target="_blank"
-        >
-          <img
-            src="/assets/images/github-svgrepo-com.svg"
-            alt="GitHub"
-            class="social-icon"
-          />
-        </a>
-        <a
-          href="https://www.linkedin.com/in/joshuabonham03"
-          class="social-link"
-          aria-label="LinkedIn"
-          target="_blank"
-        >
-          <img
-            src="/assets/images/linkedin-round-svgrepo-com.svg"
-            alt="LinkedIn"
-            class="social-icon"
-          />
-        </a>
-        
-        <a
-          href="https://www.instagram.com/jb_bru/"
-          class="social-link"
-          aria-label="Instagram"
-          target="_blank"
-        >
-          <img
-            src="/assets/images/instagram-round-svgrepo-com.svg"
-            alt="Instagram"
-            class="social-icon"
-          />
-        </a>
-         
-        <a
-          href="mailto:jb.brubusiness3@gmail.com"
-          class="social-link"
-          aria-label="Email"
-        >
-          <img
-            src="/assets/images/email-circle-fill-svgrepo-com.svg"
-            alt="Email"
-            class="social-icon"
-          />
-        </a>
-        
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <p class="copyright">
-        &copy; 2025 Joshua Edwin Rene Bonham.
-        Crafted with passion and modern web technologies.
-      </p>
-    </div>
-  </div>
-</footer>
-
+    </footer>
 
     <script src="/js/main.js"></script>
   </body>

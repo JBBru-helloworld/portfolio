@@ -29,11 +29,13 @@
         inset: -10px;
         pointer-events: none;
         background-image: var(--dark-gradient), var(--aurora);
-        background-size: 300%, 200%;
+        background-size: 250%, 150%;
         background-position: 50% 50%, 50% 50%;
-        opacity: 0.8;
-        filter: blur(15px);
-        will-change: transform;
+        opacity: 0.6;
+        filter: blur(10px);
+        will-change: transform, background-position;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
         animation: aurora 60s linear infinite;
         mask-image: radial-gradient(
           ellipse at 50% 0%,
@@ -61,10 +63,12 @@
           #7c3aed,
           #0891b2
         );
-        background-size: 400% 400%;
-        opacity: 0.6;
-        filter: blur(20px);
-        will-change: transform;
+        background-size: 300% 300%;
+        opacity: 0.4;
+        filter: blur(12px);
+        will-change: transform, background-position;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
         animation: aurora 45s linear infinite reverse;
         mask-image: radial-gradient(
           ellipse at 50% 50%,

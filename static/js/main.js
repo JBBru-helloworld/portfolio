@@ -106,12 +106,35 @@ document.addEventListener("DOMContentLoaded", () => {
   updateHeaderBackground();
 });
 
-// Header background on scroll
-function updateHeaderBackground() {
+// Optimized scroll handler - consolidates all scroll-based updates
+let scrollTicking = false;
+let lastScrollY = 0;
+const scrollThreshold = 2; // Only update if scroll changed by this amount
+
+function optimizedScrollHandler() {
+  const scrollY = window.pageYOffset;
+
+  // Only proceed if scroll position changed significantly
+  if (Math.abs(scrollY - lastScrollY) < scrollThreshold) {
+    scrollTicking = false;
+    return;
+  }
+
+  // Update header background
+  updateHeaderBackground(scrollY);
+
+  // Update parallax elements (only if they exist)
+  updateParallax(scrollY);
+
+  lastScrollY = scrollY;
+  scrollTicking = false;
+}
+
+// Header background update function
+function updateHeaderBackground(scrollY) {
   const header = document.querySelector(".header");
   if (!header) return;
 
-  const scrollY = window.scrollY;
   if (scrollY > 50) {
     header.style.background = "rgba(15, 15, 20, 0.12)";
     header.style.boxShadow = "0 8px 32px rgba(0, 0, 0, 0.25)";
@@ -121,7 +144,17 @@ function updateHeaderBackground() {
   }
 }
 
-window.addEventListener("scroll", updateHeaderBackground);
+// Single throttled scroll listener
+window.addEventListener(
+  "scroll",
+  () => {
+    if (!scrollTicking) {
+      requestAnimationFrame(optimizedScrollHandler);
+      scrollTicking = true;
+    }
+  },
+  { passive: true }
+);
 
 // Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
@@ -340,36 +373,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Optimized parallax effect with requestAnimationFrame and throttling
-let ticking = false;
-let lastScrollY = 0;
+// Optimized parallax function - now called from main scroll handler
+function updateParallax(scrollY) {
+  const parallaxElements = document.querySelectorAll(
+    ".aurora-background, .aurora-background-2"
+  );
 
-function updateParallax() {
-  const scrolled = window.pageYOffset;
+  // Early return if no parallax elements exist
+  if (parallaxElements.length === 0) return;
 
-  // Only update if scroll position changed significantly
-  if (Math.abs(scrolled - lastScrollY) > 1) {
-    const parallaxElements = document.querySelectorAll(
-      ".aurora-background, .aurora-background-2"
-    );
-
-    parallaxElements.forEach((element, index) => {
-      const speed = 0.3 + index * 0.1; // Reduced speed for better performance
-      element.style.transform = `translate3d(0, ${scrolled * speed}px, 0)`;
-    });
-
-    lastScrollY = scrolled;
-  }
-
-  ticking = false;
+  parallaxElements.forEach((element, index) => {
+    const speed = 0.2 + index * 0.05; // Further reduced speed for smoother performance
+    // Use transform3d for hardware acceleration
+    element.style.transform = `translate3d(0, ${scrollY * speed}px, 0)`;
+  });
 }
-
-window.addEventListener("scroll", () => {
-  if (!ticking) {
-    requestAnimationFrame(updateParallax);
-    ticking = true;
-  }
-});
 
 // Optimized project card interactions
 document.addEventListener("DOMContentLoaded", () => {
