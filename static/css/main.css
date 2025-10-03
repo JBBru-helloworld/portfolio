@@ -12,13 +12,22 @@
   font-display: swap;
 }
 
-/* Performance optimizations */
+/* Enhanced performance optimizations */
 * {
   backface-visibility: hidden;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+/* GPU acceleration for smooth animations */
+.aurora-background,
+.aurora-background-2 {
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
 /* Optimize animations for 60fps */
@@ -28,6 +37,17 @@ html {
   .project-card,
   .bento-item {
     will-change: transform, opacity;
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* Use reduced animation for performance on mobile */
+  @media (max-width: 768px) {
+    .aurora-background {
+      animation: aurora-reduced 60s linear infinite;
+    }
+    .aurora-background-2 {
+      animation: aurora-reduced 45s linear infinite reverse;
+    }
   }
 }
 
@@ -40,6 +60,14 @@ html {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* Disable expensive aurora animations completely for reduced motion */
+  .aurora-background,
+  .aurora-background-2 {
+    animation: none !important;
+    filter: none !important;
+    opacity: 0.2 !important;
   }
 }
 
@@ -100,13 +128,25 @@ html {
   --transition-slow: 300ms ease-in-out;
 }
 
-/* Aurora animation */
+/* Aurora animation - Optimized for performance */
 @keyframes aurora {
+  from {
+    transform: translate3d(0, 0, 0);
+    background-position: 50% 50%, 50% 50%;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    background-position: 350% 50%, 350% 50%;
+  }
+}
+
+/* Reduced motion version for performance */
+@keyframes aurora-reduced {
   from {
     background-position: 50% 50%, 50% 50%;
   }
   to {
-    background-position: 350% 50%, 350% 50%;
+    background-position: 200% 50%, 200% 50%;
   }
 }
 
@@ -136,14 +176,27 @@ html {
 
 .animate-aurora {
   animation: aurora 60s linear infinite;
+  transform: translate3d(0, 0, 0);
+  will-change: transform, background-position;
+  backface-visibility: hidden;
 }
 
-/* Floating elements for hero section - dark mode */
+/* Reduce animation intensity on mobile for better performance */
+@media (max-width: 768px) {
+  .animate-aurora {
+    animation: aurora-reduced 60s linear infinite;
+  }
+}
+
+/* Floating elements for hero section - optimized */
 .floating-element {
   position: absolute;
   border-radius: 50%;
   background: rgba(16, 185, 129, 0.1);
   backdrop-filter: blur(10px);
+  transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
 .floating-element-1 {
@@ -2902,9 +2955,23 @@ a:hover {
   cursor: not-allowed;
 }
 
-/* Enhanced project card animations */
+/* Enhanced project card animations with better performance */
 .project-card {
   will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  /* Remove will-change after animation completes */
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+    box-shadow 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.project-card:hover {
+  transform: translate3d(0, -12px, 0);
+}
+
+/* Clean up will-change after animations */
+.project-card:not(:hover) {
+  will-change: auto;
 }
 
 /* Additional utility animations */
