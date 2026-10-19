@@ -1,23 +1,16 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  // Off until Cache Components work on workerd: with them on, every request hangs the Worker.
-  // https://github.com/opennextjs/opennextjs-cloudflare/issues/1450 (fix: PR #1318)
-  cacheComponents: false,
-  partialPrefetching: false,
-  turbopack: {
-    rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
-    },
-  },
+  // Pin the workspace root: a stray lockfile in the home folder otherwise confuses inference.
+  outputFileTracingRoot: path.join(__dirname),
 };
 
 export default nextConfig;
 
 // Makes Cloudflare bindings available to `next dev` via getCloudflareContext().
-initOpenNextCloudflareForDev();
+// Dev only: on Next 15.5 the local proxy it starts keeps `next typegen` from exiting.
+if (process.env.NODE_ENV === "development") {
+  initOpenNextCloudflareForDev();
+}

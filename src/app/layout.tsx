@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
+import { fontVariables } from "@/lib/fonts";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
-import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -13,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-GB" className={cn("font-sans", geist.variable)}>
+    <html lang="en-GB" className={fontVariables}>
       <body>{children}</body>
     </html>
   );
