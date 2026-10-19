@@ -1,4 +1,32 @@
-// Temporary style sheet page for Phase 1c. Replaced in Phase 2.
+// Temporary page: design-system specimen (Phase 1c) and a plain render of all content (Phase 1d).
+// Replaced in Phase 2.
+import {
+  credentials,
+  departures,
+  experience,
+  journey,
+  links,
+  profile,
+  projects,
+  stack,
+  stackCategories,
+} from "@/content";
+import type { DateRange, Link } from "@/content";
+
+const range = (d: DateRange) => (d.end ? `${d.start} to ${d.end}` : d.start);
+
+function LinkList({ items }: { items: Link[] }) {
+  if (!items.length) return null;
+  return (
+    <ul>
+      {items.map((l) => (
+        <li key={l.label + l.url}>
+          {l.label} ({l.kind}): {l.url.startsWith("TODO") ? l.url : <a href={l.url}>{l.url}</a>}
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 const swatches = [
   { token: "--void", hex: "#0A0A0A", ratio: "1.00", note: "page" },
@@ -89,6 +117,118 @@ export default function StyleSheet() {
                   {s.hex} · {s.ratio}:1 · {s.note}
                 </span>
               </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section aria-labelledby="content-heading" className="flex flex-col gap-6 border-t border-graphite-2 pt-16">
+        <h2 id="content-heading" className="text-3xl font-medium">
+          Content (plain render)
+        </h2>
+
+        <h3>Profile</h3>
+        <ul>
+          <li>Name: {profile.name}</li>
+          <li>Role (default): {profile.roleLines.default}</li>
+          <li>Role (point of view): {profile.roleLines.pointOfView}</li>
+          <li>Role (board): {profile.roleLines.board}</li>
+          <li>Bio: {profile.bio}</li>
+          <li>Location: {profile.location}</li>
+          <li>Languages: {profile.languages.map((l) => l.name).join(", ")}</li>
+        </ul>
+
+        <h3>Links</h3>
+        <LinkList items={Object.values(links)} />
+
+        <h3>Departures</h3>
+        <p>
+          {departures.header.label} · {departures.header.name} · {departures.header.role}
+        </p>
+        <ul>
+          {departures.rows.map((r) => (
+            <li key={r.code}>
+              {r.code} · {r.destination} · {r.status}
+            </li>
+          ))}
+        </ul>
+
+        <h3>Journey</h3>
+        <ul>
+          {journey.map((j) => (
+            <li key={j.country}>
+              {j.label} ({j.ink}, {range(j.years)}): {j.line}
+            </li>
+          ))}
+        </ul>
+
+        <h3>Experience</h3>
+        <ul>
+          {experience.map((e) => (
+            <li key={e.slug}>
+              {e.role}, {e.organisation} ({range(e.dates)}
+              {e.location ? `, ${e.location}` : ""}): {e.summary}
+              <ul>
+                {e.highlights.map((h) => (
+                  <li key={h}>{h}</li>
+                ))}
+              </ul>
+              <LinkList items={e.links} />
+            </li>
+          ))}
+        </ul>
+
+        {(["featured", "also-built", "archive"] as const).map((status) => (
+          <div key={status}>
+            <h3>Projects: {status}</h3>
+            <ul>
+              {projects
+                .filter((p) => p.status === status)
+                .map((p) => (
+                  <li key={p.slug}>
+                    {p.title} ({range(p.date)}
+                    {p.context ? `, ${p.context}` : ""}
+                    {p.role ? `, ${p.role}` : ""}): {p.summary}
+                    <br />
+                    Stack: {p.stack.join(", ") || "none listed"}
+                    {p.caseStudyAngle ? (
+                      <>
+                        <br />
+                        Case study angle: {p.caseStudyAngle}
+                      </>
+                    ) : null}
+                    <LinkList items={p.links} />
+                  </li>
+                ))}
+            </ul>
+          </div>
+        ))}
+
+        <h3>Periodic table ({stack.length} elements)</h3>
+        {stackCategories.map((c) => (
+          <div key={c}>
+            <h4>
+              {c} ({stack.filter((e) => e.category === c).length})
+            </h4>
+            <ul>
+              {stack
+                .filter((e) => e.category === c)
+                .map((e) => (
+                  <li key={e.symbol}>
+                    {e.number} {e.symbol} {e.name}: {e.usedFor}
+                  </li>
+                ))}
+            </ul>
+          </div>
+        ))}
+
+        <h3>Credentials</h3>
+        <ul>
+          {credentials.map((c) => (
+            <li key={c.title}>
+              {c.title}
+              {c.issuer ? `, ${c.issuer}` : ""}
+              {c.date ? ` (${c.date})` : ""}
+              {c.detail ? `: ${c.detail}` : ""}
             </li>
           ))}
         </ul>

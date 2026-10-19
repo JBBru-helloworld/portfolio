@@ -11,7 +11,8 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
-    "typecheck": "next typegen && tsc --noEmit"
+    "typecheck": "next typegen && tsc --noEmit",
+    "check:content": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-content.ts"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
