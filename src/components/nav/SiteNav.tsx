@@ -18,6 +18,8 @@ import type { Departures, Destination } from "@/content";
 import { glideTo, jumpToTop, remarkOf, startTracking, useNavState, whenRestored } from "./site-state";
 import { FlapBoard } from "@/components/departures/flap-engine";
 import tileStyles from "@/components/departures/DeparturesBoard.module.css";
+import { SoundToggle } from "@/components/sound/SoundToggle";
+import { bootSound, chime, soundStats } from "@/lib/sound";
 import styles from "./SiteNav.module.css";
 
 const SIGN_TILES = 24; // "GATE 3 · LIVE FRAUD DEMO"
@@ -60,11 +62,21 @@ export function SiteNav({ name, board, destinations }: Props) {
   useEffect(() => {
     let stop: (() => void) | undefined;
     const cancel = whenRestored(() => (stop = startTracking()));
+    // Sound saved as on from an earlier visit waits for the first click, tap or key press.
+    const unboot = bootSound();
+    (window as Window & { __soundStats?: typeof soundStats }).__soundStats = soundStats;
     return () => {
       cancel();
       stop?.();
+      unboot();
     };
   }, []);
+
+  // Opening the sign plays the cabin chime (only with sound on); closing it is silent.
+  const onOpenChange = (next: boolean) => {
+    if (next) chime();
+    setOpen(next);
+  };
 
   useEffect(() => {
     const mq = window.matchMedia(PHONE_MEDIA);
@@ -130,7 +142,7 @@ export function SiteNav({ name, board, destinations }: Props) {
         {name}
       </Link>
       <nav aria-label="Site" className={styles.nav}>
-        <Popover.Root open={open} onOpenChange={setOpen}>
+        <Popover.Root open={open} onOpenChange={onOpenChange}>
           <Popover.Trigger asChild>
             <button type="button" className={styles.sign} data-current={nav.current ?? undefined}>
               <span className="sr-only">{`${board.nav.ariaLabel}. Now: ${currentName}`}</span>
@@ -180,6 +192,12 @@ export function SiteNav({ name, board, destinations }: Props) {
                 );
               })}
             </ol>
+            <div className={styles.panelFoot}>
+              <span className={styles.panelFootLabel} aria-hidden="true">
+                {board.sound.ariaLabel}
+              </span>
+              <SoundToggle ariaLabel={board.sound.ariaLabel} onWord={board.sound.onWord} offWord={board.sound.offWord} />
+            </div>
           </Popover.Content>
         </Popover.Root>
       </nav>

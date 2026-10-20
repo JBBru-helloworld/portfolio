@@ -166,7 +166,7 @@ for (const file of files) {
     const onFlaps: { where: string; value: string }[] = [];
     const departures = readFileSync(join(contentDir, "departures.ts"), "utf8");
     for (const [file, src, keys] of [
-      ["src/content/departures.ts", departures, ["label", "name", "gate", "board"]],
+      ["src/content/departures.ts", departures, ["label", "name", "gate", "board", "onWord", "offWord"]],
       [rel, text, ["flight", "destination", "gate", "remark"]],
     ] as const) {
       for (const key of keys) {

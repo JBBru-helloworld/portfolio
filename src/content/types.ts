@@ -85,8 +85,8 @@ export interface Departures {
   title: string;
   /** Column labels, in capitals. */
   columns: { flight: string; destination: string; gate: string; remarks: string };
-  /** Accessible label for the optional board-sound toggle. */
-  soundLabel: string;
+  /** The sound toggle: its accessible name, the two words on its flaps, and the one-time hint. */
+  sound: { ariaLabel: string; onWord: string; offWord: string; hint: string };
   /** The corner navigation: its accessible name, the gate prefix on its sign ("GATE") and its label on the board. */
   nav: { ariaLabel: string; gate: string; board: string };
   header: DepartureHeader;
@@ -103,7 +103,23 @@ export interface JourneyStamp {
   label: string;
   /** One sentence about this chapter. */
   line: string;
+  /** The years as shown beside the stamp, for example "2019 to 2023". */
+  period: string;
+  /** The passport stamp: the airport code, its word and its year (arrival, or departure when no arrival year is known). */
+  stamp: {
+    port: string;
+    word: "ADMITTED" | "ENTRY" | "DEPARTED";
+    year: string;
+    /** Rotation on the page, in degrees (within ±6). */
+    rotate: number;
+  };
   notes?: OwnerNotes;
+}
+
+/** The "My journey" section's passport page. */
+export interface JourneyPage {
+  /** The page label, in capitals ("VISAS"). */
+  label: string;
 }
 
 export interface ExperienceItem {

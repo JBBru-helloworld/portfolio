@@ -64,27 +64,40 @@
   color: var(--graphite-4);
 }
 
-.sound {
-  display: inline-grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: var(--radius);
+/* The sound toggle, right-aligned in the header; the one-time hint sits just below it. */
+.soundSlot {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hint {
+  position: absolute;
+  top: calc(100% + 0.625rem);
+  right: 0;
+  margin: 0;
+  white-space: nowrap;
+  font-size: 0.75rem;
   color: var(--graphite-4);
-  background: transparent;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: color var(--duration-fast) var(--ease-out);
+  opacity: 0;
+  transform: translateY(-2px);
+  pointer-events: none;
+  transition:
+    opacity 600ms var(--ease-out),
+    transform 600ms var(--ease-out);
 }
 
-.sound svg {
-  width: 1rem;
-  height: 1rem;
+.hint[data-shown="true"] {
+  opacity: 1;
+  transform: none;
+  transition-duration: 400ms;
 }
 
-.sound:hover,
-.sound[aria-pressed="true"] {
-  color: var(--paper-muted);
+@media (prefers-reduced-motion: reduce) {
+  .hint {
+    transform: none;
+    transition: none;
+  }
 }
 
 .rule {

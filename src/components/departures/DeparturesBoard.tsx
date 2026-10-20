@@ -11,11 +11,12 @@
  * it flips into place once, when it is about 60% into view.
  */
 import { memo, useEffect, useRef, useState, type MouseEvent } from "react";
-import { Plane, Volume2, VolumeX } from "lucide-react";
+import { Plane } from "lucide-react";
 import type { Departures, Destination, DestinationRemark } from "@/content";
 import { getState, glideTo, loadVisited, remarkOf, setBoarding, subscribe, useNavState } from "@/components/nav/site-state";
 import { FlapBoard } from "./flap-engine";
-import { savePreference, savedPreference, tick, unlock } from "./board-sound";
+import { SoundToggle } from "@/components/sound/SoundToggle";
+import { flap, isSoundOn } from "@/lib/sound";
 import styles from "./DeparturesBoard.module.css";
 
 /** Columns, in tiles. */
@@ -26,6 +27,8 @@ const DESKTOP = { rowStagger: 120, tileJitter: 90, stepsBefore: [6, 14] as [numb
 /** Phones: one row at a time, top to bottom (9 rows, settled in under 3 s), so few tiles move at once. */
 const PHONE = { rowStagger: 300, tileJitter: 20, stepsBefore: [2, 4] as [number, number] };
 const PHONE_MEDIA = "(max-width: 639px)";
+const HINT_KEY = "jbbru:sound-hint";
+const HINT_MS = 4000;
 /** A remark change: 4 to 6 flips of 70 ms plus a little jitter, 300 to 500 ms in all. */
 const REMARK = { rowStagger: 0, tileJitter: 60, stepsBefore: [4, 6] as [number, number] };
 
@@ -86,29 +89,12 @@ const sentence = (remark: DestinationRemark) => remark.charAt(0) + remark.slice(
 
 export function DeparturesBoard({ board, destinations }: { board: Departures; destinations: Destination[] }) {
   const boardRef = useRef<HTMLDivElement>(null);
-  const [sound, setSound] = useState(false);
-  const soundRef = useRef(false);
-  soundRef.current = sound;
+  const [hint, setHint] = useState(false);
   const nav = useNavState();
   /** The main flip, and one engine per remark that is changing. */
   const main = useRef<FlapBoard | null>(null);
   const remarkEngines = useRef(new Map<string, FlapBoard>());
   const onScreen = useRef(false);
-
-  // The saved sound preference (off unless the visitor switched it on before).
-  useEffect(() => setSound(savedPreference()), []);
-
-  // With sound on, any click or key press lets the browser start audio; it never starts on its own.
-  useEffect(() => {
-    if (!sound) return;
-    const onGesture = () => unlock();
-    window.addEventListener("pointerdown", onGesture, { once: true });
-    window.addEventListener("keydown", onGesture, { once: true });
-    return () => {
-      window.removeEventListener("pointerdown", onGesture);
-      window.removeEventListener("keydown", onGesture);
-    };
-  }, [sound]);
 
   /**
    * Flips one row's remark to `remark` (no motion under reduced motion). Resolves when it has settled.
@@ -122,7 +108,7 @@ export function DeparturesBoard({ board, destinations }: { board: Departures; de
       remarkEngines.current.get(id)?.stop();
       const engine = new FlapBoard([tiles], {
         ...REMARK,
-        onFlip: () => soundRef.current && tick(),
+        onFlip: () => flap(),
         onDone: () => {
           remarkEngines.current.delete(id);
           resolve();
@@ -168,12 +154,13 @@ export function DeparturesBoard({ board, destinations }: { board: Departures; de
     const light = lightFlip();
     const engine = new FlapBoard(rows, {
       ...(light ? PHONE : DESKTOP),
-      onFlip: () => soundRef.current && tick(),
+      onFlip: () => flap(),
       onDone: (ms) => {
         el.setAttribute("data-settled", "true");
         el.removeAttribute("data-running");
         el.setAttribute("data-settle-ms", String(Math.round(ms)));
         syncRemarks();
+        showHint();
       },
     });
     main.current = engine;
@@ -215,11 +202,17 @@ export function DeparturesBoard({ board, destinations }: { board: Departures; de
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [destinations]);
 
-  const toggleSound = () => {
-    const on = !sound;
-    if (on) unlock();
-    setSound(on);
-    savePreference(on);
+  // The first time the board settles in a visit (with sound off), a quiet hint beside the toggle.
+  const showHint = () => {
+    if (isSoundOn()) return;
+    try {
+      if (window.sessionStorage.getItem(HINT_KEY)) return;
+      window.sessionStorage.setItem(HINT_KEY, "1");
+    } catch {
+      // Storage unavailable: show it anyway, once for this page.
+    }
+    setHint(true);
+    window.setTimeout(() => setHint(false), HINT_MS);
   };
 
   const choose = (e: MouseEvent<HTMLAnchorElement>, d: Destination) => {
@@ -249,15 +242,12 @@ export function DeparturesBoard({ board, destinations }: { board: Departures; de
               <Plane className={styles.icon} aria-hidden="true" strokeWidth={1.5} />
               {board.title}
             </h2>
-            <button
-              type="button"
-              className={styles.sound}
-              aria-pressed={sound}
-              aria-label={board.soundLabel}
-              onClick={toggleSound}
-            >
-              {sound ? <Volume2 aria-hidden="true" strokeWidth={1.5} /> : <VolumeX aria-hidden="true" strokeWidth={1.5} />}
-            </button>
+            <div className={styles.soundSlot}>
+              <SoundToggle ariaLabel={board.sound.ariaLabel} onWord={board.sound.onWord} offWord={board.sound.offWord} />
+              <p className={styles.hint} data-shown={hint} aria-hidden={!hint}>
+                {board.sound.hint}
+              </p>
+            </div>
           </div>
           <div className={styles.rule} aria-hidden="true" />
 

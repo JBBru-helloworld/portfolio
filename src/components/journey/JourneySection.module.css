@@ -1,0 +1,207 @@
+/*
+ * "My journey": an open passport visa page, with restraint on the dark site. The page is --cabin (the
+ * stamp inks keep their 3:1 on it), with a faint guilloche pattern, a hairline fold along its left edge
+ * and "VISAS" as its label. The inks are the only colour in the section, and only on the stamps.
+ */
+
+.section {
+  padding: clamp(5rem, 14svh, 9rem) clamp(1rem, 4vw, 3rem) clamp(4rem, 12svh, 8rem);
+  border-top: 1px solid var(--graphite-2);
+  outline: none;
+}
+
+.inner {
+  max-width: 68rem;
+  margin: 0 auto;
+}
+
+.heading {
+  margin: 0 0 clamp(1.5rem, 4svh, 2.5rem);
+  font-size: var(--text-3xl, 1.875rem);
+  font-weight: 500;
+  color: var(--paper);
+}
+
+/* ---------- The page ---------- */
+
+.page {
+  position: relative;
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.25rem, 6vw, 5rem) clamp(2.5rem, 6vw, 4.5rem) clamp(2rem, 7vw, 6rem);
+  border: 1px solid var(--graphite-1);
+  border-radius: 4px 14px 14px 4px;
+  background:
+    url(/journey/guilloche.svg) center / 480px 160px repeat,
+    radial-gradient(120% 90% at 60% 40%, rgb(255 255 255 / 0.018), transparent 70%),
+    var(--cabin);
+  overflow: hidden;
+}
+
+/* The fold: a hairline along the binding, with a soft shadow into the page. */
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: clamp(0.75rem, 2.5vw, 1.75rem);
+  width: clamp(1.5rem, 4vw, 3rem);
+  background: linear-gradient(to right, rgb(0 0 0 / 0.28), transparent);
+  border-left: 1px solid var(--graphite-2);
+  pointer-events: none;
+}
+
+.pageLabel {
+  position: absolute;
+  top: clamp(1rem, 2.5vw, 1.75rem);
+  right: clamp(1.25rem, 3vw, 2.25rem);
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  color: var(--graphite-4);
+}
+
+/* ---------- Entries ---------- */
+
+.list {
+  position: relative;
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+}
+
+.stamp {
+  position: relative;
+  flex: none;
+  display: block;
+  rotate: var(--rotate);
+}
+
+.entry[data-ink-name="za"] .stamp {
+  width: 11.5rem;
+  aspect-ratio: 1;
+  --ink-colour: var(--ink-za);
+}
+
+.entry[data-ink-name="mu"] .stamp {
+  width: 13.5rem;
+  aspect-ratio: 600 / 380;
+  --ink-colour: var(--ink-mu);
+}
+
+.entry[data-ink-name="my"] .stamp {
+  width: 12.25rem;
+  aspect-ratio: 520 / 460;
+  --ink-colour: var(--ink-my);
+}
+
+/* The ink: the section's ink token through the baked, worn mask; faded. */
+.ink {
+  position: absolute;
+  inset: 0;
+  background-color: var(--ink-colour);
+  opacity: 0.86;
+  -webkit-mask: none center / contain no-repeat;
+  mask: none center / contain no-repeat;
+}
+
+/* The mask loads as the section approaches (or at once without JavaScript). */
+.entry[data-near] .ink,
+:global(html:not(.js)) .ink {
+  -webkit-mask-image: var(--mask);
+  mask-image: var(--mask);
+}
+
+/* Before landing, with JavaScript and motion, the stamp is not on the page yet. */
+:global(html.js) .entry:not([data-landed]):not([data-landing]) .stamp {
+  opacity: 0;
+}
+
+.text {
+  max-width: 19rem;
+}
+
+.country {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.period {
+  margin: 0.25rem 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--graphite-4);
+}
+
+.line {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--paper-muted);
+  text-wrap: pretty;
+}
+
+/* ---------- Desktop: scattered across the page, read top left to bottom right ---------- */
+
+@media (min-width: 768px) {
+  .list {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    row-gap: 0;
+  }
+
+  .entry:nth-child(1) {
+    grid-column: 1 / span 7;
+  }
+
+  /* A little overlap, like a well-used passport. */
+  .entry:nth-child(2) {
+    grid-column: 6 / span 7;
+    margin-top: -2.25rem;
+  }
+
+  .entry:nth-child(3) {
+    grid-column: 2 / span 8;
+    margin-top: 0.5rem;
+  }
+}
+
+/* ---------- Phones: one stamp per row, the line below ---------- */
+
+@media (max-width: 767px) {
+  .list {
+    row-gap: 2.75rem;
+  }
+
+  .entry {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .entry[data-ink-name="za"] .stamp {
+    width: min(10rem, 55vw);
+  }
+
+  .entry[data-ink-name="mu"] .stamp {
+    width: min(12rem, 66vw);
+  }
+
+  .entry[data-ink-name="my"] .stamp {
+    width: min(11rem, 60vw);
+  }
+
+  /* Alternate sides a little, so it still reads as a stamped page. */
+  .entry:nth-child(2) .stamp {
+    align-self: flex-end;
+  }
+}

@@ -3,7 +3,7 @@ export { links } from "./links";
 export { departures } from "./departures";
 export { destinations } from "./destinations";
 export { securityCheck } from "./security-check";
-export { journey } from "./journey";
+export { journey, journeyPage } from "./journey";
 export { experience } from "./experience";
 export { projects } from "./projects";
 export { stack, stackCategories } from "./stack";

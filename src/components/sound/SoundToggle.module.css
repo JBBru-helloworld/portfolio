@@ -1,0 +1,46 @@
+/* The sound toggle's flap label: small tiles, muted when off and paper when on. */
+
+.toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem;
+  margin: -0.25rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  cursor: pointer;
+}
+
+/* A 44 px touch target around the slim label. */
+.toggle::before {
+  content: "";
+  position: absolute;
+  inset: -0.5rem -0.25rem;
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+.toggle .tiles {
+  --tw: 0.75rem;
+  gap: 1px;
+}
+
+.toggle .tile {
+  color: var(--graphite-4);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.toggle[aria-pressed="true"] .tile,
+.toggle:hover .toggle .tile {
+  color: var(--paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle .tile {
+    transition: none;
+  }
+}

@@ -2,13 +2,24 @@ import { DeparturesBoard } from "@/components/departures/DeparturesBoard";
 import { SiteNav } from "@/components/nav/SiteNav";
 import { WindowScene } from "@/components/scene/WindowScene";
 import { getSceneData } from "@/components/scene/scene-data";
+import { JourneySection } from "@/components/journey/JourneySection";
 import { DestinationSection } from "@/components/sections/DestinationSection";
 import { SkipIntro } from "@/components/scroll/SkipIntro";
 import { SmoothScroll } from "@/components/scroll/SmoothScroll";
-import { departures, destinations, landing, profile } from "@/content";
+import { departures, destinations, journey, journeyPage, landing, profile } from "@/content";
 
 export default function Home() {
   const scene = getSceneData();
+  // Only what the page shows reaches the client (owner notes stay on the server).
+  const journeyEntries = journey.map(({ country, ink, years, label, line, period, stamp }) => ({
+    country,
+    ink,
+    years,
+    label,
+    line,
+    period,
+    stamp,
+  }));
   return (
     <>
       <SkipIntro targetId="departures" label={landing.skipIntro} />
@@ -26,9 +37,13 @@ export default function Home() {
         <DeparturesBoard board={departures} destinations={destinations} />
 
         {/* The board's destinations, in page order (placeholders until each section is built). */}
-        {destinations.map((destination) => (
-          <DestinationSection key={destination.id} destination={destination} />
-        ))}
+        {destinations.map((destination) =>
+          destination.id === "journey" ? (
+            <JourneySection key={destination.id} destination={destination} page={journeyPage} entries={journeyEntries} />
+          ) : (
+            <DestinationSection key={destination.id} destination={destination} />
+          ),
+        )}
       </main>
     </>
   );

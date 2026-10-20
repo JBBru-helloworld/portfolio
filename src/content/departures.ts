@@ -9,7 +9,7 @@ import type { Departures } from "./types";
 export const departures: Departures = {
   title: "DEPARTURES",
   columns: { flight: "FLIGHT", destination: "DESTINATION", gate: "GATE", remarks: "REMARKS" },
-  soundLabel: "Board sound",
+  sound: { ariaLabel: "Board sound", onWord: "SOUND ON", offWord: "SOUND OFF", hint: "Turn on for the board sound" },
   nav: { ariaLabel: "Site sections", gate: "GATE", board: "DEPARTURES" },
   header: {
     label: "NOW BOARDING",
