@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { PORTRAIT_MEDIA, REDUCED_MOTION, SMALL_SCREEN, isConstrainedNetwork } from "./media";
 import type { SceneData, PlateSet } from "./scene-data";
+import { useScrollSequence } from "./useScrollSequence";
 import styles from "./WindowScene.module.css";
 
 type Phase = "closed" | "lifting" | "open";
@@ -17,10 +19,6 @@ interface Props {
 const INTRO_CAP_MS = 2500; // never wait longer than this for the plate and video
 const INTRO_PAUSE_MS = 300; // beat between "ready" and the shade moving
 const LIFT_MS = 1600; // shade travel; matches --duration in the CSS module
-const SMALL_SCREEN = "(max-width: 767px), (max-height: 500px), (max-aspect-ratio: 3/4)";
-// Portrait plate (cropped to the wall panel) up to 3:4 viewports; the 16:9 landscape plate otherwise.
-// Must match the media query in WindowScene.module.css.
-const PORTRAIT_MEDIA = "(max-aspect-ratio: 3/4)";
 // Frame height as a share of the viewport height. Mirrors --window-scale-* in the CSS module (the CSS
 // variables are the source of truth); used here only to tell the browser which image width to fetch.
 const WINDOW_SCALE = { landscape: 0.65, portrait: 0.575 };
@@ -63,12 +61,6 @@ function sizesFor(p: PlateSet, scale: number, share = 1) {
   return `${((scale / p.frame.height) * p.aspect * share * 100).toFixed(1)}svh`;
 }
 
-function isConstrainedNetwork(): boolean {
-  const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
-  if (!conn) return false;
-  return Boolean(conn.saveData) || ["slow-2g", "2g", "3g"].includes(conn.effectiveType ?? "");
-}
-
 function wait(ms: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
@@ -91,11 +83,43 @@ function canPlay(video: HTMLVideoElement) {
 
 export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
+  const cameraRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
+  const lightRef = useRef<HTMLDivElement>(null);
+  const vignetteRef = useRef<HTMLDivElement>(null);
+  const hudRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const whiteRef = useRef<HTMLDivElement>(null);
+  const fadeRef = useRef<HTMLDivElement>(null);
   const [phase, setPhase] = useState<Phase>("closed");
   const videoActive = useRef(false); // true once the intro has started the video
+  const videoHeld = useRef(false); // true while the fly-through has taken over from the video
+  const introSkipped = useRef(false);
   const inView = useRef(true);
+
+  // The visitor scrolled before the intro finished (or reloaded mid-sequence): open the shade now.
+  const openNow = useCallback(() => {
+    introSkipped.current = true;
+    setPhase("open");
+  }, []);
+
+  const refs = useMemo(
+    () => ({
+      section: sectionRef,
+      camera: cameraRef,
+      video: videoRef,
+      plate: imgRef,
+      light: lightRef,
+      vignette: vignetteRef,
+      hud: hudRef,
+      canvas: canvasRef,
+      white: whiteRef,
+      fade: fadeRef,
+    }),
+    [],
+  );
+  useScrollSequence(refs, data, { open: phase === "open", openNow, videoActive, videoHeld });
 
   // Intro: decode the plate, then start loading the video, then lift the shade.
   useEffect(() => {
@@ -103,7 +127,7 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
     if (!video) return;
     let cancelled = false;
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = window.matchMedia(REDUCED_MOTION).matches;
     if (reduce) {
       // Shade open (CSS), poster only, light at full strength.
       setPhase("open");
@@ -133,19 +157,22 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
       // Start the clouds just before the shade moves; if the video is not ready by now, keep the poster.
       if (!lite && video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
         videoActive.current = true;
-        await video.play().catch(() => {
-          videoActive.current = false;
-        });
+        if (!videoHeld.current) {
+          await video.play().catch(() => {
+            videoActive.current = false;
+          });
+        }
       } else if (!lite) {
         video.removeAttribute("src");
         video.load();
         video.dataset.source = "poster-fallback";
       }
+      if (introSkipped.current) return; // already opened by scrolling
       requestAnimationFrame(() => {
-        if (!cancelled) setPhase("lifting");
+        if (!cancelled && !introSkipped.current) setPhase("lifting");
       });
       await wait(LIFT_MS);
-      if (!cancelled) setPhase("open");
+      if (!cancelled && !introSkipped.current) setPhase("open");
     })();
 
     return () => {
@@ -173,7 +200,7 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
     const sync = () => {
       const active = inView.current && document.visibilityState === "visible";
       section.dataset.inview = active ? "true" : "false";
-      if (!videoActive.current) return;
+      if (!videoActive.current || videoHeld.current) return;
       if (active && video.paused) video.play().catch(() => {});
       if (!active && !video.paused) video.pause();
     };
@@ -226,6 +253,8 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
       </svg>
 
       <div className={styles.stage} role="img" aria-label={sceneLabel}>
+        {/* The camera: the scroll push moves and scales this layer (the stage keeps its CSS placement) */}
+        <div ref={cameraRef} className={styles.camera}>
         {/* 1: the view, clipped to the glass */}
         <div className={styles.view} aria-hidden="true">
           <video
@@ -313,29 +342,40 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
           />
         </picture>
 
-        {/* 6: window light on the wall; rises as the shade opens, then stays still */}
-        <div className={styles.light} aria-hidden="true" />
+        {/* 6: window light on the wall; rises as the shade opens, then stays still (fades in the push) */}
+        <div ref={lightRef} className={styles.lightLayer} aria-hidden="true">
+          <div className={styles.light} />
+        </div>
+        </div>
       </div>
+
+      {/* Scroll sequence: the fly-through canvas, the white of the cloud and the fade into --void */}
+      <canvas ref={canvasRef} className={styles.fly} aria-hidden="true" />
+      <div ref={whiteRef} className={styles.white} aria-hidden="true" />
 
       {/* 7: still film grain over the whole scene; inside the glass at half strength */}
       <div className={styles.grain} aria-hidden="true" />
       <div className={styles.grainGlass} aria-hidden="true" />
 
       {/* 8: vignette */}
-      <div className={styles.vignette} aria-hidden="true" />
+      <div ref={vignetteRef} className={styles.vignette} aria-hidden="true" />
+      <div ref={fadeRef} className={styles.fade} aria-hidden="true" />
       {/* 9: darkness: with the shade down no daylight reaches the cabin; it lifts with the shade */}
       <div className={styles.dark} aria-hidden="true" />
 
-      <p className={`${styles.wordmark} text-sm font-medium tracking-[0.01em] text-paper-muted`}>{name}</p>
-      <div className={styles.title}>
-        <h1 className={`${styles.h1} text-2xl font-medium text-paper`}>{name}</h1>
-        <p className={`${styles.role} text-base text-pretty text-paper-muted`}>{role}</p>
-      </div>
-      <div className={styles.cue} aria-hidden="true">
-        <span className="font-mono text-xs uppercase tracking-[0.18em] text-graphite-4">{scrollCue}</span>
-        <span className={styles.cueTrack}>
-          <span className={styles.cueLine} />
-        </span>
+      {/* Text: fades out and drifts up as the push begins */}
+      <div ref={hudRef} className={styles.hud}>
+        <p className={`${styles.wordmark} text-sm font-medium tracking-[0.01em] text-paper-muted`}>{name}</p>
+        <div className={styles.title}>
+          <h1 className={`${styles.h1} text-2xl font-medium text-paper`}>{name}</h1>
+          <p className={`${styles.role} text-base text-pretty text-paper-muted`}>{role}</p>
+        </div>
+        <div className={styles.cue} aria-hidden="true">
+          <span className="font-mono text-xs uppercase tracking-[0.18em] text-graphite-4">{scrollCue}</span>
+          <span className={styles.cueTrack}>
+            <span className={styles.cueLine} />
+          </span>
+        </div>
       </div>
     </section>
   );

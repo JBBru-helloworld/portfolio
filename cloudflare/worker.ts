@@ -3,8 +3,8 @@
  *
  * Cloudflare's static-assets binding returns the whole file and ignores Range. Safari (iPhone, iPad and
  * Mac) will not play a video unless the server answers Range with 206 Partial Content, so requests for
- * /scene/clouds/* and /scene/clouds-v2/* run through this Worker first (wrangler.jsonc:
- * assets.run_worker_first) and are sliced here. Everything else goes straight to OpenNext.
+ * /scene/clouds-v2/* run through this Worker first (wrangler.jsonc: assets.run_worker_first) and are
+ * sliced here. Everything else goes straight to OpenNext.
  * See https://opennext.js.org/cloudflare/howtos/custom-worker
  */
 // `.open-next/worker.js` is generated at build time by `opennextjs-cloudflare build`; it may or may not exist
@@ -17,7 +17,7 @@ interface Env {
   ASSETS: { fetch(input: Request | URL | string): Promise<Response> };
 }
 
-const VIDEO = /^\/scene\/clouds(?:-v2)?\/[^/]+\.(?:mp4|webm)$/;
+const VIDEO = /^\/scene\/clouds-v2\/[^/]+\.(?:mp4|webm)$/;
 
 /** Parses a single "bytes=start-end" range. Returns null for absent or multi-range headers. */
 function parseRange(header: string | null, size: number): { start: number; end: number } | "invalid" | null {

@@ -13,8 +13,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-from clouds import codec_string
-from common import CLOUDS_V2_SRC, PUBLIC, clean_dir, ffmpeg, file_entry, monotone_curve, probe
+from common import CLOUDS_V2_SRC, PUBLIC, clean_dir, codec_string, ffmpeg, file_entry, monotone_curve, probe
 
 OUT = PUBLIC / "clouds-v2"
 
@@ -34,7 +33,7 @@ WHITE_IN = 184 / 255
 LUMA_X = np.array([0.00, 0.20, 0.45, 0.70, 0.90, 1.00])
 LUMA_Y = np.array([0.10, 0.26, 0.50, 0.72, 0.87, 0.93])
 # Colour: chroma kept as a fraction of the source's (0.25..0.40 is the intended range), optional hue turn.
-SATURATION = float(os.environ.get("SCENE_CLOUD_SATURATION", "0.32"))
+SATURATION = float(os.environ.get("SCENE_CLOUD_SATURATION", "0.40"))  # owner chose 40% (Phase 2c)
 HUE_SHIFT_DEG = float(os.environ.get("SCENE_CLOUD_HUE", "0"))
 SATURATION_SHEET = (0.25, 0.32, 0.40)
 

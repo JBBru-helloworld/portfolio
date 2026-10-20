@@ -27,6 +27,7 @@ interface Framing {
   /** The inner bezel (between the groove and the glass); it sits under the shade. */
   inner: Box;
   shade: { box: Box; open: number; closed: number };
+  view: { clipPath: string };
 }
 
 /** One framing of the frame plate (landscape or portrait). All geometry is normalised to the plate. */
@@ -40,6 +41,18 @@ export interface PlateSet extends Framing {
   fallback: string;
   /** SVG mask (data URI) that is opaque inside the glass only, stretched to the plate. */
   glassMask: string;
+  /** The view actually seen with the shade open, as [x, y] pairs normalised to the plate. */
+  viewPoints: [number, number][];
+  /** The largest plate image (AVIF and WebP), swapped in as the scroll push begins. */
+  largest: { avif: string; webp: string; width: number };
+}
+
+export interface FlyTier {
+  /** Frame URLs in order (AVIF), up to the near-whiteout frame, with the WebP fallback alongside. */
+  avif: string[];
+  webp: string[];
+  /** The near-whiteout still, shown if the visitor gets ahead of the frames. */
+  whiteout: { avif: string; webp: string };
 }
 
 export interface ImageSet {
@@ -63,6 +76,7 @@ export interface SceneData {
   video: { desktop: { av1: VideoSource; h264: VideoSource }; mobile: { av1: VideoSource; h264: VideoSource } };
   poster: string;
   grain: string;
+  fly: { desktop: FlyTier; mobile: FlyTier };
 }
 
 const files = (section: { files: FileEntry[] }) => section.files;
@@ -95,7 +109,48 @@ function plate(kind: "window-landscape" | "window-portrait", framing: Framing): 
     frame: framing.frame,
     inner: framing.inner,
     shade: framing.shade,
+    view: framing.view,
     glassMask: glassMask(framing.glass.clipPath),
+    viewPoints: pathPoints(framing.view.clipPath),
+    largest: largestPlate(kind),
+  };
+}
+
+function largestPlate(kind: string) {
+  const entries = files(manifest.window).filter((f) => f.kind === kind);
+  const top = (fmt: string) =>
+    entries.filter((f) => f.format === fmt).sort((a, b) => (b.width ?? 0) - (a.width ?? 0))[0];
+  return { avif: top("avif").path, webp: top("webp").path, width: top("webp").width ?? 0 };
+}
+
+/** "M x y L x y ... Z" (absolute, normalised) to [x, y] pairs. */
+function pathPoints(d: string): [number, number][] {
+  const nums = d.replace(/[MLZ]/g, " ").trim().split(/\s+/).map(Number);
+  const pts: [number, number][] = [];
+  for (let i = 0; i + 1 < nums.length; i += 2) pts.push([nums[i], nums[i + 1]]);
+  return pts;
+}
+
+function flyTier(tier: "desktop" | "mobile"): FlyTier {
+  const fly = manifest.fly as unknown as {
+    frames: Record<string, number>;
+    pattern: { pad: number; fallbackExtension: string } & Record<string, string | number>;
+    files: FileEntry[];
+  };
+  // Only up to the near-whiteout frame: the sequence ends in white and fades to black, so the dark
+  // emergence frames after it are never shown (and never downloaded).
+  const count = Number((fly as unknown as { whiteoutIndex: Record<string, number> }).whiteoutIndex[tier]);
+  const pattern = String(fly.pattern[tier]);
+  const avif = Array.from({ length: count }, (_, i) => pattern.replace("{n}", String(i + 1).padStart(fly.pattern.pad, "0")));
+  const still = (fmt: string) => {
+    const f = fly.files.find((e) => e.kind === "fly-still" && e.path.includes(`whiteout-${tier}`) && e.format === fmt);
+    if (!f) throw new Error(`scene manifest: no whiteout still for ${tier}`);
+    return f.path;
+  };
+  return {
+    avif,
+    webp: avif.map((u) => u.replace(/\.avif$/, `.${fly.pattern.fallbackExtension}`)),
+    whiteout: { avif: still("avif"), webp: still("webp") },
   };
 }
 
@@ -133,5 +188,6 @@ export function getSceneData(): SceneData {
     // WebP poster: universally supported and, for this frame, smaller than the AVIF.
     poster: (posters.find((f) => f.format === "webp") ?? posters[0]).path,
     grain,
+    fly: { desktop: flyTier("desktop"), mobile: flyTier("mobile") },
   };
 }

@@ -156,6 +156,8 @@ export interface Landing {
   sceneLabel: string;
   /** Small cue under the scene. */
   scrollCue: string;
+  /** Visually hidden link (shown on focus) that jumps past the landing sequence. */
+  skipIntro: string;
   /** Temporary placeholder sections below the scene (replaced in later phases). */
   placeholders: { id: string; title: string }[];
 }

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { profile } from "@/content";
 import { fontVariables } from "@/lib/fonts";
 import { siteUrl } from "@/lib/site";
+import "lenis/dist/lenis.css";
 import "./globals.css";
 
 export const metadata: Metadata = {

@@ -395,6 +395,24 @@ def frame_alpha(panel_alpha: np.ndarray, track: np.ndarray) -> np.ndarray:
     return (a * panel_alpha * fx * fy).astype(np.float32), (int(px0), int(py0), int(px1), int(py1))
 
 
+def visible_view(glass: np.ndarray, frame_a: np.ndarray, shade_rgba: np.ndarray, shade_box: dict) -> np.ndarray:
+    """The view that is actually seen with the shade open: glass not covered by the frame or the lip. The
+    scroll push scales the window until the viewport fits inside this region (uint8 mask)."""
+    h, w = glass.shape
+    shade_a = np.zeros((h, w), np.float32)
+    y0 = shade_box["y"]
+    ys0, ys1 = max(0, y0), min(h, y0 + shade_box["height"])
+    shade_a[ys0:ys1, shade_box["x"] : shade_box["x"] + shade_box["width"]] = shade_rgba[ys0 - y0 : ys1 - y0, :, 3] / 255.0
+    view = (glass > 0) & (frame_a < 0.5) & (shade_a < 0.5)
+    # Largest piece only, holes filled, so the outline is one clean polygon.
+    n, lab, stats, _ = cv2.connectedComponentsWithStats(view.astype(np.uint8), 8)
+    view = (lab == 1 + int(np.argmax(stats[1:, cv2.CC_STAT_AREA]))).astype(np.uint8)
+    contours, _ = cv2.findContours(view, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    out = np.zeros_like(view)
+    cv2.drawContours(out, contours, -1, 1, thickness=cv2.FILLED)
+    return out
+
+
 def separate() -> dict:
     src = np.asarray(Image.open(WINDOW_V2_SRC).convert("RGBA"), dtype=np.float32) / 255.0
     rgb, panel_alpha = src[..., :3], src[..., 3]
@@ -415,6 +433,7 @@ def separate() -> dict:
         "frame": frame,
         "glass": glass,
         "aperture": track,
+        "view": visible_view(glass, fa, shade_rgba, shade_box),
         "shade_mask": shade["mask"],
         "shade": shade_rgba,
         "shade_box": shade_box,
@@ -476,6 +495,7 @@ def _framing(sep: dict, x0: int, y0: int, w: int, h: int) -> dict:
         },
         "frame": _norm_box(fx0 - x0, fy0 - y0, fx1 - fx0, fy1 - fy0, w, h),
         "inner": _norm_box(ib["x"] - x0, ib["y"] - y0, ib["width"], ib["height"], w, h),
+        "view": dict(zip(("clipPath", "points"), _path(sep["view"][y0 : y0 + h, x0 : x0 + w], w, h, 0))),
         "shade": {
             "box": _norm_box(sb["x"] - x0, sb["y"] - y0, sb["width"], sb["height"], w, h),
             "open": 0,

@@ -8,7 +8,7 @@
 		"directory": ".open-next/assets",
 		"binding": "ASSETS",
 		// The scene videos go through cloudflare/worker.ts so Range requests get 206 (Safari needs it).
-		"run_worker_first": ["/scene/clouds/*", "/scene/clouds-v2/*"]
+		"run_worker_first": ["/scene/clouds-v2/*"]
 	},
 	"services": [
 		{

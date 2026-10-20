@@ -6,7 +6,6 @@ src/content/scene-manifest.json (QA images go to docs/qa/scene/ via qa.py).
 from __future__ import annotations
 
 import json
-import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -19,15 +18,10 @@ PUBLIC = ROOT / "public" / "scene"
 MANIFEST = ROOT / "src" / "content" / "scene-manifest.json"
 QA = ROOT / "docs" / "qa" / "scene"
 
-WINDOW_SRC = ORIGINALS / "window.png"        # Phase 2a plate (window.py); kept until v2 is approved
 WINDOW_V2_SRC = ORIGINALS / "window-v2.png"  # owner's Canva plate with a real shade (window_v2.py)
-CLOUDS_SRC = ORIGINALS / "clouds.mp4"        # Phase 2a loop, graded monochrome (clouds.py)
 CLOUDS_V2_SRC = ORIGINALS / "clouds-v2.mp4"  # naturally blue loop (clouds_v2.py)
 FLY_SRC = ORIGINALS / "fly-through.mp4"
-
-# Which cloud pipeline `pnpm scene:build` runs: v2 (default) or v1. Both stay runnable.
-CLOUDS_PIPELINE = os.environ.get("SCENE_CLOUDS", "v2")
-ORIGINAL_FILES = (WINDOW_V2_SRC, CLOUDS_V2_SRC if CLOUDS_PIPELINE == "v2" else CLOUDS_SRC, FLY_SRC)
+ORIGINAL_FILES = (WINDOW_V2_SRC, CLOUDS_V2_SRC, FLY_SRC)
 
 
 def run(cmd: list[str]) -> None:
@@ -96,3 +90,19 @@ def clean_dir(path: Path) -> None:
     if path.exists():
         shutil.rmtree(path)
     path.mkdir(parents=True, exist_ok=True)
+
+
+def codec_string(path: Path) -> str:
+    """RFC 6381 codec string for canPlayType: avc1.PPCCLL for H.264, av01.P.LLT.DD for AV1."""
+    out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+                          "stream=codec_name,profile,level,pix_fmt", "-of", "json", str(path)],
+                         capture_output=True, text=True, check=True)
+    st = json.loads(out.stdout)["streams"][0]
+    if st["codec_name"] == "h264":
+        profile_idc = {"Baseline": 0x42, "Constrained Baseline": 0x42, "Main": 0x4D, "High": 0x64}[st["profile"]]
+        return f"avc1.{profile_idc:02X}00{int(st['level']):02X}"
+    if st["codec_name"] == "av1":
+        profile = {"Main": 0, "High": 1, "Professional": 2}[st["profile"]]
+        depth = 10 if "10" in st["pix_fmt"] else 8
+        return f"av01.{profile}.{int(st['level']):02d}M.{depth:02d}"
+    raise ValueError(f"unexpected codec {st['codec_name']}")

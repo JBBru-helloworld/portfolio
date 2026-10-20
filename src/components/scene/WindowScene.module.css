@@ -115,6 +115,14 @@
   container-type: size;
 }
 
+/* The camera fills the stage; the scroll push moves and scales it about the glass centre. GSAP writes its
+   transform (and would clear a CSS translate), which is why the stage's own placement lives one level up. */
+.camera {
+  position: absolute;
+  inset: 0;
+  transform-origin: var(--cx) var(--cy);
+}
+
 /* ---------- 1: the view, clipped to the glass (grown a little under the bezel) ---------- */
 
 .view,
@@ -236,6 +244,38 @@
   opacity: 1;
 }
 
+.lightLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ---------- Scroll sequence: fly-through canvas, the white of the cloud, the fade into --void ---------- */
+
+.fly,
+.white,
+.fade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.fly {
+  display: block;
+}
+
+/* A very slightly cool white, so the inside of the cloud is soft rather than clinical. */
+.white {
+  background: #eef1f4;
+}
+
+.fade {
+  background: var(--void);
+}
+
 /* ---------- 7: grain (static, one texel per device pixel) ---------- */
 
 /* The glass mask is placed exactly over the stage: same size, same shift, same top. */
@@ -274,6 +314,18 @@
   -webkit-mask-position: calc(50% + var(--frame-dx)) var(--stage-top);
 }
 
+/* During the push the grain is off: its glass mask no longer lines up with the scaling stage, a full-screen
+   blend layer over a moving backdrop costs a GPU pass every frame, and at 2% it is invisible in motion. */
+.scene[data-pushing="true"] .grain,
+.scene[data-pushing="true"] .grainGlass {
+  display: none;
+}
+
+/* Once the fly-through canvas fully covers it, the window is not drawn at all. */
+.scene[data-covered="true"] .stage {
+  visibility: hidden;
+}
+
 /* ---------- 8: vignette ---------- */
 
 .vignette {
@@ -303,6 +355,17 @@
 }
 
 /* ---------- Text (type sizes come from Tailwind utilities in the JSX) ---------- */
+
+/* All landing text in one layer, so the scroll push can fade it as one (GSAP sets opacity and transform). */
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hud > * {
+  pointer-events: auto;
+}
 
 .wordmark {
   position: absolute;

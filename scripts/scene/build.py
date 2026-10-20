@@ -12,7 +12,7 @@ import os
 import sys
 from collections import defaultdict
 
-from common import CLOUDS_PIPELINE, MANIFEST, ORIGINAL_FILES, PUBLIC, ROOT, probe
+from common import MANIFEST, ORIGINAL_FILES, PUBLIC, ROOT, probe
 
 
 def _sha256(path) -> str:
@@ -29,14 +29,11 @@ def main() -> int:
         print(f"scene:build: originals not found ({', '.join(missing)}); keeping the committed outputs in public/scene/.")
         return 0
 
-    import clouds
     import clouds_v2
     import fly
     import grain
     import window_v2
 
-    # The Phase 2a plate's outputs (public/scene/window/) and the other cloud pipeline's outputs are
-    # left in place, unreferenced, until the owner approves v2; they are not counted in the totals.
     PUBLIC.mkdir(parents=True, exist_ok=True)
     print("scene:build: window plate v2 (frame, shade, aperture)...", flush=True)
     w = window_v2.build()
@@ -45,8 +42,8 @@ def main() -> int:
         old = json.loads(MANIFEST.read_text())
         c, f, g = old["clouds"], old["fly"], old["grain"]
     else:
-        print(f"scene:build: cloud loop ({CLOUDS_PIPELINE})...", flush=True)
-        c = clouds_v2.build() if CLOUDS_PIPELINE == "v2" else clouds.build()
+        print("scene:build: cloud loop...", flush=True)
+        c = clouds_v2.build()
         print("scene:build: fly-through sequence...", flush=True)
         f = fly.build(tint=c.get("tint"))
         g = grain.build()

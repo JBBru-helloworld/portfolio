@@ -209,15 +209,6 @@ def clouds_v2_images(m: dict) -> None:
                     "-map", "[v]", "-c:v", "libx264", "-crf", "20", "-pix_fmt", "yuv420p", "-an",
                     str(V2 / f"clouds-speed-{speed}x-vs-1.0x.mp4")], check=True)
 
-    # Old loop (Phase 2a, monochrome) vs new loop, both clipped to the open window.
-    old = ROOT / "public" / "scene" / "clouds" / "clouds-desktop.mp4"
-    if old.exists():
-        old_frame = _video_frame("/scene/clouds/clouds-desktop.mp4", 7.0)
-        new_frame = _video_frame(mp4, m["clouds"]["durationSeconds"] / 2)
-        _sheet([("old loop (Phase 2a)", _frame_crop(m, "landscape", compose(m, "landscape", 1800, 0.0, view=old_frame))),
-                ("new loop (clouds-v2)", _frame_crop(m, "landscape", compose(m, "landscape", 1800, 0.0, view=new_frame)))],
-               2, 560).save(V2 / "clouds-old-vs-new.png")
-
 
 def _sheet(frames: list[tuple[str, Image.Image]], cols: int, w: int) -> Image.Image:
     tiles = []
@@ -266,15 +257,14 @@ if __name__ == "__main__":
 
 
 def plane_check(margin: int = 24) -> dict:
-    """Automatic check that no plane or drone part reaches inside any crop, on every source frame used.
+    """Automatic check that no drone part reaches inside the fly-through crops, on every source frame used.
 
-    Plane and drone parts always enter from the edges of the full source frame (wing: top right;
-    window edge: bottom left; propellers: left and right; drone body: bottom). For each frame we find
+    Drone parts always enter from the edges of the full source frame (propellers: left and right; drone
+    body: bottom). (clouds-v2 has no aircraft in it; its picture is cropped from a plain border.) For each frame we find
     dark shapes connected to those source edges, grow their bounding box by `margin` px to cover
     motion-blurred tips, and record any frame where a box overlaps the crop. Natural cloud shadows
     inside the frame are not connected to the edges and are ignored.
     """
-    import clouds as cl
     import fly as fl
 
     def edge_parts(bgr: np.ndarray, sides: dict, v_max: int, s_max: int) -> list:
@@ -306,7 +296,7 @@ def plane_check(margin: int = 24) -> dict:
         _, grown = part
         return bool(grown[c["y"]: c["y"] + c["h"], c["x"]: c["x"] + c["w"]].any())
 
-    results: dict = {"fly-desktop": [], "fly-mobile": [], "clouds": [], "partsSeen": {}}
+    results: dict = {"fly-desktop": [], "fly-mobile": [], "partsSeen": {}}
     fly_sides = {
         "left propeller": ("left", (0, 200, 640, 720)),
         "right propeller": ("right", (640, 200, 1280, 720)),
@@ -321,21 +311,4 @@ def plane_check(margin: int = 24) -> dict:
             hits = [p[0] for p in parts if overlaps(p, c)]
             if hits:
                 results[tier].append((i, hits))
-    # The wing is mid-dark grey against blue sky; the window edge is near black (the grey sea and haze
-    # between the clouds is also neutral but much lighter), so each gets its own threshold.
-    wing_side = {"wing": ("top", (640, 0, 1280, 360))}
-    edge_side = {"window edge": ("left", (0, 360, 640, 720)), "window edge (bottom)": ("bottom", (0, 360, 640, 720))}
-    cap = cv2.VideoCapture(str(cl.CLOUDS_SRC))
-    i = 0
-    while True:
-        ok, f = cap.read()
-        if not ok:
-            break
-        parts = edge_parts(f, wing_side, v_max=95, s_max=45) + edge_parts(f, edge_side, v_max=45, s_max=60)
-        for p in parts:
-            results["partsSeen"][p[0]] = results["partsSeen"].get(p[0], 0) + 1
-        hits = [p[0] for p in parts if overlaps(p, cl.CROP)]
-        if hits:
-            results["clouds"].append((i, hits))
-        i += 1
     return results
