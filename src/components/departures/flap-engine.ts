@@ -34,6 +34,8 @@ interface Tile {
   /** The flip currently shown (-1 before the first). */
   k: number;
   phase2: boolean;
+  /** The character actually showing when a retarget began (its first flip folds this one away). */
+  from?: string;
 }
 
 export interface BoardOptions {
@@ -85,14 +87,17 @@ export class FlapBoard {
     private readonly opts: BoardOptions,
   ) {}
 
-  /** Puts every tile on its starting character (a few steps before its target), ready to run. */
+  /**
+   * Puts every tile on its starting character (a few steps before its target), ready to run. Tiles whose
+   * target is blank start blank and never move.
+   */
   prepare(random: () => number = Math.random): void {
     const [lo, hi] = this.opts.stepsBefore;
     this.tiles = [];
     this.rows.forEach((row, r) => {
       for (const el of row) {
         const target = flapIndex(el.dataset.target ?? " ");
-        const steps = lo + Math.floor(random() * (hi - lo + 1));
+        const steps = target === 0 ? 0 : lo + Math.floor(random() * (hi - lo + 1));
         const cur = (target - steps + N * 4) % N;
         const parts = glyphsOf(el);
         const c = FLAP_SEQUENCE[cur];
@@ -109,6 +114,36 @@ export class FlapBoard {
           phase2: false,
         });
       }
+    });
+  }
+
+  /**
+   * Flips tiles from whatever they show now to new characters (a remark changing). Each tile makes a few
+   * flips, the first folding away its current character; tiles already right, or blank to blank, stay
+   * still. Call run() afterwards.
+   */
+  retarget(text: string, random: () => number = Math.random): void {
+    const [lo, hi] = this.opts.stepsBefore;
+    const els = this.rows.flat();
+    this.tiles = [];
+    els.forEach((el, i) => {
+      const c = text[i] ?? " ";
+      el.dataset.target = c;
+      const parts = glyphsOf(el);
+      const from = parts.glyphs[1].textContent || " ";
+      const target = flapIndex(c);
+      const steps = from === c ? 0 : lo + Math.floor(random() * (hi - lo + 1));
+      if (!steps) return;
+      this.tiles.push({
+        ...parts,
+        start: (target - steps + N * 4) % N,
+        steps,
+        target,
+        startAt: random() * this.opts.tileJitter,
+        k: -1,
+        phase2: false,
+        from,
+      });
     });
   }
 
@@ -167,7 +202,7 @@ export class FlapBoard {
     if (k !== tile.k) {
       // A new flip begins: current character on the folding top flap and the static bottom, the next one
       // behind the top flap and on the falling bottom flap.
-      const cur = FLAP_SEQUENCE[(tile.start + k) % N];
+      const cur = k === 0 && tile.from !== undefined ? tile.from : FLAP_SEQUENCE[(tile.start + k) % N];
       const next = FLAP_SEQUENCE[(tile.start + k + 1) % N];
       set(tile.glyphs[0], next);
       set(tile.glyphs[1], cur);
@@ -189,6 +224,10 @@ export class FlapBoard {
     }
     tile.flapBottom.style.transform = fold(90 * (1 - easeOut((f - 0.5) * 2)));
     return false;
+  }
+
+  get running(): boolean {
+    return this.raf !== 0;
   }
 
   stop(): void {

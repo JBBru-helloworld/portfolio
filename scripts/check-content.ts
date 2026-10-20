@@ -2,7 +2,8 @@
  * Content checks for src/content/. Run with `pnpm check:content` (Node 24 runs TypeScript directly).
  *
  * Fails on: excluded words and phrases, the Sunway Tech Club outside its two approved lines, em dashes, common US spellings in strings,
- * duplicate or malformed periodic-table symbols, and departures-board rows that do not fit.
+ * duplicate or malformed periodic-table symbols, departures-board rows that do not fit, and destinations
+ * whose section is not on the page.
  * Warns (does not fail) on every TODO(owner) and CHECK(owner) until launch.
  */
 import { readdirSync, readFileSync } from "node:fs";
@@ -134,22 +135,27 @@ for (const file of files) {
   }
 }
 
-// Departures board: codes 2 to 4 characters, destinations and the board role at most 32 characters.
+// Departures board and site destinations: every row must fit its flaps, and use only flap characters.
 {
-  const rel = "src/content/departures.ts";
-  const text = readFileSync(join(contentDir, "departures.ts"), "utf8");
-  for (const m of text.matchAll(/code:\s*"([^"]*)"/g)) {
-    if (m[1].length < 2 || m[1].length > 4) failures.push(`${rel}:${lineOf(text, m.index ?? 0)}  code "${m[1]}" must be 2 to 4 characters`);
-  }
-  for (const m of text.matchAll(/destination:\s*"([^"]*)"/g)) {
-    if (m[1].length > 32) failures.push(`${rel}:${lineOf(text, m.index ?? 0)}  destination "${m[1]}" is ${m[1].length} characters (max 32)`);
+  const rel = "src/content/destinations.ts";
+  const text = readFileSync(join(contentDir, "destinations.ts"), "utf8");
+  const limits: Record<string, number> = { flight: 6, destination: 16, gate: 1, remark: 8 };
+  const rows = [...text.matchAll(/\{\s*flight:[^}]*\}/g)];
+  if (!rows.length) failures.push(`${rel}  no destinations found`);
+  const ids: { id: string; line: number }[] = [];
+  for (const row of rows) {
+    const line = lineOf(text, row.index ?? 0);
+    for (const [key, max] of Object.entries(limits)) {
+      const m = row[0].match(new RegExp(`${key}:\\s*"([^"]*)"`));
+      if (!m) failures.push(`${rel}:${line}  missing ${key}`);
+      else if (m[1].length > max || m[1].length === 0) failures.push(`${rel}:${line}  ${key} "${m[1]}" is ${m[1].length} characters (1 to ${max})`);
+    }
+    const id = row[0].match(/id:\s*"([^"]*)"/);
+    if (id) ids.push({ id: id[1], line });
   }
   const profile = readFileSync(join(contentDir, "profile.ts"), "utf8");
   const board = profile.match(/board:\s*"([^"]*)"/);
   if (board && board[1].length > 32) failures.push(`src/content/profile.ts  board role line is ${board[1].length} characters (max 32)`);
-  for (const m of text.matchAll(/status:\s*"([^"]*)"/g)) {
-    if (m[1].length > 8) failures.push(`${rel}:${lineOf(text, m.index ?? 0)}  status "${m[1]}" is ${m[1].length} characters (max 8)`);
-  }
 
   // Every character on the flaps must exist in the board's flap sequence (src/lib/flap-sequence.ts).
   const seqFile = readFileSync(join(contentDir, "..", "lib", "flap-sequence.ts"), "utf8");
@@ -158,16 +164,54 @@ for (const file of files) {
   else {
     const sequence = new Set(seqMatch[1]);
     const onFlaps: { where: string; value: string }[] = [];
-    for (const key of ["label", "name", "code", "destination", "status"]) {
-      for (const m of text.matchAll(new RegExp(`${key}:\\s*"([^"]*)"`, "g"))) {
-        onFlaps.push({ where: `${rel}:${lineOf(text, m.index ?? 0)}`, value: m[1] });
+    const departures = readFileSync(join(contentDir, "departures.ts"), "utf8");
+    for (const [file, src, keys] of [
+      ["src/content/departures.ts", departures, ["label", "name", "gate", "board"]],
+      [rel, text, ["flight", "destination", "gate", "remark"]],
+    ] as const) {
+      for (const key of keys) {
+        for (const m of src.matchAll(new RegExp(`\\b${key}:\\s*"([^"]*)"`, "g"))) {
+          onFlaps.push({ where: `${file}:${lineOf(src, m.index ?? 0)}`, value: m[1] });
+        }
       }
     }
+    // Live remarks set by the board and the corner navigation.
+    for (const value of ["BOARDING", "DEPARTED", "ON TIME"]) onFlaps.push({ where: "live remarks", value });
     if (board) onFlaps.push({ where: "src/content/profile.ts (roleLines.board)", value: board[1] });
     for (const { where, value } of onFlaps) {
       const missing = [...new Set([...value].filter((c) => !sequence.has(c)))];
       if (missing.length) failures.push(`${where}  "${value}" uses characters not on the flaps: ${missing.map((c) => JSON.stringify(c)).join(" ")}`);
     }
+  }
+
+  // Every destination must be a section on the page: either a component renders the literal id, or the
+  // page renders its sections from the destinations list. Set CHECK_PAGE_URL to also check rendered HTML.
+  const seen = new Set<string>();
+  const sources: string[] = [];
+  const walk = (dir: string) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const path = join(dir, entry.name);
+      if (entry.isDirectory()) walk(path);
+      else if (/\.tsx$/.test(entry.name)) sources.push(readFileSync(path, "utf8"));
+    }
+  };
+  walk(join(root, "src", "app"));
+  walk(join(root, "src", "components"));
+  const page = readFileSync(join(root, "src", "app", "page.tsx"), "utf8");
+  const fromList = /destinations\.map\(/.test(page) && /<DestinationSection\b/.test(page);
+  for (const { id, line } of ids) {
+    if (seen.has(id)) failures.push(`${rel}:${line}  duplicate section id "${id}"`);
+    seen.add(id);
+    const literal = sources.some((src) => src.includes(`id="${id}"`));
+    if (!literal && !fromList) failures.push(`${rel}:${line}  section id "${id}" is not on the page`);
+  }
+  const url = process.env.CHECK_PAGE_URL;
+  if (url) {
+    const html = await (await fetch(url)).text();
+    for (const { id, line } of ids) {
+      if (!new RegExp(`<section[^>]*\\bid="${id}"`).test(html)) failures.push(`${rel}:${line}  section id "${id}" is missing from ${url}`);
+    }
+    console.log(`Checked ${ids.length} destination sections against ${url}.`);
   }
 }
 

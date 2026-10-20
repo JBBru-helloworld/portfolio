@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { pendingRestore } from "@/components/nav/site-state";
 import { PORTRAIT_MEDIA, REDUCED_MOTION, SMALL_SCREEN, isConstrainedNetwork } from "./media";
 import type { SceneData, PlateSet } from "./scene-data";
 import { useScrollSequence } from "./useScrollSequence";
@@ -125,7 +126,30 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
     }),
     [],
   );
-  useScrollSequence(refs, data, { open: phase === "open", openNow, videoActive, videoHeld });
+  // Loads the cloud video and starts it (unless the fly-through holds it). Returns once it can play.
+  const startVideo = useCallback(async () => {
+    const video = videoRef.current;
+    if (!video || video.getAttribute("src")) return;
+    const tier = window.matchMedia(SMALL_SCREEN).matches ? data.video.mobile : data.video.desktop;
+    const source = video.canPlayType(tier.av1.type) ? tier.av1 : tier.h264;
+    video.dataset.source = source.src;
+    video.preload = "auto";
+    video.src = source.src;
+    video.load();
+    await canPlay(video);
+  }, [data]);
+
+  // After a restore to a later section, the video loads only once the visitor scrolls back up.
+  const wakeVideo = useCallback(() => {
+    const video = videoRef.current;
+    if (!video || isConstrainedNetwork() || window.matchMedia(REDUCED_MOTION).matches) return;
+    void startVideo().then(() => {
+      videoActive.current = true;
+      if (!videoHeld.current && inView.current) video.play().catch(() => (videoActive.current = false));
+    });
+  }, [startVideo]);
+
+  useScrollSequence(refs, data, { open: phase === "open", openNow, videoActive, videoHeld, wakeVideo });
 
   // Intro: decode the plate, then start loading the video, then lift the shade.
   useEffect(() => {
@@ -134,7 +158,9 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
     let cancelled = false;
 
     const reduce = window.matchMedia(REDUCED_MOTION).matches;
-    if (reduce) {
+    // Restored to the board or a later section: the shade is already open and nothing plays (the scene
+    // is covered); the video waits for the visitor to scroll back up (wakeVideo).
+    if (reduce || pendingRestore() !== null) {
       // Shade open (CSS), poster only, light at full strength; the view appears with the decoded frame.
       setPhase("open");
       decodeImage(imgRef.current).then(() => !cancelled && setViewReady(true));
@@ -144,19 +170,14 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
     }
 
     const lite = isConstrainedNetwork();
-    const tier = window.matchMedia(SMALL_SCREEN).matches ? data.video.mobile : data.video.desktop;
-    const source = video.canPlayType(tier.av1.type) ? tier.av1 : tier.h264;
-    video.dataset.source = lite ? "poster-only" : source.src;
+    if (lite) video.dataset.source = "poster-only";
 
     const ready = (async () => {
       await decodeImage(imgRef.current);
       if (!cancelled) setViewReady(true);
       if (lite || cancelled) return;
       // The video only starts loading once the plate has decoded, so it can never delay it.
-      video.preload = "auto";
-      video.src = source.src;
-      video.load();
-      await canPlay(video);
+      await startVideo();
     })();
 
     (async () => {
@@ -188,7 +209,7 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
     return () => {
       cancelled = true;
     };
-  }, [data]);
+  }, [data, startVideo]);
 
   // Grain at one texel per device pixel (crisp, never clumped): 256 px tile / devicePixelRatio.
   useEffect(() => {

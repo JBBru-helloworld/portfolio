@@ -21,6 +21,6 @@ export const journey: JourneyStamp[] = [
     ink: "my",
     years: { start: "2023", end: "2026" },
     label: "MALAYSIA · 2023",
-    line: "University in Malaysia: a Bachelor of Software Engineering (Hons) at Sunway University and Lancaster University.",
+    line: "University in Malaysia: a Bachelor of Software Engineering (Hons) at Sunway University and Lancaster University, with a 3.95 CGPA and six Dean's List awards.",
   },
 ];

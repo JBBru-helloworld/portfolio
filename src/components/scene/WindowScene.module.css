@@ -369,6 +369,11 @@
   pointer-events: none;
 }
 
+/* Reloading on a later section: the landing text is not shown in the moment before the restore. */
+:global(html[data-restore]) .hud {
+  visibility: hidden;
+}
+
 .hud > * {
   pointer-events: auto;
 }

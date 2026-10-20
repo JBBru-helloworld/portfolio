@@ -1,0 +1,252 @@
+/*
+ * The top bar after the window sequence: the wordmark (placed exactly where the landing's wordmark sits)
+ * and the seat sign. Fixed, inside the safe areas, and above the board (z-index 2). It sits in the board's
+ * and the sections' top padding, so it never covers their headings.
+ */
+
+.bar {
+  --edge-x: clamp(1rem, 4vw, 3rem);
+  --edge-y: clamp(1rem, 3vw, 2rem);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: max(var(--edge-y), env(safe-area-inset-top)) max(var(--edge-x), env(safe-area-inset-right)) 0
+    max(var(--edge-x), env(safe-area-inset-left));
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    visibility 0s linear var(--duration-slow);
+}
+
+.bar[data-visible="true"] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--duration-spring) var(--ease-out);
+}
+
+.bar > * {
+  pointer-events: auto;
+}
+
+@media (max-width: 767px) {
+  .bar {
+    --edge-y: 0.75rem;
+  }
+}
+
+/* Same type and place as the landing's wordmark, so it simply stays. */
+.wordmark {
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--paper-muted);
+  text-decoration: none;
+  border-radius: 2px;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.wordmark:hover {
+  color: var(--paper);
+}
+
+.wordmark:focus-visible,
+.sign:focus-visible,
+.item:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+/* ---------- The seat sign ---------- */
+
+.nav {
+  display: flex;
+}
+
+.sign {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4375rem 0.5rem 0.4375rem 0.625rem;
+  border: 1px solid var(--graphite-2);
+  border-radius: 999px;
+  background: #0d0d0d;
+  /* the faint glow of a lit cabin sign */
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.04),
+    0 0 0 1px rgb(0 0 0 / 0.6);
+  color: var(--paper-muted);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+/* A 44 px touch target around the slimmer pill. */
+.sign::before {
+  content: "";
+  position: absolute;
+  inset: -6px -4px;
+}
+
+@media (hover: hover) {
+  .sign:hover {
+    border-color: var(--graphite-3);
+    background: #121212;
+  }
+}
+
+.sign[aria-expanded="true"] {
+  border-color: var(--graphite-3);
+}
+
+.signFace {
+  display: inline-flex;
+  /* small flap tiles; their faces are only a shade off the pill, so blank tiles read as an unlit panel */
+  --w: 0.6875rem;
+  --g: 1px;
+}
+
+.tiles {
+  --tw: var(--w);
+}
+
+.signFace .tile {
+  --tile-top: #161616;
+  --tile-top-end: #141414;
+  --tile-bottom: #121212;
+  --tile-bottom-end: #101010;
+  color: var(--paper);
+  box-shadow: none;
+}
+
+.signFace .tile[data-off] {
+  display: none;
+}
+
+.chevron {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--graphite-4);
+  transition: rotate var(--duration-base) var(--ease-out);
+}
+
+.sign[aria-expanded="true"] .chevron {
+  rotate: 180deg;
+}
+
+/* ---------- The panel: a mini departures list ---------- */
+
+.panel {
+  z-index: 41;
+  width: min(19rem, calc(100vw - 2rem));
+  padding: 0.5rem;
+  border: 1px solid var(--graphite-2);
+  border-radius: calc(var(--radius) * 2);
+  background: #0f0f0f;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.55);
+  font-family: var(--font-mono);
+  transform-origin: var(--radix-popover-content-transform-origin);
+}
+
+.panel[data-state="open"] {
+  animation: panel-in var(--duration-base) var(--ease-out);
+}
+
+.panel[data-state="closed"] {
+  animation: panel-out var(--duration-fast) var(--ease-out);
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
+}
+
+@keyframes panel-out {
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+.panelTitle {
+  margin: 0.25rem 0.5rem 0.5rem;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--graphite-4);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 1.25rem 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.5rem;
+  padding: 0 0.5rem;
+  border-radius: var(--radius);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--paper-muted);
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .item:hover {
+    background: var(--graphite-1);
+    color: var(--paper);
+  }
+}
+
+.gate {
+  color: var(--graphite-4);
+}
+
+.remark {
+  font-size: 0.6875rem;
+  color: var(--graphite-4);
+}
+
+.remark[data-remark="BOARDING"] {
+  color: var(--paper-muted);
+}
+
+/* The current destination is the one amber line. */
+.item[aria-current] .gate,
+.item[aria-current] .dest,
+.item[aria-current] .remark {
+  color: var(--amber);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar,
+  .bar[data-visible="true"],
+  .sign,
+  .chevron,
+  .item,
+  .wordmark {
+    transition: none;
+  }
+
+  .panel[data-state="open"],
+  .panel[data-state="closed"] {
+    animation: none;
+  }
+}

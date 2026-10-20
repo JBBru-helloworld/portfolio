@@ -1,40 +1,35 @@
 import { DeparturesBoard } from "@/components/departures/DeparturesBoard";
+import { SiteNav } from "@/components/nav/SiteNav";
 import { WindowScene } from "@/components/scene/WindowScene";
 import { getSceneData } from "@/components/scene/scene-data";
+import { DestinationSection } from "@/components/sections/DestinationSection";
 import { SkipIntro } from "@/components/scroll/SkipIntro";
 import { SmoothScroll } from "@/components/scroll/SmoothScroll";
-import { departures, landing, profile } from "@/content";
+import { departures, destinations, landing, profile } from "@/content";
 
 export default function Home() {
   const scene = getSceneData();
   return (
-    <main>
+    <>
       <SkipIntro targetId="departures" label={landing.skipIntro} />
-      <SmoothScroll />
-      <WindowScene
-        data={scene}
-        name={profile.name}
-        role={profile.roleLines.default}
-        sceneLabel={landing.sceneLabel}
-        scrollCue={landing.scrollCue}
-      />
+      <SiteNav name={profile.name} board={departures} destinations={destinations} />
+      <main>
+        <SmoothScroll />
+        <WindowScene
+          data={scene}
+          name={profile.name}
+          role={profile.roleLines.default}
+          sceneLabel={landing.sceneLabel}
+          scrollCue={landing.scrollCue}
+        />
 
-      <DeparturesBoard board={departures} />
+        <DeparturesBoard board={departures} destinations={destinations} />
 
-      {/* Temporary placeholders for the sections still to come; replaced in later phases. */}
-      {landing.placeholders.map((section) => (
-        <section
-          key={section.id}
-          id={section.id}
-          aria-labelledby={`${section.id}-heading`}
-          tabIndex={-1}
-          className="flex min-h-[100svh] items-center border-t border-graphite-2 px-4 sm:px-8"
-        >
-          <h2 id={`${section.id}-heading`} className="mx-auto w-full max-w-6xl text-3xl font-medium text-paper-muted">
-            {section.title}
-          </h2>
-        </section>
-      ))}
-    </main>
+        {/* The board's destinations, in page order (placeholders until each section is built). */}
+        {destinations.map((destination) => (
+          <DestinationSection key={destination.id} destination={destination} />
+        ))}
+      </main>
+    </>
   );
 }

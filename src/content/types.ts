@@ -46,7 +46,8 @@ export interface SiteLinks {
   resume: Link;
 }
 
-export type DepartureStatus = "ON TIME" | "ARRIVED" | "LANDED" | "BOARDED" | "CLEARED" | "DEPARTED";
+/** Board remarks. BOARDING and DEPARTED are also set live (on choosing a row, and after a visit). */
+export type DestinationRemark = "BOARDING" | "ON TIME" | "DEPARTED";
 
 export interface DepartureHeader {
   /** "NOW BOARDING" */
@@ -55,26 +56,40 @@ export interface DepartureHeader {
   role: string;
 }
 
-export interface DepartureRow {
-  /** 2 to 4 characters. */
-  code: string;
-  /** The fact, in capitals, under about 32 characters. */
+/** One section of the site: a row on the departures board and an entry in the corner navigation. */
+export interface Destination {
+  /** Flight code on the flaps, for example "JB 101". */
+  flight: string;
+  /** Destination on the flaps, in capitals. */
   destination: string;
-  status: DepartureStatus;
-  /** Where the fact comes from, so it can be verified. Never rendered. */
+  /** Gate number (one character). */
+  gate: string;
+  /** Remark shown before the visitor has been there. */
+  remark: DestinationRemark;
+  /** The section's element id (its anchor). */
+  id: string;
+  /** Sentence-case name, for link labels ("Gate 1: My journey") and the section heading. */
+  name: string;
+}
+
+/** The live security check (fraud demo): the model behind it and its headline result. */
+export interface SecurityCheck {
+  /** Slug of the project in projects.ts. */
+  projectSlug: string;
+  headline: string;
   source: string;
-  notes?: OwnerNotes;
 }
 
 export interface Departures {
   /** Section heading (the board's title), in capitals. */
   title: string;
   /** Column labels, in capitals. */
-  columns: { flight: string; destination: string; remarks: string };
+  columns: { flight: string; destination: string; gate: string; remarks: string };
   /** Accessible label for the optional board-sound toggle. */
   soundLabel: string;
+  /** The corner navigation: its accessible name, the gate prefix on its sign ("GATE") and its label on the board. */
+  nav: { ariaLabel: string; gate: string; board: string };
   header: DepartureHeader;
-  rows: DepartureRow[];
 }
 
 /** Section-scoped stamp inks from DESIGN.md. */
@@ -164,6 +179,5 @@ export interface Landing {
   scrollCue: string;
   /** Visually hidden link (shown on focus) that jumps past the landing sequence. */
   skipIntro: string;
-  /** Temporary placeholder sections below the scene (replaced in later phases). */
-  placeholders: { id: string; title: string }[];
+
 }

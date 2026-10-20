@@ -13,6 +13,7 @@ import { CINEMATIC_EASE, sceneTimeline as T } from "@/config/scene-timeline";
 import { FlyFrames, drawCover } from "./fly-frames";
 import { PORTRAIT_MEDIA, REDUCED_MOTION, SMALL_SCREEN, TOUCH_ONLY, isConstrainedNetwork } from "./media";
 import { pushTarget, type Point, type PushTarget } from "./push-geometry";
+import { pendingRestore, restoreNow } from "@/components/nav/site-state";
 import type { PlateSet, SceneData } from "./scene-data";
 
 gsap.registerPlugin(ScrollTrigger, CustomEase);
@@ -39,6 +40,11 @@ interface Options {
   videoActive: MutableRefObject<boolean>;
   /** Set here while the fly-through has taken over, so the visibility logic keeps the video paused. */
   videoHeld: MutableRefObject<boolean>;
+  /**
+   * After a restore to a later section the video and fly-through frames are not loaded; this starts the
+   * video once the visitor scrolls back up into the sequence (the frames are started here).
+   */
+  wakeVideo: () => void;
 }
 
 /** Runs fn when the browser is idle (Safari has no requestIdleCallback). Returns a cancel function. */
@@ -84,13 +90,15 @@ function viewClip(m: Measured, camera: HTMLDivElement): string {
 export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Options) {
   const frames = useRef<FlyFrames | null>(null);
   const plateUpgrade = useRef<{ ready: boolean; applied: boolean; sizes: string } | null>(null);
-  const { openNow, videoActive, videoHeld } = opts;
+  const { openNow, videoActive, videoHeld, wakeVideo } = opts;
   const openRef = useRef(opts.open);
   openRef.current = opts.open;
+  // True while media loading is deferred (restored to a later section, not yet back in the sequence).
+  const deferred = useRef(false);
 
   // After the intro, when the browser is idle: the largest plate (for the push) and the fly-through frames.
   useEffect(() => {
-    if (!opts.open || window.matchMedia(REDUCED_MOTION).matches || isConstrainedNetwork()) return;
+    if (!opts.open || deferred.current || window.matchMedia(REDUCED_MOTION).matches || isConstrainedNetwork()) return;
     return idle(() => {
       frames.current?.load();
       const img = refs.plate.current;
@@ -120,6 +128,15 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
     CustomEase.create("cinematic", CINEMATIC_EASE);
     ScrollTrigger.config({ ignoreMobileResize: true });
     const mm = gsap.matchMedia();
+    // A reload on the board or a later section (or a section hash) lands there covered: no intro, and the
+    // video and frames wait until the visitor scrolls back up into the sequence.
+    deferred.current = pendingRestore() !== null;
+    const wake = () => {
+      if (!deferred.current) return;
+      deferred.current = false;
+      wakeVideo();
+      if (!isConstrainedNetwork()) frames.current?.load();
+    };
 
     mm.add({ motion: "(prefers-reduced-motion: no-preference)", touch: TOUCH_ONLY }, (ctx) => {
       const { motion, touch } = ctx.conditions as { motion: boolean; touch: boolean };
@@ -128,6 +145,8 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
         // Reduced motion: no pin, no zoom, no frames. The next section simply fades in.
         const next = section.nextElementSibling as HTMLElement | null;
         if (!next) return;
+        restoreNow();
+        if (next.getBoundingClientRect().top < window.innerHeight) return; // restored to it, or below
         next.style.opacity = "0";
         next.style.transition = "opacity 400ms ease";
         const io = new IntersectionObserver(([e]) => {
@@ -176,7 +195,7 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
           lastDrawn = -2;
           requestDraw();
         });
-        if (openRef.current) idle(() => frames.current?.load());
+        if (openRef.current && !deferred.current) idle(() => frames.current?.load());
       }
 
       const sizeCanvas = () => {
@@ -196,6 +215,7 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
 
       let pushing = false;
       let covered = false;
+      let live = false; // true once the restore has run (creating the triggers reports progress 0 first)
       let settle = 0;
       const onProgress = (p: number) => {
         // While the scroll moves, the camera is its own layer (cheap scaling); when it rests, the hint is
@@ -204,6 +224,7 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
         window.clearTimeout(settle);
         settle = window.setTimeout(() => (camera.style.willChange = ""), 180);
         if (p > T.skipIntroAt && !openRef.current) openNow();
+        if (p < 1 && live) wake();
         const up = plateUpgrade.current;
         if (up && up.ready && !up.applied && p > T.sharpPlateAt) {
           up.applied = true;
@@ -232,7 +253,7 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
           else if (videoActive.current) video.play().catch(() => {});
         }
         if (lite) return;
-        if (p > T.handover.start - 0.1) frames.current?.load(); // reached early (fast scroll or reload)
+        if (p > T.handover.start - 0.1 && !deferred.current) frames.current?.load(); // reached early (fast scroll or reload)
         if (p >= T.handover.start) {
           // Frame 1 to the near-whiteout frame, then slowly on through the last misty frames.
           const w = tier.whiteoutIndex;
@@ -310,15 +331,27 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
           end: () => pin.start + distance() + riseDistance(),
           scrub: true,
           invalidateOnRefresh: true,
-          // Hidden only past the end of the rise; the enter/leave callbacks fire even on a large jump.
+          // Hidden once the rise is complete (from its very end, where a restore to the board lands); the
+          // enter/leave callbacks fire even on a large jump.
+          onUpdate: (self) => {
+            const full = String(self.progress >= 1);
+            if (section.dataset.boardCovered !== full) section.dataset.boardCovered = full;
+          },
           onLeave: () => (section.dataset.boardCovered = "true"),
-          onEnterBack: () => (section.dataset.boardCovered = "false"),
+          onEnterBack: () => {
+            section.dataset.boardCovered = "false";
+            if (live) wake();
+          },
           onLeaveBack: () => (section.dataset.boardCovered = "false"),
-          onRefresh: (self) => (section.dataset.boardCovered = String(self.progress >= 1 && self.scroll() > self.end)),
+          onRefresh: (self) => (section.dataset.boardCovered = String(self.progress >= 1 && self.scroll() >= self.end)),
         },
       });
       if (!lite) rise.fromTo(canvas, { scale: T.dusk.push }, { scale: T.rise.drift, duration: 1, immediateRender: false });
       else rise.set({}, {}, 1);
+
+      // Everything is in place: restore the saved section (or hash) now, before Lenis starts.
+      restoreNow(() => ScrollTrigger.update());
+      live = true;
 
       const onResize = () => sizeCanvas();
       window.addEventListener("resize", onResize);
@@ -344,6 +377,6 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
       frames.current?.dispose();
       frames.current = null;
     };
-  }, [data, refs, openNow, videoActive, videoHeld]);
+  }, [data, refs, openNow, videoActive, videoHeld, wakeVideo]);
 }
 
