@@ -150,3 +150,12 @@ export interface Credential {
   detail?: string;
   notes?: OwnerNotes;
 }
+
+export interface Landing {
+  /** Accessible description of the window scene (role="img" label). */
+  sceneLabel: string;
+  /** Small cue under the scene. */
+  scrollCue: string;
+  /** Temporary placeholder sections below the scene (replaced in later phases). */
+  placeholders: { id: string; title: string }[];
+}

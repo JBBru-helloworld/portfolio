@@ -41,7 +41,6 @@ export const credentials: Credential[] = [
     kind: "community",
     title: "Portfolio workshop",
     detail: "Co-led a portfolio workshop with the Sunway Tech Club, alongside a speaker from Google (2025).",
-    date: "2025",
-    notes: ["CHECK(owner): the exact month of the portfolio workshop; it is not on the old CV."],
+    date: "Nov 2025",
   },
 ];

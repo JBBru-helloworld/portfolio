@@ -155,10 +155,10 @@
     }
   },
   "clouds": {
-    "durationSeconds": 14.125,
+    "durationSeconds": 14.875,
     "fps": 24,
     "speed": 0.5,
-    "crossfadeSeconds": 1.75,
+    "crossfadeSeconds": 1.0,
     "crop": {
       "x": 176,
       "y": 96,
@@ -169,43 +169,47 @@
       {
         "path": "/scene/clouds/clouds-desktop.mp4",
         "kind": "clouds-desktop",
-        "bytes": 1521055,
+        "bytes": 1560354,
         "format": "mp4",
         "codec": "h264",
         "width": 1656,
-        "height": 936
+        "height": 936,
+        "mime": "video/mp4; codecs=\"avc1.640032\""
       },
       {
         "path": "/scene/clouds/clouds-desktop.webm",
         "kind": "clouds-desktop",
-        "bytes": 421627,
+        "bytes": 425905,
         "format": "webm",
         "codec": "av1",
         "width": 1656,
-        "height": 936
+        "height": 936,
+        "mime": "video/webm; codecs=\"av01.0.08M.08\""
       },
       {
         "path": "/scene/clouds/clouds-mobile.mp4",
         "kind": "clouds-mobile",
-        "bytes": 500774,
+        "bytes": 505717,
         "format": "mp4",
         "codec": "h264",
         "width": 960,
-        "height": 542
+        "height": 542,
+        "mime": "video/mp4; codecs=\"avc1.640028\""
       },
       {
         "path": "/scene/clouds/clouds-mobile.webm",
         "kind": "clouds-mobile",
-        "bytes": 198465,
+        "bytes": 201696,
         "format": "webm",
         "codec": "av1",
         "width": 960,
-        "height": 542
+        "height": 542,
+        "mime": "video/webm; codecs=\"av01.0.04M.08\""
       },
       {
         "path": "/scene/clouds/clouds-poster.avif",
         "kind": "clouds-poster",
-        "bytes": 50897,
+        "bytes": 47309,
         "format": "avif",
         "width": 1656,
         "height": 936
@@ -213,7 +217,7 @@
       {
         "path": "/scene/clouds/clouds-poster.webp",
         "kind": "clouds-poster",
-        "bytes": 46558,
+        "bytes": 44048,
         "format": "webp",
         "width": 1656,
         "height": 936
@@ -2434,14 +2438,27 @@
       }
     ]
   },
+  "grain": {
+    "files": [
+      {
+        "path": "/scene/grain.webp",
+        "kind": "grain",
+        "bytes": 23812,
+        "format": "webp",
+        "width": 256,
+        "height": 256
+      }
+    ]
+  },
   "totals": {
-    "bytes": 4610887,
+    "bytes": 4680352,
     "byGroup": {
       "fly-through desktop": 1127045,
       "fly-through mobile": 258096,
-      "loop": 2641921,
+      "grain": 23812,
+      "loop": 2693672,
       "plate": 443227,
-      "stills": 140598
+      "stills": 134500
     }
   }
 }

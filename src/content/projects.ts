@@ -186,12 +186,11 @@ export const projects: Project[] = [
     date: { start: "May 2026", end: "Aug 2026" },
     context: "Code Camp assignment, group project",
     role: "Lead mobile app designer and integration engineer",
-    stack: ["Flutter", "Dart", "Riverpod", "Django", "Django REST Framework", "PostgreSQL", "PostGIS", "pgvector", "Google Gemini", "Docker"],
+    stack: ["Flutter", "Dart", "Riverpod", "PostgreSQL", "PostGIS", "pgvector", "Google Gemini", "Docker"],
     links: [{ label: "GitHub", url: "https://github.com/Spimy/mapetite", kind: "repo" }],
     status: "also-built",
     summary:
       "Mobile app connecting people with nearby merchants through routine matching, location-based discovery and Gemini-powered semantic search.",
-    notes: ["CHECK(owner): dates taken from the repo's commit history (first commit 15 May 2026, last 5 Aug 2026)."],
   },
 
   // Archive

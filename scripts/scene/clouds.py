@@ -1,6 +1,9 @@
 """Cloud loop seen through the window: crop out the plane, grade, slow down, loop seamlessly, encode."""
 from __future__ import annotations
 
+import json
+import os
+import subprocess
 import tempfile
 from pathlib import Path
 
@@ -16,7 +19,7 @@ OUT = PUBLIC / "clouds"
 CROP = {"x": 176, "y": 96, "w": 1104, "h": 624}
 DENOISE = "hqdn3d=1.5:1.5:4:4"
 SPEED = 0.5            # 0.5 = half speed, via motion-compensated interpolation
-LOOP_XFADE = 1.75      # seconds of cross-fade at the loop point
+LOOP_XFADE = float(os.environ.get("SCENE_LOOP_XFADE", "1.0"))  # seconds of cross-fade at the loop point
 UPSCALE = 1.5          # 1104x624 -> 1656x936
 SHARPEN = "unsharp=5:5:0.35:5:5:0.0"
 MOBILE_WIDTH = 960
@@ -54,10 +57,10 @@ def graded_intermediate(work: Path, speed: float = SPEED) -> tuple[Path, float]:
     return slow, duration
 
 
-def seamless_loop(slow: Path, duration: float, work: Path) -> tuple[Path, float]:
+def seamless_loop(slow: Path, duration: float, work: Path, xfade: float = LOOP_XFADE) -> tuple[Path, float]:
     """Cross-fade the tail into the head so the loop point is invisible. Output length = D - T."""
-    t = LOOP_XFADE
-    out = work / "loop.mkv"
+    t = xfade
+    out = work / f"loop-{t}.mkv"
     fc = (
         f"[0:v]trim=start={t}:end={duration},setpts=PTS-STARTPTS[a];"
         f"[0:v]trim=start=0:end={t},setpts=PTS-STARTPTS[b];"
@@ -66,6 +69,22 @@ def seamless_loop(slow: Path, duration: float, work: Path) -> tuple[Path, float]
     )
     ffmpeg("-i", str(slow), "-filter_complex", fc, "-map", "[v]", "-an", "-c:v", "ffv1", str(out))
     return out, float(probe(out)["format"]["duration"])
+
+
+def codec_string(path: Path) -> str:
+    """RFC 6381 codec string for canPlayType: avc1.PPCCLL for H.264, av01.P.LLT.DD for AV1."""
+    out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+                          "stream=codec_name,profile,level,pix_fmt", "-of", "json", str(path)],
+                         capture_output=True, text=True, check=True)
+    st = json.loads(out.stdout)["streams"][0]
+    if st["codec_name"] == "h264":
+        profile_idc = {"Baseline": 0x42, "Constrained Baseline": 0x42, "Main": 0x4D, "High": 0x64}[st["profile"]]
+        return f"avc1.{profile_idc:02X}00{int(st['level']):02X}"
+    if st["codec_name"] == "av1":
+        profile = {"Main": 0, "High": 1, "Professional": 2}[st["profile"]]
+        depth = 10 if "10" in st["pix_fmt"] else 8
+        return f"av01.{profile}.{int(st['level']):02d}M.{depth:02d}"
+    raise ValueError(f"unexpected codec {st['codec_name']}")
 
 
 def encode(loop: Path, entries: list) -> None:
@@ -83,7 +102,8 @@ def encode(loop: Path, entries: list) -> None:
         for path, fmt, codec in ((mp4, "mp4", "h264"), (webm, "webm", "av1")):
             info = probe(path)["streams"][0]
             entries.append(file_entry(path, f"clouds-{tier}", format=fmt, codec=codec,
-                                      width=info["width"], height=info["height"]))
+                                      width=info["width"], height=info["height"],
+                                      mime=f'video/{fmt}; codecs="{codec_string(path)}"'))
 
 
 def poster(loop: Path, duration: float, entries: list) -> None:

@@ -63,7 +63,6 @@ const elements: ElementDraft[] = [
   { symbol: "Fb", name: "Firebase Auth", category: "Backend", usedFor: "OCR Budget Tracker authentication" },
   { symbol: "Lk", name: "LiveKit", category: "Backend", usedFor: "Inklusif real-time voice and video" },
   { symbol: "Bv", name: "Brevo", category: "Backend", usedFor: "Inklusif email" },
-  { symbol: "Dj", name: "Django", category: "Backend", usedFor: "Mapetite API (Django REST Framework)" },
   { symbol: "Pg", name: "PostgreSQL", category: "Backend", usedFor: "Mapetite, with PostGIS and pgvector" },
   { symbol: "Dy", name: "Amazon DynamoDB", category: "Backend", usedFor: "Automated Receipt Processing Tool" },
 

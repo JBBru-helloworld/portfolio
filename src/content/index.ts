@@ -6,4 +6,5 @@ export { experience } from "./experience";
 export { projects } from "./projects";
 export { stack, stackCategories } from "./stack";
 export { credentials } from "./credentials";
+export { landing } from "./landing";
 export type * from "./types";

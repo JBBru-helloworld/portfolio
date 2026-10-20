@@ -30,6 +30,7 @@ def main() -> int:
 
     import clouds
     import fly
+    import grain
     import window
 
     PUBLIC.mkdir(parents=True, exist_ok=True)
@@ -40,11 +41,12 @@ def main() -> int:
     c = clouds.build()
     print("scene:build: fly-through sequence...", flush=True)
     f = fly.build()
+    g = grain.build()
 
     groups: dict = defaultdict(int)
-    for section, key in ((w, "window"), (c, "clouds"), (f, "fly")):
+    for section, key in ((w, "window"), (c, "clouds"), (f, "fly"), (g, "grain")):
         for e in section["files"]:
-            group = {"window": "plate", "clouds": "loop"}.get(key) or (
+            group = {"window": "plate", "clouds": "loop", "grain": "grain"}.get(key) or (
                 "stills" if e["kind"] == "fly-still" else e["kind"].replace("fly-", "fly-through ")
             )
             if key == "clouds" and e["kind"] == "clouds-poster":
@@ -66,6 +68,7 @@ def main() -> int:
         "window": w,
         "clouds": c,
         "fly": f,
+        "grain": g,
         "totals": {"bytes": sum(groups.values()), "byGroup": dict(sorted(groups.items()))},
     }
     MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")

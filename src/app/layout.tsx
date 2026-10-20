@@ -1,16 +1,30 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { profile } from "@/content";
 import { fontVariables } from "@/lib/fonts";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Joshua Bonham",
+  title: profile.name,
+  description: `${profile.name}: ${profile.roleLines.default}.`,
+  alternates: { canonical: "/" },
 };
+
+export const viewport: Viewport = {
+  themeColor: "#0a0a0a",
+  colorScheme: "dark",
+};
+
+// Runs before first paint: lets CSS start the shade closed only when JavaScript will open it.
+const jsFlag = "document.documentElement.classList.add('js')";
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-GB" className={fontVariables}>
+    <html lang="en-GB" className={fontVariables} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: jsFlag }} />
+      </head>
       <body>{children}</body>
     </html>
   );
