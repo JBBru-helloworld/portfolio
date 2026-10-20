@@ -6,6 +6,7 @@ src/content/scene-manifest.json (QA images go to docs/qa/scene/ via qa.py).
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -18,10 +19,15 @@ PUBLIC = ROOT / "public" / "scene"
 MANIFEST = ROOT / "src" / "content" / "scene-manifest.json"
 QA = ROOT / "docs" / "qa" / "scene"
 
-WINDOW_SRC = ORIGINALS / "window.png"
-CLOUDS_SRC = ORIGINALS / "clouds.mp4"
+WINDOW_SRC = ORIGINALS / "window.png"        # Phase 2a plate (window.py); kept until v2 is approved
+WINDOW_V2_SRC = ORIGINALS / "window-v2.png"  # owner's Canva plate with a real shade (window_v2.py)
+CLOUDS_SRC = ORIGINALS / "clouds.mp4"        # Phase 2a loop, graded monochrome (clouds.py)
+CLOUDS_V2_SRC = ORIGINALS / "clouds-v2.mp4"  # naturally blue loop (clouds_v2.py)
 FLY_SRC = ORIGINALS / "fly-through.mp4"
-ORIGINAL_FILES = (WINDOW_SRC, CLOUDS_SRC, FLY_SRC)
+
+# Which cloud pipeline `pnpm scene:build` runs: v2 (default) or v1. Both stay runnable.
+CLOUDS_PIPELINE = os.environ.get("SCENE_CLOUDS", "v2")
+ORIGINAL_FILES = (WINDOW_V2_SRC, CLOUDS_V2_SRC if CLOUDS_PIPELINE == "v2" else CLOUDS_SRC, FLY_SRC)
 
 
 def run(cmd: list[str]) -> None:

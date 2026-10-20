@@ -142,10 +142,15 @@ Dark is the default and only theme. Contrast ratios are WCAG 2 against `void` (`
 
 All three share one lightness (52%) so no country shouts louder than another, with low chroma (0.04 to 0.085) so they read as real, slightly faded stamp ink rather than digital colour.
 
+### Section-scoped: the view through the window
+
+The clouds seen through the landing's window keep their own soft, muted, cool blue: the photographed sky graded to about a third of its natural saturation (32% by default; 25 to 40% is the intended range) with lifted blacks and rolled-off whites. When the shade opens, the view is the only natural colour on the landing. It is photography, not a palette colour: no token, no UI element and no gradient takes its hue. The fly-through starts in the same soft blue and fades to monochrome by its final frames, so the rest of the site arrives in greys.
+
 ### Named Rules
 
 - **The Single Accent Rule.** Amber is used only for focus rings, at most one highlight per section, and the top driver in the fraud demo. Never as a large fill, a glow, a gradient, a background wash or a decorative border.
 - **Amber contrast.** Amber meets 3:1 for focus rings and 4.5:1 for text on `void` and `cabin` (it measures 8.79:1 and 8.18:1). Re-check if it is ever placed on any other surface.
+- **The Window View Rule.** The cloud loop and the opening of the fly-through are the only other colour, and only as photography inside the window (and the push through it). Nothing is ever sampled from them.
 - **The Stamp Ink Rule.** `ink-za`, `ink-mu` and `ink-my` may be used only inside the passport stamp section. Nowhere else, for anything. They clear 3:1 as graphics; stamp text set in them must be large (at least 24px, or 18.66px bold) and the same information must also exist as real text in `paper` or `paper-muted`.
 - **shadcn naming.** shadcn's `--accent` is a hover fill mapped to `graphite-1`; it is not the amber accent. Amber is reached through `--ring` and the `amber` utilities only.
 - **Muted text floor.** Small text never uses anything darker than `graphite-4`. `graphite-3` and darker are for borders and surfaces.
@@ -210,9 +215,19 @@ Small radii (`--radius: 0.375rem`). Buttons and inputs use `rounded-md`. No pill
 
 `graphite-3` border (3.30:1, meets the 3:1 non-text minimum), `paper` text, `graphite-4` placeholder, amber focus ring, `error` text and border for validation messages.
 
+### Window landing (built in Phase 2b, v2 plate)
+
+All values live at the top of `src/components/scene/WindowScene.module.css`, so they can be tuned in one place.
+
+- **Plate:** the owner's window composition, separated into a frame plate (outer bezel and wall), the inner bezel (between the groove and the glass), the plate's own shade (panel and lip, extended upwards with matching matt texture and widened so its edges run in the groove) and the track and glass outlines. Graded to neutral monochrome; the bezel is clearly the lightest object, the shade dark matt with its lip catching the light. The wall panel feathers into `--void` on every side; there is no invented wall.
+- **Window scale:** the frame is **65%** of the viewport height on landscape screens, centred at 46% (slightly above the middle), and **57.5%** on portrait screens (3:4 or narrower), centred at 42%, so the title and the scroll cue sit on the dark background below and beside it.
+- **Layers, back to front:** cloud loop (clipped to the glass), glass sheen and inner shadow (clipped to the glass), inner bezel, shade (clipped to its track, so it runs in the bezel's dark groove like a real slider), frame plate, window light (very slightly cool white, subtle), grain, vignette, darkness.
+- **Shade:** opens once on load, from closed (lip resting in the groove at the bottom) to the photographed position, over 1.6 s on `--ease-cinematic`; the clouds start just before it moves. The frame is lit only by the window: with the shade down the landing is black (only the name and role show), and the bezel's glow and the window light return with the shade, on the same duration and curve. Reduced motion shows it open and lit.
+- **Film grain:** static (no movement), one texel per device pixel (a 256 px tile shown at 256 / devicePixelRatio CSS px, so it never clumps on Retina screens), **soft-light at 2%** over the whole landing and **1%** inside the glass. At this strength it is at the edge of perception: it changes pixels by about one grey level and never greys the blacks.
+
 ### Signature components (to be built)
 
-- **Window landing:** photographic layers (keyed window image, two cloud videos), shade lift, scroll push through the window and a cloud. The only place `--ease-cinematic` and long durations are allowed.
+- **Window landing:** photographic layers (the owner's window composition separated into frame, inner bezel and shade; two cloud videos), shade lift, scroll push through the window and a cloud. The only place `--ease-cinematic` and long durations are allowed.
 - **Split-flap departures board:** JetBrains Mono, tabular figures, `paper` on `cabin`; amber at most on one cell.
 - **Passport stamps:** the only place the stamp inks appear.
 - **Periodic table of the stack:** `graphite-4` category labels, `paper` symbols.

@@ -9,17 +9,20 @@ from common import PUBLIC, file_entry
 
 SIZE = 256
 SEED = 2026
-SIGMA = 0.6  # a touch of softness so the grain reads as film, not digital noise
+# No blur: the tile is shown at one texel per device pixel (256 / devicePixelRatio CSS px), so any
+# softening would clump the grain into blotches on Retina screens (the Phase 2b problem).
+SIGMA = 0.0
 WEBP_QUALITY = 70
 
 
 def build() -> dict:
     rng = np.random.default_rng(SEED)
     noise = rng.normal(0.0, 1.0, (SIZE, SIZE)).astype(np.float32)
-    # Blur with wrap-around so the tile repeats seamlessly.
-    padded = np.pad(noise, 8, mode="wrap")
-    padded = cv2.GaussianBlur(padded, (0, 0), SIGMA)
-    noise = padded[8:-8, 8:-8]
+    if SIGMA > 0:
+        # Blur with wrap-around so the tile repeats seamlessly.
+        padded = np.pad(noise, 8, mode="wrap")
+        padded = cv2.GaussianBlur(padded, (0, 0), SIGMA)
+        noise = padded[8:-8, 8:-8]
     noise = (noise - noise.mean()) / noise.std()
     grey = np.clip(128 + noise * 34, 0, 255).astype(np.uint8)  # mean mid-grey: neutral under overlay blending
     (PUBLIC / "grain.png").unlink(missing_ok=True)  # earlier versions wrote a PNG

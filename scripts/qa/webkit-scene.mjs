@@ -4,7 +4,7 @@ import { mkdir } from "node:fs/promises";
 import { webkit } from "playwright";
 
 const url = process.argv[2] ?? "http://localhost:8787/";
-const outDir = process.argv[3] ?? "docs/qa/scene-2b";
+const outDir = process.argv[3] ?? "docs/qa/scene-2b-v2";
 const sizes = [
   { name: "webkit-390x844", width: 390, height: 844, deviceScaleFactor: 3, isMobile: true, hasTouch: true },
   { name: "webkit-1440x900", width: 1440, height: 900, deviceScaleFactor: 2 },
@@ -34,10 +34,10 @@ for (const s of sizes) {
 
   const info = await page.evaluate(() => {
     const scene = document.querySelector("section[data-phase]");
-    const img = scene.querySelector("picture img");
+    const img = scene.querySelector("img[fetchpriority='high']");
     const video = scene.querySelector("video");
     const view = video.parentElement;
-    const shade = view.children[2];
+    const shade = scene.querySelector("img[class*='shade']");
     const grain = scene.querySelector("[class*='grain_']") ?? scene.querySelector("[class*='grain']");
     const vcs = getComputedStyle(view);
     return {
@@ -51,7 +51,10 @@ for (const s of sizes) {
       videoPlaying: !video.paused && video.readyState >= 3,
       videoTime: video.currentTime,
       clipPath: vcs.clipPath || vcs.webkitClipPath,
+      shade: shade.currentSrc.replace(location.origin, ""),
+      shadeLoaded: shade.complete && shade.naturalWidth > 0,
       shadeTranslate: getComputedStyle(shade).translate,
+      shadeClip: getComputedStyle(shade.closest("[class*='shadeClip']")).clipPath,
       grainAnimation: grain ? getComputedStyle(grain).animationName : "not found",
     };
   });

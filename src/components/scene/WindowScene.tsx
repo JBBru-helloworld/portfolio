@@ -17,22 +17,50 @@ interface Props {
 const INTRO_CAP_MS = 2500; // never wait longer than this for the plate and video
 const INTRO_PAUSE_MS = 300; // beat between "ready" and the shade moving
 const LIFT_MS = 1600; // shade travel; matches --duration in the CSS module
-const SMALL_SCREEN = "(max-width: 767px), (max-height: 500px), (max-aspect-ratio: 1/1)";
+const SMALL_SCREEN = "(max-width: 767px), (max-height: 500px), (max-aspect-ratio: 3/4)";
+// Portrait plate (cropped to the wall panel) up to 3:4 viewports; the 16:9 landscape plate otherwise.
+// Must match the media query in WindowScene.module.css.
+const PORTRAIT_MEDIA = "(max-aspect-ratio: 3/4)";
+// Frame height as a share of the viewport height. Mirrors --window-scale-* in the CSS module (the CSS
+// variables are the source of truth); used here only to tell the browser which image width to fetch.
+const WINDOW_SCALE = { landscape: 0.65, portrait: 0.575 };
 
 const pct = (n: number) => `${(n * 100).toFixed(4)}%`;
+const num = (n: number) => n.toFixed(6);
 
-/** Glass geometry and plate aspect as CSS custom properties, one set per orientation. */
+/** Glass, frame and shade geometry and plate aspect as CSS custom properties, one set per orientation. */
 function geometryVars(prefix: "l" | "p", p: PlateSet): Record<string, string> {
   const g = p.glass;
+  const s = p.shade.box;
+  const i = p.inner;
   return {
-    [`--${prefix}-aspect`]: p.aspect.toFixed(6),
+    [`--${prefix}-aspect`]: num(p.aspect),
     [`--${prefix}-gx`]: pct(g.bbox.x),
     [`--${prefix}-gy`]: pct(g.bbox.y),
     [`--${prefix}-gw`]: pct(g.bbox.width),
     [`--${prefix}-gh`]: pct(g.bbox.height),
     [`--${prefix}-cx`]: pct(g.centre.x),
     [`--${prefix}-cy`]: pct(g.centre.y),
+    [`--${prefix}-fx-n`]: num(p.frame.x),
+    [`--${prefix}-fy-n`]: num(p.frame.y),
+    [`--${prefix}-fw-n`]: num(p.frame.width),
+    [`--${prefix}-fh-n`]: num(p.frame.height),
+    [`--${prefix}-sx`]: pct(s.x),
+    [`--${prefix}-sy`]: pct(s.y),
+    [`--${prefix}-sw`]: pct(s.width),
+    [`--${prefix}-sh`]: pct(s.height),
+    [`--${prefix}-ix`]: pct(i.x),
+    [`--${prefix}-iy`]: pct(i.y),
+    [`--${prefix}-iw`]: pct(i.width),
+    [`--${prefix}-ih`]: pct(i.height),
+    [`--${prefix}-shade-closed`]: num(p.shade.closed - p.shade.open),
+    [`--${prefix}-glass-mask`]: p.glassMask,
   };
+}
+
+/** Displayed width of an image that spans `share` of the plate width, in svh at the default scale. */
+function sizesFor(p: PlateSet, scale: number, share = 1) {
+  return `${((scale / p.frame.height) * p.aspect * share * 100).toFixed(1)}svh`;
 }
 
 function isConstrainedNetwork(): boolean {
@@ -77,7 +105,7 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
-      // Shade already open (CSS), poster only, light at full strength.
+      // Shade open (CSS), poster only, light at full strength.
       setPhase("open");
       return;
     }
@@ -125,7 +153,18 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
     };
   }, [data]);
 
-  // Pause the video and the grain when the scene is off screen or the tab is hidden.
+  // Grain at one texel per device pixel (crisp, never clumped): 256 px tile / devicePixelRatio.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const apply = () => section.style.setProperty("--grain-size", `${256 / (window.devicePixelRatio || 1)}px`);
+    apply();
+    const mq = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  // Pause the video (and the cue) when the scene is off screen or the tab is hidden.
   useEffect(() => {
     const section = sectionRef.current;
     const video = videoRef.current;
@@ -154,9 +193,16 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
     };
   }, []);
 
+  const { landscape, portrait, shade, inner } = data;
+  const landscapeSizes = sizesFor(landscape, WINDOW_SCALE.landscape);
+  const portraitSizes = sizesFor(portrait, WINDOW_SCALE.portrait);
+  const shadeSizes =
+    `${PORTRAIT_MEDIA} ${sizesFor(portrait, WINDOW_SCALE.portrait, portrait.shade.box.width)}, ` +
+    sizesFor(landscape, WINDOW_SCALE.landscape, landscape.shade.box.width);
+
   const style = {
-    ...geometryVars("l", data.landscape),
-    ...geometryVars("p", data.portrait),
+    ...geometryVars("l", landscape),
+    ...geometryVars("p", portrait),
     "--grain": `url(${data.grain})`,
   } as CSSProperties;
 
@@ -164,17 +210,23 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
     <section ref={sectionRef} className={styles.scene} data-phase={phase} data-inview="true" style={style}>
       <svg className={styles.defs} aria-hidden="true" focusable="false">
         <defs>
+          <clipPath id="aperture-clip-landscape" clipPathUnits="objectBoundingBox">
+            <path d={landscape.aperture.clipPath} />
+          </clipPath>
+          <clipPath id="aperture-clip-portrait" clipPathUnits="objectBoundingBox">
+            <path d={portrait.aperture.clipPath} />
+          </clipPath>
           <clipPath id="glass-clip-landscape" clipPathUnits="objectBoundingBox">
-            <path d={data.landscape.glass.clipPath} />
+            <path d={landscape.glass.clipPath} />
           </clipPath>
           <clipPath id="glass-clip-portrait" clipPathUnits="objectBoundingBox">
-            <path d={data.portrait.glass.clipPath} />
+            <path d={portrait.glass.clipPath} />
           </clipPath>
         </defs>
       </svg>
 
       <div className={styles.stage} role="img" aria-label={sceneLabel}>
-        {/* 1-3: the view, the glass and the shade, all clipped to the glass shape */}
+        {/* 1: the view, clipped to the glass */}
         <div className={styles.view} aria-hidden="true">
           <video
             ref={videoRef}
@@ -189,38 +241,71 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
             tabIndex={-1}
             aria-hidden="true"
           />
-          <div className={styles.glass} />
-          <div className={styles.shade}>
-            <div className={styles.lip} />
-          </div>
         </div>
 
-        {/* 4: the window and wall plate; the browser picks the orientation by aspect ratio */}
+        {/* 2: glass sheen and inner shadow, clipped to the glass */}
+        <div className={styles.glass} aria-hidden="true">
+          <div className={styles.sheen} />
+        </div>
+
+        {/* 3: the inner bezel, between the groove and the glass; the closing shade covers it */}
+        <picture>
+          <source type="image/avif" srcSet={inner.avifSrcSet} sizes={shadeSizes} />
+          <source type="image/webp" srcSet={inner.webpSrcSet} sizes={shadeSizes} />
+          <img
+            className={styles.inner}
+            src={inner.fallback}
+            width={inner.width}
+            height={inner.height}
+            alt=""
+            decoding="async"
+            draggable={false}
+          />
+        </picture>
+
+        {/* 4: the plate's own shade, clipped to its track (inside the groove), so it runs under the bezel */}
+        <div className={styles.shadeClip} aria-hidden="true">
+          <picture>
+            <source type="image/avif" srcSet={shade.avifSrcSet} sizes={shadeSizes} />
+            <source type="image/webp" srcSet={shade.webpSrcSet} sizes={shadeSizes} />
+            <img
+              className={styles.shade}
+              src={shade.fallback}
+              width={shade.width}
+              height={shade.height}
+              alt=""
+              decoding="async"
+              draggable={false}
+            />
+          </picture>
+        </div>
+
+        {/* 5: the frame plate (outer bezel and wall); the browser picks the framing by aspect ratio */}
         <picture>
           <source
-            media="(max-aspect-ratio: 1/1)"
+            media={PORTRAIT_MEDIA}
             type="image/avif"
-            srcSet={data.portrait.avifSrcSet}
-            sizes="100vw"
-            width={data.portrait.width}
-            height={data.portrait.height}
+            srcSet={portrait.avifSrcSet}
+            sizes={portraitSizes}
+            width={portrait.width}
+            height={portrait.height}
           />
           <source
-            media="(max-aspect-ratio: 1/1)"
+            media={PORTRAIT_MEDIA}
             type="image/webp"
-            srcSet={data.portrait.webpSrcSet}
-            sizes="100vw"
-            width={data.portrait.width}
-            height={data.portrait.height}
+            srcSet={portrait.webpSrcSet}
+            sizes={portraitSizes}
+            width={portrait.width}
+            height={portrait.height}
           />
-          <source type="image/avif" srcSet={data.landscape.avifSrcSet} sizes="max(100vw, 177.97svh)" />
-          <source type="image/webp" srcSet={data.landscape.webpSrcSet} sizes="max(100vw, 177.97svh)" />
+          <source type="image/avif" srcSet={landscape.avifSrcSet} sizes={landscapeSizes} />
+          <source type="image/webp" srcSet={landscape.webpSrcSet} sizes={landscapeSizes} />
           <img
             ref={imgRef}
             className={styles.plate}
-            src={data.landscape.fallback}
-            width={data.landscape.width}
-            height={data.landscape.height}
+            src={landscape.fallback}
+            width={landscape.width}
+            height={landscape.height}
             alt=""
             fetchPriority="high"
             decoding="async"
@@ -228,18 +313,18 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
           />
         </picture>
 
-        {/* 5: window light on the wall; rises as the shade opens, then stays still */}
+        {/* 6: window light on the wall; rises as the shade opens, then stays still */}
         <div className={styles.light} aria-hidden="true" />
-        {/* Portrait only: soft fades into --void above and below the plate */}
-        <div className={styles.fadeTop} aria-hidden="true" />
-        <div className={styles.fadeBottom} aria-hidden="true" />
       </div>
 
-      {/* 7 and 6: vignette and grain over the whole scene */}
+      {/* 7: still film grain over the whole scene; inside the glass at half strength */}
+      <div className={styles.grain} aria-hidden="true" />
+      <div className={styles.grainGlass} aria-hidden="true" />
+
+      {/* 8: vignette */}
       <div className={styles.vignette} aria-hidden="true" />
-      <div className={styles.grainWrap} aria-hidden="true">
-        <div className={styles.grain} />
-      </div>
+      {/* 9: darkness: with the shade down no daylight reaches the cabin; it lifts with the shade */}
+      <div className={styles.dark} aria-hidden="true" />
 
       <p className={`${styles.wordmark} text-sm font-medium tracking-[0.01em] text-paper-muted`}>{name}</p>
       <div className={styles.title}>

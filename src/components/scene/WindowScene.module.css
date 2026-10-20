@@ -1,11 +1,27 @@
 /*
- * Window scene (Phase 2b). Every layer lives in one stage with the plate's exact aspect ratio,
- * positioned in plate coordinates, so the clouds and the shade line up with the glass at any size.
- * Geometry arrives as custom properties (--l-* landscape, --p-* portrait) from the manifest.
+ * Window scene (Phase 2b, v2 plate). Every image layer lives in one stage with the plate's exact aspect
+ * ratio, positioned in plate coordinates, so the clouds, the shade and the bezel line up at any size.
+ * Geometry arrives as custom properties (--l-* landscape plate, --p-* portrait plate) from the manifest.
+ * The plate's wall feathers into --void by itself, so the stage never has to cover the viewport.
  */
 
 .scene {
+  /* ---- Tune the window here ---- */
+  /* Frame height as a share of the viewport height, per orientation (mirrored in WindowScene.tsx). */
+  --window-scale-landscape: 0.65;
+  --window-scale-portrait: 0.575;
+  /* Where the frame's centre sits, as a share of the viewport height (0.5 = middle). */
+  --window-y-landscape: 0.46;
+  --window-y-portrait: 0.42;
+  /* Film grain (static, one texel per device pixel): full strength outside the glass, half inside. */
+  --grain-opacity: 0.02;
+  --grain-blend: soft-light;
+  /* -------------------------------- */
+
   --lift: 1600ms;
+  --grain-size: 128px; /* set to 256px / devicePixelRatio by the component */
+  --scale: var(--window-scale-landscape);
+  --window-y: var(--window-y-landscape);
   --aspect: var(--l-aspect);
   --gx: var(--l-gx);
   --gy: var(--l-gy);
@@ -13,7 +29,33 @@
   --gh: var(--l-gh);
   --cx: var(--l-cx);
   --cy: var(--l-cy);
-  --clip: url(#glass-clip-landscape);
+  --fx-n: var(--l-fx-n);
+  --fy-n: var(--l-fy-n);
+  --fw-n: var(--l-fw-n);
+  --fh-n: var(--l-fh-n);
+  --sx: var(--l-sx);
+  --sy: var(--l-sy);
+  --sw: var(--l-sw);
+  --sh: var(--l-sh);
+  --ix: var(--l-ix);
+  --iy: var(--l-iy);
+  --iw: var(--l-iw);
+  --ih: var(--l-ih);
+  --shade-closed: var(--l-shade-closed);
+  --glass-mask: var(--l-glass-mask);
+  --aperture-clip: url(#aperture-clip-landscape);
+  --glass-clip: url(#glass-clip-landscape);
+
+  /* Stage size: the frame box is --scale of the viewport height. */
+  --stage-h: calc(var(--scale) / var(--fh-n) * 100svh);
+  --stage-w: calc(var(--stage-h) * var(--aspect));
+  /* Stage top: the frame's centre lands at --window-y. */
+  --frame-cy-n: calc(var(--fy-n) + var(--fh-n) / 2);
+  --stage-top: calc(var(--window-y) * 100svh - var(--frame-cy-n) * var(--stage-h));
+  /* Horizontal shift that centres the frame (not the plate) in the viewport. */
+  --frame-dx: calc((0.5 - var(--fx-n) - var(--fw-n) / 2) * var(--stage-w));
+  /* The frame's left edge on screen (for keeping text clear of it). */
+  --frame-left: calc(50vw - var(--fw-n) * var(--stage-w) / 2);
 
   position: relative;
   height: 100svh;
@@ -23,9 +65,11 @@
   isolation: isolate;
 }
 
-/* Choose the plate by aspect ratio, not width: square and taller viewports get the portrait plate. */
-@media (max-aspect-ratio: 1/1) {
+/* Portrait plate (cropped to the wall panel) up to 3:4 viewports. Must match PORTRAIT_MEDIA in the TSX. */
+@media (max-aspect-ratio: 3/4) {
   .scene {
+    --scale: var(--window-scale-portrait);
+    --window-y: var(--window-y-portrait);
     --aspect: var(--p-aspect);
     --gx: var(--p-gx);
     --gy: var(--p-gy);
@@ -33,7 +77,22 @@
     --gh: var(--p-gh);
     --cx: var(--p-cx);
     --cy: var(--p-cy);
-    --clip: url(#glass-clip-portrait);
+    --fx-n: var(--p-fx-n);
+    --fy-n: var(--p-fy-n);
+    --fw-n: var(--p-fw-n);
+    --fh-n: var(--p-fh-n);
+    --sx: var(--p-sx);
+    --sy: var(--p-sy);
+    --sw: var(--p-sw);
+    --sh: var(--p-sh);
+    --ix: var(--p-ix);
+    --iy: var(--p-iy);
+    --iw: var(--p-iw);
+    --ih: var(--p-ih);
+    --shade-closed: var(--p-shade-closed);
+    --glass-mask: var(--p-glass-mask);
+    --aperture-clip: url(#aperture-clip-portrait);
+    --glass-clip: url(#glass-clip-portrait);
   }
 }
 
@@ -44,133 +103,105 @@
   overflow: hidden;
 }
 
-/* ---------- Stage: covers the viewport (landscape) or fills the width (portrait) ---------- */
+/* ---------- Stage ---------- */
 
 .stage {
   position: absolute;
   left: 50%;
-  top: 50%;
-  width: max(100vw, calc(100svh * var(--aspect)));
-  height: max(calc(100vw / var(--aspect)), 100svh);
-  translate: -50% -50%;
+  top: var(--stage-top);
+  width: var(--stage-w);
+  height: var(--stage-h);
+  translate: calc(-50% + var(--frame-dx)) 0;
   container-type: size;
 }
 
-@media (max-aspect-ratio: 1/1) {
-  /* 2:3 plate sized to the space above a band reserved for the title and scroll cue, so the text
-     never sits on the window. Any space left over is --void, reached through soft fades on the
-     plate's edges (no invented wall). */
-  .stage {
-    --reserve: 11.5rem;
-    --ph: min(calc(100vw / var(--aspect)), calc(100svh - var(--reserve)));
-    top: calc((100svh - var(--reserve)) / 2);
-    width: calc(var(--ph) * var(--aspect));
-    height: var(--ph);
-  }
-}
+/* ---------- 1: the view, clipped to the glass (grown a little under the bezel) ---------- */
 
-/* ---------- 1-3: view, glass and shade, clipped to the glass ---------- */
-
-.view {
+.view,
+.glass,
+.shadeClip {
   position: absolute;
   inset: 0;
-  clip-path: var(--clip);
-  -webkit-clip-path: var(--clip);
+  pointer-events: none;
+}
+
+.view {
+  clip-path: var(--glass-clip);
+  -webkit-clip-path: var(--glass-clip);
 }
 
 .video {
   position: absolute;
-  /* Cover the glass's bounding box plus a small margin. */
+  /* Cover the glass's bounding box plus a small margin (the clip path runs a little under the bezel). */
   left: calc(var(--gx) - 1.5%);
   top: calc(var(--gy) - 1.5%);
   width: calc(var(--gw) + 3%);
   height: calc(var(--gh) + 3%);
   object-fit: cover;
-  background: #1b1b1d;
-  pointer-events: none;
+  background: #8e97a1;
 }
 
-/* Glass: a faint diagonal sheen and a soft inner shadow under the overhanging frame top. */
+/* ---------- 2: glass sheen and inner shadow, clipped to the glass ---------- */
+
 .glass {
+  clip-path: var(--glass-clip);
+  -webkit-clip-path: var(--glass-clip);
+}
+
+.sheen {
   position: absolute;
-  /* Starts 1% above the glass so the inner shadow also covers the grown clip band under the bezel's
-     soft edge (otherwise a bright sliver of sky shows there). */
   left: var(--gx);
-  top: calc(var(--gy) - 1%);
+  top: var(--gy);
   width: var(--gw);
-  height: calc(var(--gh) + 1%);
-  pointer-events: none;
+  height: var(--gh);
   background:
-    linear-gradient(to bottom, rgb(0 0 0 / 0.55) 0, rgb(0 0 0 / 0.42) 1.6%, rgb(0 0 0 / 0.12) 8.5%, transparent 17%),
+    /* soft inner shadow where the glass meets the bezel, following its rounded shape */
+    radial-gradient(ellipse 72% 66% at 50% 50%, transparent 62%, rgb(0 0 0 / 0.1) 86%, rgb(0 0 0 / 0.22) 100%),
+    /* a faint diagonal sheen on the inner pane */
     linear-gradient(118deg, transparent 22%, rgb(255 255 255 / 0.045) 38%, rgb(255 255 255 / 0.015) 50%, transparent 62%);
 }
 
-/* The shade: a matt plastic panel that slides up behind the top of the frame. */
+/* ---------- 3: the inner bezel (from the plate), between the groove and the glass ---------- */
+
+.inner {
+  position: absolute;
+  left: var(--ix);
+  top: var(--iy);
+  width: var(--iw);
+  height: var(--ih);
+  max-width: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ---------- 4: the shade, clipped to its track (inside the groove), under the outer bezel ---------- */
+
+.shadeClip {
+  clip-path: var(--aperture-clip);
+  -webkit-clip-path: var(--aperture-clip);
+}
+
+/* Closed: lowered until the lip rests in the groove at the bottom. Open: where the photograph has it. */
 .shade {
   position: absolute;
-  left: calc(var(--gx) - 1%);
-  top: calc(var(--gy) - 2%);
-  width: calc(var(--gw) + 2%);
-  height: calc(var(--gh) + 3%);
-  translate: 0 0;
+  left: var(--sx);
+  top: var(--sy);
+  width: var(--sw);
+  height: var(--sh);
+  max-width: none;
+  user-select: none;
+  translate: 0 calc(var(--shade-closed) * 100cqh);
   transition: translate var(--lift) var(--ease-cinematic);
   will-change: translate;
-  /* lit from the window side: slightly lighter towards the lower half */
-  background: linear-gradient(to bottom, #1e1e1e 0%, #252525 34%, #2b2b2b 74%, #2f2f2f 100%);
-}
-
-/* Soft side falloff, so it reads as a slightly curved moulded panel rather than a flat card. */
-.shade::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, rgb(0 0 0 / 0.3), transparent 16%, transparent 84%, rgb(0 0 0 / 0.3));
-}
-
-/* Very faint matt plastic texture. */
-.shade::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--grain) 0 0 / 128px 128px;
-  opacity: 0.05;
-}
-
-/* The moulded grip lip: a lit top edge, a darker underside and a soft shadow cast below it. */
-.lip {
-  position: absolute;
-  z-index: 1;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 5%;
-  background: linear-gradient(
-    to bottom,
-    #424242 0%,
-    #3a3a3a 12%,
-    #333333 40%,
-    #2c2c2c 70%,
-    #222222 90%,
-    #191919 100%
-  );
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.07),
-    0 0.3cqh 0.5cqh rgb(0 0 0 / 0.5),
-    0 0.8cqh 1.6cqh rgb(0 0 0 / 0.35);
-}
-
-/* Closed only when JavaScript will open it (html.js is set before first paint). */
-:global(html.js) .scene[data-phase="closed"] .shade {
-  translate: 0 0;
 }
 
 .scene[data-phase="lifting"] .shade,
 .scene[data-phase="open"] .shade,
 :global(html:not(.js)) .shade {
-  translate: 0 -106%;
+  translate: 0 0;
 }
 
-/* ---------- 4: plate ---------- */
+/* ---------- 5: frame plate ---------- */
 
 .plate {
   position: absolute;
@@ -182,20 +213,20 @@
   pointer-events: none;
 }
 
-/* ---------- 5: window light ---------- */
+/* ---------- 6: window light: very slightly cool white, subtle; rises with the shade ---------- */
 
 .light {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background: radial-gradient(
-    ellipse calc(var(--gw) * 2.6) calc(var(--gh) * 1.25) at var(--cx) var(--cy),
-    rgb(232 237 242 / 0.075) 0%,
-    rgb(232 237 242 / 0.035) 38%,
-    rgb(232 237 242 / 0.01) 62%,
+    ellipse calc(var(--gw) * 2.4) calc(var(--gh) * 1.2) at var(--cx) var(--cy),
+    rgb(236 240 245 / 0.06) 0%,
+    rgb(236 240 245 / 0.028) 38%,
+    rgb(236 240 245 / 0.008) 62%,
     transparent 80%
   );
-  opacity: 0.3;
+  opacity: 0.25;
   transition: opacity var(--lift) var(--ease-cinematic);
 }
 
@@ -205,80 +236,74 @@
   opacity: 1;
 }
 
-/* ---------- Portrait fades into --void ---------- */
+/* ---------- 7: grain (static, one texel per device pixel) ---------- */
 
-.fadeTop,
-.fadeBottom {
-  display: none;
+/* The glass mask is placed exactly over the stage: same size, same shift, same top. */
+.grain,
+.grainGlass {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--grain) 0 0 / var(--grain-size) var(--grain-size);
+  mix-blend-mode: var(--grain-blend);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
 }
 
-@media (max-aspect-ratio: 1/1) {
-  /* Edge fades: top and bottom always; left and right only matter when the plate is narrower than
-     the viewport (tablets), and blend into the vignette otherwise. Slightly overscanned (-1px) so no
-     seam can show at the plate's edge. */
-  .fadeTop,
-  .fadeBottom {
-    display: block;
-    position: absolute;
-    inset: -1px;
-    pointer-events: none;
-  }
-  .fadeTop {
-    background:
-      linear-gradient(to bottom, var(--void) 0, rgb(10 10 10 / 0) 16%),
-      linear-gradient(to top, var(--void) 0, rgb(10 10 10 / 0) 16%);
-  }
-  .fadeBottom {
-    background:
-      linear-gradient(to right, var(--void) 0, rgb(10 10 10 / 0) 10%),
-      linear-gradient(to left, var(--void) 0, rgb(10 10 10 / 0) 10%);
-  }
+/* Everywhere except the glass: full strength. */
+.grain {
+  opacity: var(--grain-opacity);
+  mask-image: linear-gradient(#000 0 0), var(--glass-mask);
+  -webkit-mask-image: linear-gradient(#000 0 0), var(--glass-mask);
+  mask-size: 100% 100%, var(--stage-w) var(--stage-h);
+  -webkit-mask-size: 100% 100%, var(--stage-w) var(--stage-h);
+  mask-position: 0 0, calc(50% + var(--frame-dx)) var(--stage-top);
+  -webkit-mask-position: 0 0, calc(50% + var(--frame-dx)) var(--stage-top);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
 }
 
-/* ---------- 7: vignette ---------- */
+/* Inside the glass: half strength, so the clouds stay clean. */
+.grainGlass {
+  opacity: calc(var(--grain-opacity) / 2);
+  mask-image: var(--glass-mask);
+  -webkit-mask-image: var(--glass-mask);
+  mask-size: var(--stage-w) var(--stage-h);
+  -webkit-mask-size: var(--stage-w) var(--stage-h);
+  mask-position: calc(50% + var(--frame-dx)) var(--stage-top);
+  -webkit-mask-position: calc(50% + var(--frame-dx)) var(--stage-top);
+}
+
+/* ---------- 8: vignette ---------- */
 
 .vignette {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse 75% 70% at 50% 48%, transparent 55%, rgb(10 10 10 / 0.55) 85%, rgb(10 10 10 / 0.85) 100%);
+  background: radial-gradient(ellipse 75% 70% at 50% 46%, transparent 55%, rgb(10 10 10 / 0.5) 85%, rgb(10 10 10 / 0.8) 100%);
 }
 
-/* ---------- 6: grain ---------- */
+/* ---------- 9: darkness while the shade is down ---------- */
 
-.grainWrap {
+/* The frame is lit only by the window. Closed, the cabin is black; the light returns as the shade
+   lifts, on the same duration and curve, so the bezel's glow is revealed with the glass. */
+.dark {
   position: absolute;
   inset: 0;
-  overflow: hidden;
   pointer-events: none;
+  background: var(--void);
+  opacity: 1;
+  transition: opacity var(--lift) var(--ease-cinematic);
 }
 
-.grain {
-  position: absolute;
-  inset: -256px;
-  background: var(--grain) 0 0 / 256px 256px;
-  opacity: 0.045;
-  will-change: transform;
-  /* a few discrete shifts per second, on the compositor (transform only) */
-  animation: grain 0.85s steps(1, end) infinite;
+.scene[data-phase="lifting"] .dark,
+.scene[data-phase="open"] .dark,
+:global(html:not(.js)) .dark {
+  opacity: 0;
 }
 
-.scene[data-inview="false"] .grain {
-  animation-play-state: paused;
-}
+/* ---------- Text (type sizes come from Tailwind utilities in the JSX) ---------- */
 
-@keyframes grain {
-  0% { transform: translate(0, 0); }
-  17% { transform: translate(-97px, 41px); }
-  33% { transform: translate(53px, -118px); }
-  50% { transform: translate(-31px, -64px); }
-  67% { transform: translate(121px, 87px); }
-  83% { transform: translate(-142px, 19px); }
-}
-
-/* ---------- Text ---------- */
-
-/* Type sizes come from Tailwind utilities in the JSX (theme tokens are inlined, not CSS variables). */
 .wordmark {
   position: absolute;
   top: clamp(1rem, 3vw, 2rem);
@@ -288,19 +313,27 @@
 
 .title {
   --margin: clamp(1rem, 4vw, 3rem);
-  /* Landscape: the title stays on the wall to the left of the window frame, which spans about 36%
-     of the stage width, centred. */
-  --stage-w: max(100vw, calc(100svh * var(--aspect)));
   position: absolute;
   left: var(--margin);
-  bottom: clamp(1.5rem, 6svh, 4rem);
-  max-width: min(30rem, calc((100vw - var(--stage-w) * 0.36) / 2 - var(--margin) - 1.5rem));
+  bottom: clamp(1.25rem, 5svh, 3.5rem);
+  /* Bottom left on the dark background, never across the frame: stop short of the frame's left edge. */
+  max-width: min(30rem, calc(var(--frame-left) - var(--margin) - 1.5rem));
 }
 
-@media (max-aspect-ratio: 1/1) {
+@media (max-aspect-ratio: 3/4) {
+  /* Portrait: the title sits below the frame, full width, above the cue. */
   .title {
     max-width: min(30rem, calc(100vw - 2 * var(--margin)));
+    bottom: calc(clamp(0.75rem, 2.2svh, 1.5rem) + 5rem);
   }
+}
+
+.h1 {
+  margin: 0;
+}
+
+.role {
+  margin: 0.35rem 0 0;
 }
 
 /* Short landscape screens (phones turned sideways): a step smaller and closer to the edges. */
@@ -321,14 +354,7 @@
   }
 }
 
-.h1 {
-  margin: 0;
-}
-
-.role {
-  margin: 0.35rem 0 0;
-}
-
+/* Scroll cue: bottom centre, below the frame (never on it). */
 .cue {
   position: absolute;
   left: 50%;
@@ -346,7 +372,6 @@
 :global(html:not(.js)) .cue {
   opacity: 1;
 }
-
 
 .cueTrack {
   position: relative;
@@ -376,39 +401,22 @@
   100% { transform: scaleY(0); transform-origin: bottom; }
 }
 
-/* On narrow and portrait screens the title rises above the centred cue so they never collide. */
-@media (max-width: 640px), (max-aspect-ratio: 1/1) {
-  .title {
-    bottom: calc(clamp(0.75rem, 2.2svh, 1.5rem) + 5rem);
-  }
-}
-
-/* Short landscape screens: the window fills the full height, so the cue moves onto the right-hand
-   wall. Placed after the base .cue rule so it wins the cascade. */
-@media (max-height: 500px) and (min-aspect-ratio: 1/1) {
-  .cue {
-    left: auto;
-    right: clamp(1rem, 4vw, 3rem);
-    bottom: 1rem;
-    translate: none;
-  }
-}
-
-/* ---------- Reduced motion: the end state, no movement ---------- */
+/* ---------- Reduced motion: the end state (shade open), no movement ---------- */
 
 @media (prefers-reduced-motion: reduce) {
   .shade {
-    translate: 0 -106% !important;
+    translate: 0 0 !important;
     transition: none !important;
   }
   .light {
     opacity: 1 !important;
   }
+  .dark {
+    opacity: 0 !important;
+    transition: none !important;
+  }
   .cue {
     opacity: 1 !important;
-  }
-  .grain {
-    animation: none !important;
   }
   .cueLine {
     animation: none !important;

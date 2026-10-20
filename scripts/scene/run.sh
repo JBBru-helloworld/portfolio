@@ -4,7 +4,7 @@ set -eu
 cd "$(dirname "$0")"
 ROOT="$(cd ../.. && pwd)"
 
-for f in window.png clouds.mp4 fly-through.mp4; do
+for f in window-v2.png fly-through.mp4; do
   if [ ! -f "$ROOT/assets/window-scene/$f" ]; then
     echo "scene:build: originals not found ($f); keeping the committed outputs in public/scene/."
     exit 0
