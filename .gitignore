@@ -37,6 +37,10 @@
 # Impeccable's compiled engine binary (16 MB); re-running the Impeccable install restores it
 /.claude/skills/impeccable/scripts/bin/
 
+# window-scene pipeline (originals live in assets/; outputs in public/scene/ are committed)
+/scripts/scene/.venv/
+__pycache__/
+
 # misc
 .DS_Store
 *.pem

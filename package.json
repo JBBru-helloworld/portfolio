@@ -12,7 +12,9 @@
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "typecheck": "next typegen && tsc --noEmit",
-    "check:content": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-content.ts"
+    "check:content": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-content.ts",
+    "scene:build": "sh scripts/scene/run.sh build.py",
+    "scene:qa": "sh scripts/scene/run.sh qa.py"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

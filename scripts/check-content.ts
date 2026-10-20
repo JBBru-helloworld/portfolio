@@ -1,7 +1,7 @@
 /*
  * Content checks for src/content/. Run with `pnpm check:content` (Node 24 runs TypeScript directly).
  *
- * Fails on: excluded words and phrases, em dashes, common US spellings in strings,
+ * Fails on: excluded words and phrases, the Sunway Tech Club outside its two approved lines, em dashes, common US spellings in strings,
  * duplicate or malformed periodic-table symbols, and departures-board rows that do not fit.
  * Warns (does not fail) on every TODO(owner) and CHECK(owner) until launch.
  */
@@ -13,13 +13,19 @@ const contentDir = join(root, "src", "content");
 
 const EXCLUDED: { label: string; pattern: RegExp }[] = [
   { label: "Singapore", pattern: /singapore/i },
-  { label: "Sunway Tech Club", pattern: /sunway\s+tech\s+club/i },
   { label: "job hunt", pattern: /job[\s-]*hunt/i },
   { label: "looking for work", pattern: /looking\s+for\s+work/i },
   { label: "open to work", pattern: /open\s+to\s+work/i },
   { label: "hiring", pattern: /\bhiring\b/i },
   { label: "available for", pattern: /available\s+for/i },
   { label: "internship opportunities", pattern: /internship\s+opportunit/i },
+];
+
+// The owner allows the Sunway Tech Club to be named for these two credentials only (Phase 2a).
+const CLUB = /sunway\s+tech\s+club/i;
+const CLUB_ALLOWED = [
+  "Coordinated a five-week Generative AI Study Jam for 900+ participants with the Sunway Tech Club (2025).",
+  "Co-led a portfolio workshop with the Sunway Tech Club, alongside a speaker from Google (2025).",
 ];
 
 // US spellings checked inside string literals only, so code identifiers are not affected.
@@ -80,7 +86,19 @@ for (const file of files) {
     while ((m = re.exec(text))) failures.push(`${rel}:${lineOf(text, m.index)}  excluded phrase "${label}"`);
   }
 
-  for (let i = text.indexOf("—"); i !== -1; i = text.indexOf("—", i + 1)) {
+  const literals = stringLiterals(text);
+  for (const { value, index } of literals) {
+    if (CLUB.test(value) && !(file === "credentials.ts" && CLUB_ALLOWED.includes(value))) {
+      failures.push(`${rel}:${lineOf(text, index)}  "Sunway Tech Club" outside the two approved credential lines`);
+    }
+  }
+  for (const m of text.matchAll(/sunway\s+tech\s+club/gi)) {
+    const at = m.index ?? 0;
+    const inString = literals.some(({ value, index }) => at > index && at <= index + value.length);
+    if (!inString) failures.push(`${rel}:${lineOf(text, at)}  "Sunway Tech Club" in a comment or code`);
+  }
+
+  for (let i = text.indexOf("\u2014"); i !== -1; i = text.indexOf("\u2014", i + 1)) {
     failures.push(`${rel}:${lineOf(text, i)}  em dash`);
   }
 

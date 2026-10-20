@@ -19,15 +19,13 @@ export const projects: Project[] = [
       "Leakage-safe fraud model reaching 0.59 PR-AUC on 590K transactions at a 3.5% fraud rate, with a cost-based threshold and 50 tests.",
     caseStudyAngle:
       "Why accuracy misleads at a 3.5% fraud rate: a chronological split, leakage controls, PR-AUC as the metric, SHAP for explanations and a cost-based threshold. It also powers the live security check demo.",
-    notes: [
-      "CHECK(owner): the inventory lists the repo URL as TODO; the public repo exists at github.com/JBBru-helloworld/payments-fraud-detection. Confirm it should be linked.",
-    ],
   },
   {
     slug: "inklusif",
     title: "Inklusif: AI-powered inclusive employment platform",
     date: { start: "Sep 2025", end: "Aug 2026" },
-    context: "Capstone project",
+    context: "Solo capstone project",
+    role: "Built it end to end",
     stack: [
       "Next.js 15",
       "Supabase",
@@ -39,15 +37,14 @@ export const projects: Project[] = [
       "Google Cloud Run",
     ],
     links: [
-      { label: "Live site", url: "TODO(owner): live URL", kind: "live" },
-      { label: "GitHub", url: "TODO(owner): repo URL", kind: "repo" },
+      { label: "Live site", url: "https://inklusif.org", kind: "live" },
+      { label: "GitHub", url: "https://github.com/JBBru-helloworld/inklusif", kind: "repo" },
     ],
     status: "featured",
     summary:
       "Employment platform with Gemini resume parsing and job matching, Guardian AI that flags ableist language, and real-time text, voice and video messaging.",
     caseStudyAngle:
       "Accessibility as the product, not a checklist: Gemini resume parsing, offer-letter generation, job matching and translations; Guardian AI flagging ableist language in job descriptions; real-time messaging with LiveKit; WCAG 2.2 AA; and the migration from Railway to Cloud Run.",
-    notes: ["CHECK(owner): Joshua's own role on the capstone team (the inventory does not say)."],
   },
   {
     slug: "touch-n-go-reporting",
@@ -105,14 +102,12 @@ export const projects: Project[] = [
     slug: "aws-receipt-processing",
     title: "Automated Receipt Processing Tool",
     date: { start: "May 2025" },
-    stack: ["AWS Lambda", "Amazon S3", "Amazon Textract", "Python"],
-    links: [{ label: "GitHub", url: "TODO(owner): repo URL", kind: "repo" }],
+    context: "Built entirely in AWS; no public repo",
+    stack: ["AWS Lambda", "Amazon S3", "Amazon Textract", "Amazon DynamoDB", "Amazon SES", "Python"],
+    links: [],
     status: "also-built",
-    summary: "Serverless AWS pipeline that runs OCR on receipts, then parses and stores the results.",
-    notes: [
-      "CHECK(owner): the old site also listed Amazon DynamoDB (storage) and Amazon SES (alerts) in this stack. Add them back?",
-      "CHECK(owner): the old site claimed Textract extraction at >95% accuracy. Not carried over without a source.",
-    ],
+    summary:
+      "Serverless AWS pipeline that runs OCR on receipts with Amazon Textract (>95% extraction accuracy), stores the results in DynamoDB and sends alerts with SES.",
   },
   {
     slug: "grab-buddy",
@@ -131,9 +126,6 @@ export const projects: Project[] = [
     ],
     status: "also-built",
     summary: "AI assistant giving Grab merchants plain-language business insights, built for Grab's UMHackathon 2025 challenge.",
-    notes: [
-      "CHECK(owner): role 'UI Designer' comes from the old site; the inventory does not state it.",
-    ],
   },
   {
     slug: "pengyou",
@@ -175,32 +167,31 @@ export const projects: Project[] = [
     stack: ["CSS", "Squarespace"],
     links: [{ label: "Live site", url: "https://www.myasiaartsfestival.com/", kind: "live" }],
     status: "also-built",
-    summary: "The festival's first website, designed, built and maintained for the client.",
-    notes: [
-      "CHECK(owner): the old CV adds '700+ event registrations' and '25% faster load times'. Not carried over without confirmation.",
-    ],
+    summary:
+      "The festival's first website, designed, built and maintained for the client: 700+ event registrations and 25% faster load times.",
   },
   {
     slug: "recipe-roots",
     title: "Recipe Roots",
+    role: "User research and UI design",
     date: { start: "Nov 2024", end: "Dec 2024" },
     stack: ["PHP", "MySQL", "Docker", "Figma"],
     links: [{ label: "Live site", url: "https://recipe-roots.spimy.dev/", kind: "live" }],
     status: "also-built",
     summary: "Recipe-sharing web app on the theme of SDG 2, Zero Hunger, working almost entirely without JavaScript.",
-    notes: ["TODO(owner): Joshua's own role (the repo or demo is hosted by a collaborator)."],
   },
   {
     slug: "mapetite",
     title: "Mapetite",
-    date: { start: "TODO(owner): dates" },
-    context: "Group project",
-    role: "UI/UX Engineer",
-    stack: [],
-    links: [{ label: "Link", url: "TODO(owner): links", kind: "other" }],
+    date: { start: "May 2026", end: "Aug 2026" },
+    context: "Code Camp assignment, group project",
+    role: "Lead mobile app designer and integration engineer",
+    stack: ["Flutter", "Dart", "Riverpod", "Django", "Django REST Framework", "PostgreSQL", "PostGIS", "pgvector", "Google Gemini", "Docker"],
+    links: [{ label: "GitHub", url: "https://github.com/Spimy/mapetite", kind: "repo" }],
     status: "also-built",
-    summary: "TODO(owner): one-line summary.",
-    notes: ["TODO(owner): dates, stack, links and a summary for Mapetite."],
+    summary:
+      "Mobile app connecting people with nearby merchants through routine matching, location-based discovery and Gemini-powered semantic search.",
+    notes: ["CHECK(owner): dates taken from the repo's commit history (first commit 15 May 2026, last 5 Aug 2026)."],
   },
 
   // Archive
@@ -218,32 +209,32 @@ export const projects: Project[] = [
   {
     slug: "eventsphere",
     title: "EventSphere",
+    role: "Content and data research",
     date: { start: "Jul 2024" },
     stack: ["HTML", "CSS", "JavaScript", "Figma"],
     links: [{ label: "GitHub", url: "https://github.com/Spimy/eventsphere", kind: "repo" }],
     status: "archive",
     summary: "Front-end concept for booking event venues and planners, with simulated sign-in via the Web Crypto API.",
-    notes: ["TODO(owner): Joshua's own role (the repo or demo is hosted by a collaborator)."],
   },
   {
     slug: "pokemon-ascii",
     title: "Pokémon ASCII",
+    role: "Contributed to the game's code",
     date: { start: "Jun 2024", end: "Jul 2024" },
     stack: ["Java", "Git"],
     links: [{ label: "GitHub", url: "https://github.com/Spimy/pokemon-ascii", kind: "repo" }],
     status: "archive",
     summary: "Command-line game inspired by Pokémon, with WASD movement and quick-time-event battles.",
-    notes: ["TODO(owner): Joshua's own role (the repo or demo is hosted by a collaborator)."],
   },
   {
     slug: "english-portfolio",
     title: "English Portfolio",
+    role: "UI design support, and author of his own written portfolio within it",
     date: { start: "Sep 2023", end: "Dec 2023" },
     context: "Team coursework",
     stack: ["MongoDB", "GitHub", "Figma"],
     links: [{ label: "Live site", url: "https://eng1044.spimy.dev/", kind: "live" }],
     status: "archive",
     summary: "Research portfolio on online gambling, built from scratch for full control over the design.",
-    notes: ["TODO(owner): Joshua's own role (the repo or demo is hosted by a collaborator)."],
   },
 ];

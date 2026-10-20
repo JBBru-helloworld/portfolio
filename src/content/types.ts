@@ -34,7 +34,6 @@ export interface Profile {
     board: string;
   };
   bio: string;
-  location: string;
   languages: { name: string; level?: string }[];
   notes?: OwnerNotes;
 }

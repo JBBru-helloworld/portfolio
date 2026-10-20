@@ -133,7 +133,6 @@ export default function StyleSheet() {
           <li>Role (point of view): {profile.roleLines.pointOfView}</li>
           <li>Role (board): {profile.roleLines.board}</li>
           <li>Bio: {profile.bio}</li>
-          <li>Location: {profile.location}</li>
           <li>Languages: {profile.languages.map((l) => l.name).join(", ")}</li>
         </ul>
 

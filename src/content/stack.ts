@@ -19,9 +19,14 @@ const elements: ElementDraft[] = [
   { symbol: "Sh", name: "SHAP", category: "ML and Data", usedFor: "Fraud detection explanations" },
   { symbol: "Op", name: "Optuna", category: "ML and Data", usedFor: "Fraud detection hyperparameter tuning" },
   { symbol: "Mc", name: "MaxCompute", category: "ML and Data", usedFor: "Touch 'n Go Digital reporting workflows" },
+  { symbol: "Pd", name: "pandas", category: "ML and Data", usedFor: "Fraud detection data pipeline (payments-fraud-detection: requirements.txt, src/fraud/features.py)" },
+  { symbol: "Np", name: "NumPy", category: "ML and Data", usedFor: "Fraud detection features and metrics (payments-fraud-detection: requirements.txt, src/fraud/features.py)" },
+  { symbol: "Sk", name: "scikit-learn", category: "ML and Data", usedFor: "Fraud detection baselines and PR-AUC metrics (payments-fraud-detection: requirements.txt, src/fraud/train.py, src/fraud/metrics.py)" },
+  { symbol: "Mp", name: "Matplotlib", category: "ML and Data", usedFor: "Fraud detection EDA charts (payments-fraud-detection: requirements.txt, src/fraud/eda.py)" },
+  { symbol: "Pa", name: "PyArrow", category: "ML and Data", usedFor: "Fraud detection Parquet data (payments-fraud-detection: requirements.txt, src/fraud/features.py)" },
 
   // GenAI
-  { symbol: "Gm", name: "Google Gemini", category: "GenAI", usedFor: "Inklusif, OCR Budget Tracker, Grab Buddy and PengYou" },
+  { symbol: "Gm", name: "Google Gemini", category: "GenAI", usedFor: "Inklusif, OCR Budget Tracker, Grab Buddy, PengYou and Mapetite search" },
   { symbol: "Ol", name: "Ollama", category: "GenAI", usedFor: "Grab Buddy (UMHackathon 2025)" },
   { symbol: "Ms", name: "Mistral 7B", category: "GenAI", usedFor: "Grab Buddy (UMHackathon 2025)" },
   { symbol: "Ls", name: "LangSmith", category: "GenAI", usedFor: "LLM-as-a-judge pipeline at Plandora" },
@@ -38,6 +43,7 @@ const elements: ElementDraft[] = [
   { symbol: "Ph", name: "PHP", category: "Languages", usedFor: "Recipe Roots" },
   { symbol: "Ht", name: "HTML", category: "Languages", usedFor: "EventSphere" },
   { symbol: "Cs", name: "CSS", category: "Languages", usedFor: "Asia Arts Festival Malaysia website, EventSphere" },
+  { symbol: "Da", name: "Dart", category: "Languages", usedFor: "Mapetite mobile app" },
 
   // Frontend
   { symbol: "Re", name: "React", category: "Frontend", usedFor: "OCR Budget Tracker, Plandora" },
@@ -46,6 +52,7 @@ const elements: ElementDraft[] = [
   { symbol: "Vt", name: "Vite", category: "Frontend", usedFor: "OCR Budget Tracker" },
   { symbol: "Tw", name: "Tailwind CSS", category: "Frontend", usedFor: "OCR Budget Tracker" },
   { symbol: "Sf", name: "ScalaFX", category: "Frontend", usedFor: "Harvest For All" },
+  { symbol: "Fl", name: "Flutter", category: "Frontend", usedFor: "Mapetite mobile app" },
 
   // Backend
   { symbol: "Fa", name: "FastAPI", category: "Backend", usedFor: "Fraud detection service, Inklusif, Budget Tracker" },
@@ -56,13 +63,17 @@ const elements: ElementDraft[] = [
   { symbol: "Fb", name: "Firebase Auth", category: "Backend", usedFor: "OCR Budget Tracker authentication" },
   { symbol: "Lk", name: "LiveKit", category: "Backend", usedFor: "Inklusif real-time voice and video" },
   { symbol: "Bv", name: "Brevo", category: "Backend", usedFor: "Inklusif email" },
+  { symbol: "Dj", name: "Django", category: "Backend", usedFor: "Mapetite API (Django REST Framework)" },
+  { symbol: "Pg", name: "PostgreSQL", category: "Backend", usedFor: "Mapetite, with PostGIS and pgvector" },
+  { symbol: "Dy", name: "Amazon DynamoDB", category: "Backend", usedFor: "Automated Receipt Processing Tool" },
 
   // Cloud and DevOps
-  { symbol: "Dk", name: "Docker", category: "Cloud and DevOps", usedFor: "Fraud detection service, Budget Tracker backend, Recipe Roots" },
+  { symbol: "Dk", name: "Docker", category: "Cloud and DevOps", usedFor: "Fraud detection service, Budget Tracker backend, Recipe Roots, Mapetite" },
   { symbol: "Ci", name: "CI/CD", category: "Cloud and DevOps", usedFor: "Plandora" },
   { symbol: "La", name: "AWS Lambda", category: "Cloud and DevOps", usedFor: "Automated Receipt Processing Tool" },
   { symbol: "As", name: "Amazon S3", category: "Cloud and DevOps", usedFor: "Automated Receipt Processing Tool" },
   { symbol: "Tx", name: "Amazon Textract", category: "Cloud and DevOps", usedFor: "Automated Receipt Processing Tool" },
+  { symbol: "Se", name: "Amazon SES", category: "Cloud and DevOps", usedFor: "Automated Receipt Processing Tool alerts" },
   { symbol: "Gr", name: "Google Cloud Run", category: "Cloud and DevOps", usedFor: "Inklusif (migrated from Railway)" },
   { symbol: "Rw", name: "Railway", category: "Cloud and DevOps", usedFor: "Inklusif, before the move to Cloud Run" },
   { symbol: "Ve", name: "Vercel", category: "Cloud and DevOps", usedFor: "Inklusif, OCR Budget Tracker frontend" },

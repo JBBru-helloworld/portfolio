@@ -34,7 +34,14 @@ export const credentials: Credential[] = [
   {
     kind: "community",
     title: "Generative AI Study Jam",
-    detail: "Coordinated a five-week Generative AI Study Jam for 900+ participants.",
-    date: "TODO(owner): year of the Study Jam",
+    detail: "Coordinated a five-week Generative AI Study Jam for 900+ participants with the Sunway Tech Club (2025).",
+    date: "2025",
+  },
+  {
+    kind: "community",
+    title: "Portfolio workshop",
+    detail: "Co-led a portfolio workshop with the Sunway Tech Club, alongside a speaker from Google (2025).",
+    date: "2025",
+    notes: ["CHECK(owner): the exact month of the portfolio workshop; it is not on the old CV."],
   },
 ];
