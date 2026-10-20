@@ -234,22 +234,38 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
         if (lite) return;
         if (p > T.handover.start - 0.1) frames.current?.load(); // reached early (fast scroll or reload)
         if (p >= T.handover.start) {
-          const f = Math.min(Math.max((p - T.fly.start) / (T.fly.end - T.fly.start), 0), 1);
-          wanted = Math.round(f * (tier.avif.length - 1));
+          // Frame 1 to the near-whiteout frame, then slowly on through the last misty frames.
+          const w = tier.whiteoutIndex;
+          const last = tier.avif.length - 1;
+          const clamp = (v: number) => Math.min(Math.max(v, 0), 1);
+          wanted =
+            p <= T.fly.whiteoutAt
+              ? Math.round(clamp((p - T.fly.start) / (T.fly.whiteoutAt - T.fly.start)) * w)
+              : Math.round(w + clamp((p - T.fly.whiteoutAt) / (T.fly.end - T.fly.whiteoutAt)) * (last - w));
           if (wanted !== lastDrawn) requestDraw();
         }
       };
 
       const white = lite ? T.lite.white : T.white;
+      const distance = () => (touch ? T.distance.touch : T.distance.desktop) * section.clientHeight;
+      // The pin releases a little before the sequence ends (T.overlap), so the next section is already
+      // rising while the last of the mist fades; the animation itself runs to the full distance.
+      const pin = ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: () => `+=${distance() * (1 - T.overlap)}`,
+        pin: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+      });
       const tl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: () => `+=${(touch ? T.distance.touch : T.distance.desktop) * section.clientHeight}`,
-          pin: true,
+          // Absolute positions from the pin's own start: a relative end here would be pushed further down
+          // by the pin's scroll length (ScrollTrigger offsets later triggers by pin spacing).
+          start: () => pin.start,
+          end: () => pin.start + distance(),
           scrub: true,
-          anticipatePin: 1,
           invalidateOnRefresh: true,
           onRefreshInit: remeasure,
           onRefresh: (self) => onProgress(self.progress),
@@ -268,11 +284,18 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
       tl.fromTo([refs.light.current, refs.vignette.current], { opacity: 1 }, { opacity: 0, duration: span(T.lightFade) }, T.lightFade.start);
       if (!lite) tl.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: span(T.handover) }, T.handover.start);
       tl.fromTo(refs.white.current, { opacity: 0 }, { opacity: white.peak, duration: white.rise[1] - white.rise[0], ease: "sine.inOut" }, white.rise[0]);
-      tl.fromTo(refs.fade.current, { opacity: 0 }, { opacity: 1, duration: span(T.void), ease: "sine.inOut" }, T.void.start);
+      // Dusk inside the cloud: the white thins while black rises over the still-drifting mist (black starts
+      // slowly, so the midpoint is dim mist, not flat grey), and the mist pushes in very slightly.
+      tl.to(refs.white.current, { opacity: 0, duration: span(T.dusk), ease: "sine.inOut" }, T.dusk.start);
+      tl.fromTo(refs.fade.current, { opacity: 0 }, { opacity: 1, duration: span(T.dusk), ease: "power2.in" }, T.dusk.start);
+      if (!lite) {
+        tl.fromTo(canvas, { scale: 1 }, { scale: T.dusk.push, duration: T.dusk.end - T.dusk.pushFrom }, T.dusk.pushFrom);
+      }
 
       const onResize = () => sizeCanvas();
       window.addEventListener("resize", onResize);
       return () => {
+        pin.kill();
         window.removeEventListener("resize", onResize);
         if (rafId) cancelAnimationFrame(rafId);
         window.clearTimeout(settle);

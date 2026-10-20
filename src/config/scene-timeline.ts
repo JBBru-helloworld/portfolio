@@ -32,14 +32,27 @@ export const sceneTimeline = {
    */
   handover: { start: 0.15, end: 0.3 },
 
-  /** Fly-through frames, from the first to the near-whiteout frame (the dark emergence is not used). */
-  fly: { start: 0.2, end: 0.7 },
+  /**
+   * Fly-through frames: frame 1 to the near-whiteout frame over [start, whiteoutAt], then on through the
+   * last misty frames (`lastFrame`, a share of the source sequence) more slowly until `end`, so the mist
+   * keeps drifting while the white darkens. The dark emergence frames after that are never used.
+   */
+  fly: { start: 0.2, whiteoutAt: 0.72, end: 1, lastFrame: 0.714 },
 
-  /** Soft white overlay: rises to full white inside the cloud and holds. */
-  white: { rise: [0.58, 0.72], peak: 1 },
+  /** Soft white overlay: rises to a near-whiteout that still lets the mist's texture through. */
+  white: { rise: [0.58, 0.72], peak: 0.85 },
 
-  /** From white to black: --void rises over the white, then holds until the pin releases. */
-  void: { start: 0.8, end: 0.95 },
+  /**
+   * Dusk inside the cloud: the white thins while --void rises over the still-drifting mist, and the canvas
+   * pushes in very slightly, so the screen darkens through moving mist rather than flat grey.
+   */
+  dusk: { start: 0.84, end: 1, push: 1.05, pushFrom: 0.72 },
+
+  /**
+   * The pin releases this share of the sequence before the screen reaches black, so the next section's
+   * heading is already rising while the last of the mist fades.
+   */
+  overlap: 0.06,
 
   /** The cloud video pauses once the fly-through has taken over (and resumes below this). */
   videoPauseAt: 0.3,

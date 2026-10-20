@@ -18,7 +18,10 @@ const SIZES = [
   { name: "2560x1440", width: 2560, height: 1440, deviceScaleFactor: 1 },
   { name: "844x390", width: 844, height: 390, deviceScaleFactor: 3, isMobile: true, hasTouch: true },
 ];
-const PROGRESS = [0, 0.1, 0.3, 0.5, 0.6, 0.7, 0.78, 0.9, 1];
+const progressArg = process.argv.find((a) => a.startsWith("--progress="));
+const PROGRESS = progressArg
+  ? progressArg.slice(11).split(",").map((v) => Number(v) / 100)
+  : [0, 0.1, 0.3, 0.5, 0.6, 0.7, 0.78, 0.9, 1];
 
 await mkdir(outDir, { recursive: true });
 const browser = await webkit.launch();
@@ -192,6 +195,83 @@ if (only.includes("network")) {
       landingFiles: reqs.filter((r) => !r.url.startsWith("/scene/fly/")).map((r) => `${r.url} ${r.bytes}`),
       errors: page.errors,
     };
+    await context.close();
+  }
+}
+
+if (only.includes("end")) {
+  // The end of the sequence: how much black scroll before the next heading appears, and whether scrolling
+  // back to the top restores the landing exactly.
+  report.end = {};
+  for (const size of [SIZES[2], SIZES[0]]) {
+    const { context, page, name } = await open(size);
+    await page.goto(url, { waitUntil: "load" });
+    await waitOpen(page);
+    const landing = () =>
+      page.evaluate(() => {
+        const s = document.querySelector("section[data-phase]");
+        const q = (sel) => s.querySelector(sel);
+        const op = (sel) => +(+getComputedStyle(q(sel)).opacity).toFixed(3);
+        return {
+          camera: getComputedStyle(q("[class*='camera']")).transform,
+          hud: op("[class*='hud']"),
+          canvas: op("canvas"),
+          white: op("[class*='white']"),
+          fade: op("[class*='fade']"),
+          light: op("[class*='lightLayer']"),
+          vignette: op("[class*='vignette']"),
+          stageVisibility: getComputedStyle(q("[class*='stage']")).visibility,
+          pushing: s.dataset.pushing === "true", // absent on a fresh load, "false" after scrolling back
+          sectionTop: Math.round(s.getBoundingClientRect().top),
+        };
+      });
+    const before = await landing();
+    await waitFrames(page);
+    // Walk down in small steps from the end of the sequence; record when the screen is black and when
+    // the heading first enters the viewport.
+    const walk = await page.evaluate(async () => {
+      const s = document.querySelector("section[data-phase]");
+      const touch = matchMedia("(hover: none) and (pointer: coarse)").matches;
+      const d = (touch ? 2.0 : 2.8) * s.clientHeight;
+      const vh = innerHeight;
+      const h = document.querySelector("#departures h2");
+      const go = async (y) => {
+        if (window.__lenis) window.__lenis.scrollTo(y, { immediate: true, force: true });
+        else window.scrollTo(0, y);
+        await new Promise((r) => setTimeout(r, 120));
+      };
+      let blackAt = null;
+      let headingAt = null;
+      for (let y = Math.round(0.8 * d); y < d + 2 * vh; y += Math.round(vh / 40)) {
+        await go(y);
+        const fade = +getComputedStyle(s.querySelector("[class*='fade']")).opacity;
+        if (blackAt === null && fade >= 0.999) blackAt = y;
+        if (headingAt === null && h.getBoundingClientRect().top < vh) headingAt = y;
+        if (blackAt !== null && headingAt !== null) break;
+      }
+      return {
+        sequenceEnd: Math.round(d),
+        pinReleaseAt: Math.round(d * 0.94),
+        blackAt,
+        headingEntersAt: headingAt,
+        blackScrollBeforeHeadingScreens: blackAt === null || headingAt === null ? null : +((headingAt - blackAt) / vh).toFixed(2),
+      };
+    });
+    // Back to the top.
+    await page.evaluate(async () => {
+      for (let i = 30; i >= 0; i--) {
+        const s = document.querySelector("section[data-phase]");
+        const y = (i / 30) * 3 * s.clientHeight;
+        if (window.__lenis) window.__lenis.scrollTo(y, { immediate: true, force: true });
+        else window.scrollTo(0, y);
+        await new Promise((r) => setTimeout(r, 40));
+      }
+    });
+    await page.waitForTimeout(800);
+    const after = await landing();
+    await page.screenshot({ path: `${outDir}/${name}-reverse-000.png` });
+    const same = Object.keys(before).every((k) => before[k] === after[k]);
+    report.end[name] = { ...walk, restored: same, before, after, errors: page.errors };
     await context.close();
   }
 }

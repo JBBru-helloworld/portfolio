@@ -2,6 +2,7 @@
  * Server-side: picks the few values the window scene needs out of the full scene manifest, so the
  * 288-entry manifest never reaches the client bundle. Import only from server components.
  */
+import { sceneTimeline } from "@/config/scene-timeline";
 import manifest from "@/content/scene-manifest.json";
 
 interface FileEntry {
@@ -48,11 +49,13 @@ export interface PlateSet extends Framing {
 }
 
 export interface FlyTier {
-  /** Frame URLs in order (AVIF), up to the near-whiteout frame, with the WebP fallback alongside. */
+  /** Frame URLs in order (AVIF), up to the last misty frame, with the WebP fallback alongside. */
   avif: string[];
   webp: string[];
   /** The near-whiteout still, shown if the visitor gets ahead of the frames. */
   whiteout: { avif: string; webp: string };
+  /** Index (0-based) of the near-whiteout frame within `avif`. */
+  whiteoutIndex: number;
 }
 
 export interface ImageSet {
@@ -137,9 +140,11 @@ function flyTier(tier: "desktop" | "mobile"): FlyTier {
     pattern: { pad: number; fallbackExtension: string } & Record<string, string | number>;
     files: FileEntry[];
   };
-  // Only up to the near-whiteout frame: the sequence ends in white and fades to black, so the dark
-  // emergence frames after it are never shown (and never downloaded).
-  const count = Number((fly as unknown as { whiteoutIndex: Record<string, number> }).whiteoutIndex[tier]);
+  // Up to the last misty frame (a little past the near-whiteout): the sequence darkens inside the cloud,
+  // so the dark emergence frames after it are never shown (and never downloaded).
+  const total = fly.frames[tier];
+  const count = Math.round(total * sceneTimeline.fly.lastFrame);
+  const whiteout = Number((fly as unknown as { whiteoutIndex: Record<string, number> }).whiteoutIndex[tier]) - 1;
   const pattern = String(fly.pattern[tier]);
   const avif = Array.from({ length: count }, (_, i) => pattern.replace("{n}", String(i + 1).padStart(fly.pattern.pad, "0")));
   const still = (fmt: string) => {
@@ -151,6 +156,7 @@ function flyTier(tier: "desktop" | "mobile"): FlyTier {
     avif,
     webp: avif.map((u) => u.replace(/\.avif$/, `.${fly.pattern.fallbackExtension}`)),
     whiteout: { avif: still("avif"), webp: still("webp") },
+    whiteoutIndex: Math.min(whiteout, count - 1),
   };
 }
 
