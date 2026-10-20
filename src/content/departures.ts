@@ -2,6 +2,9 @@ import { profile } from "./profile";
 import type { Departures } from "./types";
 
 export const departures: Departures = {
+  title: "DEPARTURES",
+  columns: { flight: "FLIGHT", destination: "DESTINATION", remarks: "REMARKS" },
+  soundLabel: "Board sound",
   header: {
     label: "NOW BOARDING",
     name: "JOSHUA BONHAM",

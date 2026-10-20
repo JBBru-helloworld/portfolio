@@ -147,6 +147,28 @@ for (const file of files) {
   const profile = readFileSync(join(contentDir, "profile.ts"), "utf8");
   const board = profile.match(/board:\s*"([^"]*)"/);
   if (board && board[1].length > 32) failures.push(`src/content/profile.ts  board role line is ${board[1].length} characters (max 32)`);
+  for (const m of text.matchAll(/status:\s*"([^"]*)"/g)) {
+    if (m[1].length > 8) failures.push(`${rel}:${lineOf(text, m.index ?? 0)}  status "${m[1]}" is ${m[1].length} characters (max 8)`);
+  }
+
+  // Every character on the flaps must exist in the board's flap sequence (src/lib/flap-sequence.ts).
+  const seqFile = readFileSync(join(contentDir, "..", "lib", "flap-sequence.ts"), "utf8");
+  const seqMatch = seqFile.match(/FLAP_SEQUENCE\s*=\s*"([^"]*)"/);
+  if (!seqMatch) failures.push("src/lib/flap-sequence.ts  FLAP_SEQUENCE not found");
+  else {
+    const sequence = new Set(seqMatch[1]);
+    const onFlaps: { where: string; value: string }[] = [];
+    for (const key of ["label", "name", "code", "destination", "status"]) {
+      for (const m of text.matchAll(new RegExp(`${key}:\\s*"([^"]*)"`, "g"))) {
+        onFlaps.push({ where: `${rel}:${lineOf(text, m.index ?? 0)}`, value: m[1] });
+      }
+    }
+    if (board) onFlaps.push({ where: "src/content/profile.ts (roleLines.board)", value: board[1] });
+    for (const { where, value } of onFlaps) {
+      const missing = [...new Set([...value].filter((c) => !sequence.has(c)))];
+      if (missing.length) failures.push(`${where}  "${value}" uses characters not on the flaps: ${missing.map((c) => JSON.stringify(c)).join(" ")}`);
+    }
+  }
 }
 
 if (warnings.length) {

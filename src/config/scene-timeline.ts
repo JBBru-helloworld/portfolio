@@ -44,15 +44,17 @@ export const sceneTimeline = {
 
   /**
    * Dusk inside the cloud: the white thins while --void rises over the still-drifting mist, and the canvas
-   * pushes in very slightly, so the screen darkens through moving mist rather than flat grey.
+   * pushes in very slightly. It stops at a deep, dim dusk, never black: `floor` is the --void layer's final
+   * opacity (about 20% brightness over the mist).
    */
-  dusk: { start: 0.84, end: 1, push: 1.05, pushFrom: 0.72 },
+  dusk: { start: 0.84, end: 1, push: 1.05, pushFrom: 0.72, floor: 0.78 },
 
   /**
-   * The pin releases this share of the sequence before the screen reaches black, so the next section's
-   * heading is already rising while the last of the mist fades.
+   * Curtain rise, after the sequence: the scene stays pinned for one more screen plus the feather while the
+   * departures section slides up over the dusk mist. Its top edge is a `featherVh` tall fade from
+   * transparent to its solid background. The mist keeps drifting, pushing on to `drift`.
    */
-  overlap: 0.06,
+  rise: { featherVh: 22, drift: 1.09 },
 
   /** The cloud video pauses once the fly-through has taken over (and resumes below this). */
   videoPauseAt: 0.3,

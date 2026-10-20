@@ -1,14 +1,15 @@
+import { DeparturesBoard } from "@/components/departures/DeparturesBoard";
 import { WindowScene } from "@/components/scene/WindowScene";
 import { getSceneData } from "@/components/scene/scene-data";
 import { SkipIntro } from "@/components/scroll/SkipIntro";
 import { SmoothScroll } from "@/components/scroll/SmoothScroll";
-import { landing, profile } from "@/content";
+import { departures, landing, profile } from "@/content";
 
 export default function Home() {
   const scene = getSceneData();
   return (
     <main>
-      <SkipIntro targetId={landing.placeholders[0].id} label={landing.skipIntro} />
+      <SkipIntro targetId="departures" label={landing.skipIntro} />
       <SmoothScroll />
       <WindowScene
         data={scene}
@@ -18,15 +19,16 @@ export default function Home() {
         scrollCue={landing.scrollCue}
       />
 
-      {/* Temporary placeholders so there is something to scroll into; replaced in later phases. The heading
-          sits near the top so it rises into view just as the landing sequence ends. */}
+      <DeparturesBoard board={departures} />
+
+      {/* Temporary placeholders for the sections still to come; replaced in later phases. */}
       {landing.placeholders.map((section) => (
         <section
           key={section.id}
           id={section.id}
           aria-labelledby={`${section.id}-heading`}
           tabIndex={-1}
-          className="flex min-h-[100svh] items-start border-t border-graphite-2 px-4 pt-[8svh] sm:px-8"
+          className="flex min-h-[100svh] items-center border-t border-graphite-2 px-4 sm:px-8"
         >
           <h2 id={`${section.id}-heading`} className="mx-auto w-full max-w-6xl text-3xl font-medium text-paper-muted">
             {section.title}

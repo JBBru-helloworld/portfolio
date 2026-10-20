@@ -248,12 +248,22 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
 
       const white = lite ? T.lite.white : T.white;
       const distance = () => (touch ? T.distance.touch : T.distance.desktop) * section.clientHeight;
-      // The pin releases a little before the sequence ends (T.overlap), so the next section is already
-      // rising while the last of the mist fades; the animation itself runs to the full distance.
+      // Curtain rise: the scene stays pinned for the sequence plus one screen plus the feather, while the
+      // next section (the departures board) is pulled up by the same amount, so it starts rising exactly as
+      // the sequence ends and slides over the dusk mist. Its feathered top edge is set here too.
+      const riseDistance = () => section.clientHeight * (1 + T.rise.featherVh / 100);
+      const curtain = document.querySelector<HTMLElement>("[data-curtain]");
+      const placeCurtain = () => {
+        if (!curtain) return;
+        curtain.style.setProperty("--feather", `${section.clientHeight * (T.rise.featherVh / 100)}px`);
+        curtain.style.marginTop = `${-riseDistance()}px`;
+      };
+      placeCurtain();
+      ScrollTrigger.addEventListener("refreshInit", placeCurtain);
       const pin = ScrollTrigger.create({
         trigger: section,
         start: "top top",
-        end: () => `+=${distance() * (1 - T.overlap)}`,
+        end: () => `+=${distance() + riseDistance()}`,
         pin: true,
         anticipatePin: 1,
         invalidateOnRefresh: true,
@@ -287,15 +297,37 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
       // Dusk inside the cloud: the white thins while black rises over the still-drifting mist (black starts
       // slowly, so the midpoint is dim mist, not flat grey), and the mist pushes in very slightly.
       tl.to(refs.white.current, { opacity: 0, duration: span(T.dusk), ease: "sine.inOut" }, T.dusk.start);
-      tl.fromTo(refs.fade.current, { opacity: 0 }, { opacity: 1, duration: span(T.dusk), ease: "power2.in" }, T.dusk.start);
+      tl.fromTo(refs.fade.current, { opacity: 0 }, { opacity: T.dusk.floor, duration: span(T.dusk), ease: "power2.in" }, T.dusk.start);
       if (!lite) {
         tl.fromTo(canvas, { scale: 1 }, { scale: T.dusk.push, duration: T.dusk.end - T.dusk.pushFrom }, T.dusk.pushFrom);
       }
+
+      // During the rise the mist keeps drifting (a slow push); once the board covers it, nothing draws.
+      const rise = gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: {
+          start: () => pin.start + distance(),
+          end: () => pin.start + distance() + riseDistance(),
+          scrub: true,
+          invalidateOnRefresh: true,
+          // Hidden only past the end of the rise; the enter/leave callbacks fire even on a large jump.
+          onLeave: () => (section.dataset.boardCovered = "true"),
+          onEnterBack: () => (section.dataset.boardCovered = "false"),
+          onLeaveBack: () => (section.dataset.boardCovered = "false"),
+          onRefresh: (self) => (section.dataset.boardCovered = String(self.progress >= 1 && self.scroll() > self.end)),
+        },
+      });
+      if (!lite) rise.fromTo(canvas, { scale: T.dusk.push }, { scale: T.rise.drift, duration: 1, immediateRender: false });
+      else rise.set({}, {}, 1);
 
       const onResize = () => sizeCanvas();
       window.addEventListener("resize", onResize);
       return () => {
         pin.kill();
+        ScrollTrigger.removeEventListener("refreshInit", placeCurtain);
+        curtain?.style.removeProperty("--feather");
+        curtain?.style.removeProperty("margin-top");
+        delete section.dataset.boardCovered;
         window.removeEventListener("resize", onResize);
         if (rafId) cancelAnimationFrame(rafId);
         window.clearTimeout(settle);

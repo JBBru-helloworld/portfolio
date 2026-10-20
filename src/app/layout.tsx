@@ -22,7 +22,8 @@ const jsFlag = "document.documentElement.classList.add('js')";
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-GB" className={fontVariables} suppressHydrationWarning>
+    // The background is also inline, so the very first paint is dark even before the stylesheet applies.
+    <html lang="en-GB" className={fontVariables} style={{ backgroundColor: "#0a0a0a" }} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: jsFlag }} />
       </head>

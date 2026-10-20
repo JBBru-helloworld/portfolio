@@ -321,6 +321,12 @@
   display: none;
 }
 
+/* Once the departures board has risen over the whole scene, none of it is drawn: its layers leave the
+   tree entirely (the section itself keeps its size, so the pin is unaffected). */
+.scene[data-board-covered="true"] > * {
+  display: none;
+}
+
 /* Once the fly-through canvas fully covers it, the window is not drawn at all. */
 .scene[data-covered="true"] .stage {
   visibility: hidden;

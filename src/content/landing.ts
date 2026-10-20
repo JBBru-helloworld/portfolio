@@ -5,7 +5,6 @@ export const landing: Landing = {
   scrollCue: "Scroll",
   skipIntro: "Skip intro",
   placeholders: [
-    { id: "departures", title: "Departures" },
     { id: "passport", title: "Passport" },
     { id: "work", title: "Work" },
   ],

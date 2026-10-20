@@ -23,6 +23,9 @@ const LIFT_MS = 1600; // shade travel; matches --duration in the CSS module
 // variables are the source of truth); used here only to tell the browser which image width to fetch.
 const WINDOW_SCALE = { landscape: 0.65, portrait: 0.575 };
 
+/** The closed-shade darkness, inline so it covers the screen even before the stylesheet applies. */
+const DARK_COVER: CSSProperties = { position: "absolute", inset: 0, background: "#0a0a0a", opacity: 1 };
+
 const pct = (n: number) => `${(n * 100).toFixed(4)}%`;
 const num = (n: number) => n.toFixed(6);
 
@@ -93,6 +96,9 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
   const whiteRef = useRef<HTMLDivElement>(null);
   const fadeRef = useRef<HTMLDivElement>(null);
   const [phase, setPhase] = useState<Phase>("closed");
+  // The view (video and poster) stays hidden until the frame plate has decoded, so nothing inside the
+  // window is ever seen without the frame around it.
+  const [viewReady, setViewReady] = useState(false);
   const videoActive = useRef(false); // true once the intro has started the video
   const videoHeld = useRef(false); // true while the fly-through has taken over from the video
   const introSkipped = useRef(false);
@@ -129,9 +135,12 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
 
     const reduce = window.matchMedia(REDUCED_MOTION).matches;
     if (reduce) {
-      // Shade open (CSS), poster only, light at full strength.
+      // Shade open (CSS), poster only, light at full strength; the view appears with the decoded frame.
       setPhase("open");
-      return;
+      decodeImage(imgRef.current).then(() => !cancelled && setViewReady(true));
+      return () => {
+        cancelled = true;
+      };
     }
 
     const lite = isConstrainedNetwork();
@@ -141,6 +150,7 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
 
     const ready = (async () => {
       await decodeImage(imgRef.current);
+      if (!cancelled) setViewReady(true);
       if (lite || cancelled) return;
       // The video only starts loading once the plate has decoded, so it can never delay it.
       video.preload = "auto";
@@ -256,7 +266,13 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
         {/* The camera: the scroll push moves and scales this layer (the stage keeps its CSS placement) */}
         <div ref={cameraRef} className={styles.camera}>
         {/* 1: the view, clipped to the glass */}
-        <div className={styles.view} aria-hidden="true">
+        {/* Hidden in the server HTML (inline, so no stylesheet is needed) until the frame plate decodes */}
+        <div
+          className={styles.view}
+          aria-hidden="true"
+          data-scene-view=""
+          style={viewReady ? undefined : { visibility: "hidden" }}
+        >
           <video
             ref={videoRef}
             className={styles.video}
@@ -361,7 +377,20 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
       <div ref={vignetteRef} className={styles.vignette} aria-hidden="true" />
       <div ref={fadeRef} className={styles.fade} aria-hidden="true" />
       {/* 9: darkness: with the shade down no daylight reaches the cabin; it lifts with the shade */}
-      <div className={styles.dark} aria-hidden="true" />
+      <div
+        className={styles.dark}
+        aria-hidden="true"
+        data-scene-cover=""
+        // Opaque in the server HTML from the very first paint, before any stylesheet has applied (the
+        // dev server delivers CSS late); once the shade starts lifting the stylesheet takes over.
+        style={phase === "closed" ? DARK_COVER : undefined}
+      />
+      {/* Without JavaScript the shade is open: drop the cover and show the view (inline styles above). */}
+      <noscript
+        dangerouslySetInnerHTML={{
+          __html: "<style>[data-scene-cover]{opacity:0!important}[data-scene-view]{visibility:visible!important}</style>",
+        }}
+      />
 
       {/* Text: fades out and drifts up as the push begins */}
       <div ref={hudRef} className={styles.hud}>

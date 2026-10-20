@@ -67,6 +67,12 @@ export interface DepartureRow {
 }
 
 export interface Departures {
+  /** Section heading (the board's title), in capitals. */
+  title: string;
+  /** Column labels, in capitals. */
+  columns: { flight: string; destination: string; remarks: string };
+  /** Accessible label for the optional board-sound toggle. */
+  soundLabel: string;
   header: DepartureHeader;
   rows: DepartureRow[];
 }
