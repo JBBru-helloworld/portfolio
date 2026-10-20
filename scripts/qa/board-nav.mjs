@@ -237,6 +237,16 @@ if (only.includes("reload")) {
     const g = await geometry(fresh.page);
     await scrollTo(fresh.page, g.d * 0.6, 1500);
     r.hashWorkThenScrollUp = await state(fresh.page);
+    // Regression (Phase 3b): back in the push after a restore, the fly-through is still clipped to the
+    // window and the camera pushes (the measurement must not come from the hidden, covered stage).
+    await scrollTo(fresh.page, g.d * 0.25, 700);
+    r.hashWorkThenPush = await fresh.page.evaluate(() => {
+      const s = document.querySelector("section[data-phase]");
+      return {
+        clip: s.querySelector("canvas").style.clipPath.slice(0, 8),
+        cameraScale: +new DOMMatrix(getComputedStyle(s.querySelector("[class*='camera']")).transform).a.toFixed(2),
+      };
+    });
     await fresh.context.close();
     report.reload[name] = r;
   }

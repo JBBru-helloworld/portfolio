@@ -207,11 +207,34 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
       };
 
       const portraitNow = () => (window.matchMedia(PORTRAIT_MEDIA).matches ? data.portrait : data.landscape);
+      // Once the board covers the scene, the stage is display:none and has no size. A refresh then (on
+      // load after a restore to a later section, or on a resize down the page) must not measure it: the
+      // view outline would collapse and the fly-through would lose its window clip. The measurement is
+      // marked stale instead, and redone (with a refresh) as soon as the scene is uncovered.
+      let stale = false;
+      let refreshQueued = 0;
       const remeasure = () => {
+        const stage = camera.parentElement as HTMLElement | null;
+        if (!stage || stage.offsetWidth === 0) {
+          stale = true;
+          return;
+        }
+        stale = false;
         m = measure(camera, portraitNow(), section.clientWidth, section.clientHeight, T.push.margin);
         sizeCanvas();
       };
       remeasure();
+      const setCovered = (value: boolean) => {
+        const v = String(value);
+        if (section.dataset.boardCovered === v) return;
+        section.dataset.boardCovered = v;
+        if (!value && stale && !refreshQueued) {
+          refreshQueued = requestAnimationFrame(() => {
+            refreshQueued = 0;
+            ScrollTrigger.refresh();
+          });
+        }
+      };
 
       let pushing = false;
       let covered = false;
@@ -238,7 +261,8 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
           section.dataset.pushing = String(nowPushing);
         }
         // Until the push ends the fly-through is seen through the window: clip the canvas to the view.
-        if (!lite) canvas.style.clipPath = p < T.push.end && m.view.length ? viewClip(m, camera) : "none";
+        // (While the measurement is stale, the fly-through stays hidden until the refresh redoes it.)
+        if (!lite) canvas.style.clipPath = p < T.push.end ? (stale || !m.view.length ? "inset(50%)" : viewClip(m, camera)) : "none";
         const nowCovered = !lite && p >= T.push.end;
         if (nowCovered !== covered) {
           covered = nowCovered;
@@ -333,17 +357,14 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
           invalidateOnRefresh: true,
           // Hidden once the rise is complete (from its very end, where a restore to the board lands); the
           // enter/leave callbacks fire even on a large jump.
-          onUpdate: (self) => {
-            const full = String(self.progress >= 1);
-            if (section.dataset.boardCovered !== full) section.dataset.boardCovered = full;
-          },
-          onLeave: () => (section.dataset.boardCovered = "true"),
+          onUpdate: (self) => setCovered(self.progress >= 1),
+          onLeave: () => setCovered(true),
           onEnterBack: () => {
-            section.dataset.boardCovered = "false";
+            setCovered(false);
             if (live) wake();
           },
-          onLeaveBack: () => (section.dataset.boardCovered = "false"),
-          onRefresh: (self) => (section.dataset.boardCovered = String(self.progress >= 1 && self.scroll() >= self.end)),
+          onLeaveBack: () => setCovered(false),
+          onRefresh: (self) => setCovered(self.progress >= 1 && self.scroll() >= self.end),
         },
       });
       if (!lite) rise.fromTo(canvas, { scale: T.dusk.push }, { scale: T.rise.drift, duration: 1, immediateRender: false });
@@ -363,6 +384,7 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
         delete section.dataset.boardCovered;
         window.removeEventListener("resize", onResize);
         if (rafId) cancelAnimationFrame(rafId);
+        if (refreshQueued) cancelAnimationFrame(refreshQueued);
         window.clearTimeout(settle);
         camera.style.willChange = "";
         delete section.dataset.pushing;
