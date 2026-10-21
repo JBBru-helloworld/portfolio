@@ -1,0 +1,872 @@
+/*
+ * The seat map. Monochrome: zones are told apart by their labels and a tiny zone letter on each seat, never
+ * by colour. Amber marks only the selected seat and, in a group booking, the booked seats' outlines.
+ *
+ * Orientation: phones and portrait screens show the plane standing (nose at the top); wide landscape
+ * screens lie it down (nose on the left). The media query mirrors WIDE_MEDIA in SeatMap.tsx. Seats are
+ * positioned in layout units (--u is one unit in pixels, from the plane's width), so both drawings share
+ * the same markup.
+ */
+
+.map {
+  --u: 1px;
+}
+
+/* ---------- Controls: group booking and the view toggle ---------- */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin-bottom: clamp(1.5rem, 4svh, 2.5rem);
+}
+
+.group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.875rem;
+  min-width: 0;
+}
+
+.controlLabel {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--graphite-4);
+}
+
+/* The group booking dropdown: the trigger, and a panel in the site's greys (GroupBooking.tsx, in a portal). */
+.select {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-width: min(22rem, 100%);
+  max-width: 100%;
+  min-height: 44px;
+  padding: 0 0.875rem;
+  border: 1px solid var(--graphite-3);
+  border-radius: var(--radius);
+  background: var(--cabin);
+  color: var(--paper);
+  font: inherit;
+  font-size: 0.9375rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.select > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select[data-placeholder] {
+  color: var(--paper-muted);
+}
+
+.select:hover,
+.select[data-state="open"] {
+  border-color: var(--graphite-4);
+}
+
+.selectIcon {
+  display: inline-flex;
+  color: var(--graphite-4);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.select[data-state="open"] .selectIcon {
+  transform: rotate(180deg);
+}
+
+.selectContent {
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  width: max(var(--radix-popover-trigger-width), 22rem);
+  max-width: calc(100vw - 2rem);
+  max-height: min(26rem, var(--radix-popover-content-available-height));
+  overflow: hidden;
+  border: 1px solid var(--graphite-2);
+  border-radius: 0.75rem;
+  background: var(--cabin);
+  box-shadow: 0 18px 48px rgb(0 0 0 / 0.55);
+  transform-origin: var(--radix-popover-content-transform-origin);
+  animation: menu-in var(--duration-slow) var(--ease-out);
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(-4px);
+  }
+}
+
+.selectViewport {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.375rem;
+  outline: none;
+}
+
+.optionHeading {
+  padding: 0.75rem 0.625rem 0.375rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--graphite-4);
+}
+
+.option {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  color: var(--paper-muted);
+  outline: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.option[data-active] {
+  background: var(--graphite-1);
+  color: var(--paper);
+  --livery: var(--amber);
+}
+
+.option[data-state="checked"] {
+  color: var(--paper);
+  --livery: var(--amber);
+}
+
+.optionCode {
+  margin-right: 0.375rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  color: var(--graphite-4);
+}
+
+.option[data-active] .optionCode,
+.option[data-state="checked"] .optionCode {
+  color: var(--paper-muted);
+}
+
+.optionCheck {
+  display: inline-flex;
+  color: var(--amber);
+}
+
+.optionNone {
+  width: 26px;
+  height: 26px;
+  border: 1px dashed var(--graphite-3);
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .selectContent {
+    animation: none;
+  }
+
+  .selectIcon {
+    transition: none;
+  }
+}
+
+.booking {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.875rem;
+  width: 100%;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--amber);
+}
+
+.textButton {
+  min-height: 36px;
+  padding: 0 0.25rem;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--paper);
+  text-decoration: underline;
+  text-decoration-color: var(--graphite-3);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.views {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--graphite-2);
+  border-radius: 999px;
+}
+
+.viewButton {
+  min-height: 38px;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--graphite-4);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.viewButton[aria-pressed="true"] {
+  background: var(--graphite-1);
+  color: var(--paper);
+}
+
+.select:focus-visible,
+.textButton:focus-visible,
+.viewButton:focus-visible,
+.close:focus-visible,
+.cardProject:focus-visible,
+.listItem:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+/* ---------- Layout: the plane and its aside (legend and card) ---------- */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Phones: the legend above the plane. */
+.aside {
+  order: -1;
+}
+
+.plane {
+  container-type: inline-size;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Portrait tablets and narrow windows: the standing plane beside the aside. */
+@media (min-width: 768px) {
+  .body {
+    display: grid;
+    grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  .aside {
+    order: 0;
+    position: sticky;
+    top: 6rem;
+  }
+}
+
+/* ---------- The cabin ---------- */
+
+.cabin {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--tw) / var(--th);
+  --u: calc(100cqw / var(--tw));
+}
+
+.fuselage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.wideOnly {
+  display: none;
+}
+
+.frameBody {
+  fill: #101010;
+  stroke: var(--graphite-3);
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.frameLine {
+  fill: #0d0d0d;
+  stroke: var(--graphite-3);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.frameMuted {
+  fill: none;
+  stroke: var(--graphite-2);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.zoneLabel,
+.marker {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  fill: var(--graphite-4);
+}
+
+.zoneLabel {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+}
+
+.marker {
+  font-size: 9px;
+}
+
+/* ---------- Seats ---------- */
+
+.seat {
+  position: absolute;
+  left: calc(var(--tx) * var(--u));
+  top: calc(var(--ty) * var(--u));
+  width: calc(var(--seat) * var(--u));
+  height: calc(var(--seat) * var(--u));
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--graphite-2);
+  border-radius: 28% 28% 16% 16%;
+  background: #1b1b1b;
+  color: var(--paper);
+  cursor: pointer;
+  transition:
+    transform var(--duration-press) var(--ease-out),
+    opacity var(--duration-base) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The seat back, on the aft side (below the cushion standing up, to its right lying down). */
+.seat::after {
+  content: "";
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  bottom: -1px;
+  height: 22%;
+  border-radius: 3px 3px 5px 5px;
+  border: 1px solid var(--graphite-2);
+  background: #242424;
+  pointer-events: none;
+}
+
+.symbol {
+  position: relative;
+  z-index: 1;
+  margin-top: -14%;
+  font-family: var(--font-mono);
+  font-size: calc(13.5 * var(--u));
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.zoneLetter {
+  position: absolute;
+  top: 9%;
+  left: 12%;
+  font-family: var(--font-mono);
+  font-size: calc(7.5 * var(--u));
+  line-height: 1;
+  color: var(--graphite-4);
+}
+
+@media (hover: hover) {
+  .seat:not(.empty):not([data-selected]):hover {
+    background: #262626;
+  }
+}
+
+.seat:not(.empty):active {
+  transform: scale(0.96);
+}
+
+.seat:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+  z-index: 2;
+}
+
+.seat[data-selected] {
+  border-color: var(--amber);
+  background: var(--amber);
+  color: var(--void);
+}
+
+.seat[data-selected]::after {
+  border-color: oklch(62% 0.08 72);
+  background: oklch(68% 0.085 72);
+}
+
+.seat[data-selected] .zoneLetter {
+  color: oklch(30% 0.03 72);
+}
+
+/* Group booking: the project's seats outlined in amber, the rest dimmed. */
+.seat[data-booked] {
+  box-shadow: 0 0 0 2px var(--amber);
+}
+
+.map[data-group] .seat:not([data-booked]):not([data-selected]) {
+  opacity: 0.28;
+}
+
+.empty {
+  border-style: dashed;
+  border-color: var(--graphite-2);
+  background: transparent;
+  opacity: 0.5;
+  cursor: default;
+}
+
+.empty::after {
+  border-style: dashed;
+  background: transparent;
+}
+
+/* ---------- Entrance: row by row from the nose, once per visit ---------- */
+
+:global(html.js) .cabin:not([data-entered]) .seat {
+  opacity: 0;
+}
+
+.cabin[data-entered="run"] .seat {
+  animation: seat-in 320ms var(--ease-out) both;
+  animation-delay: calc(var(--row) * 70ms);
+}
+
+@keyframes seat-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+/* ---------- The legend and the seat card ---------- */
+
+.legendList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+  color: var(--paper-muted);
+}
+
+.legendList li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legendLetter {
+  display: inline-grid;
+  place-items: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  border: 1px solid var(--graphite-2);
+  border-radius: 6px;
+  background: #1b1b1b;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--graphite-4);
+}
+
+.legendSwatch {
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 6px;
+}
+
+.swatchSelected {
+  background: var(--amber);
+}
+
+.swatchEmpty {
+  border: 1px dashed var(--graphite-3);
+}
+
+@media (min-width: 768px) {
+  .legendList {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.card {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--graphite-2);
+  border-radius: 0.75rem;
+  background: var(--cabin);
+}
+
+.cardHead {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "symbol name close"
+    "meta   meta meta";
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.cardHead > div {
+  display: contents;
+}
+
+.cardSymbol {
+  grid-area: symbol;
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.625rem;
+  background: var(--amber);
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--void);
+}
+
+.cardName {
+  grid-area: name;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.cardMeta {
+  grid-area: meta;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--graphite-4);
+}
+
+.close {
+  grid-area: close;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--graphite-2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--paper);
+  cursor: pointer;
+}
+
+.cardLabel {
+  margin: 1.25rem 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--graphite-4);
+}
+
+.cardProjects {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cardProject {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.625rem;
+  min-height: 44px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  color: var(--paper);
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.cardProject:hover {
+  background: var(--graphite-1);
+  --livery: var(--amber);
+}
+
+/* The flight code above the name, so long names keep the width. */
+.cardProjectText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+  padding: 0.25rem 0;
+}
+
+.cardFlight {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--paper-muted);
+}
+
+.cardProjectName {
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.cardAlso {
+  margin: 1rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--paper-muted);
+}
+
+.cardAlso .cardLabel {
+  margin-right: 0.5rem;
+}
+
+/* Phones: the card is a bottom sheet. */
+@media (max-width: 767px) {
+  .card {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    max-height: 46svh;
+    margin: 0;
+    overflow-y: auto;
+    padding: 1.25rem 1.25rem max(1.25rem, env(safe-area-inset-bottom));
+    border-width: 1px 0 0;
+    border-radius: 1rem 1rem 0 0;
+    box-shadow: 0 -16px 40px rgb(0 0 0 / 0.5);
+    animation: sheet-in 240ms var(--ease-out);
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    translate: 0 100%;
+  }
+}
+
+/* ---------- The list view (and the no-JavaScript default) ---------- */
+
+.list {
+  display: none;
+  gap: 2rem;
+}
+
+.map[data-view="list"] .list {
+  display: grid;
+}
+
+.map[data-view="list"] .body {
+  display: none;
+}
+
+:global(html:not(.js)) .list {
+  display: grid;
+}
+
+:global(html:not(.js)) .body,
+:global(html:not(.js)) .controls {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 3rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.listHeading {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--graphite-4);
+}
+
+.listItems {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--graphite-2);
+}
+
+.listItems li {
+  border-bottom: 1px solid var(--graphite-2);
+}
+
+.listItem {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+  padding: 0.375rem 0.25rem;
+  color: var(--paper);
+  text-decoration: none;
+}
+
+@media (hover: hover) {
+  .listItem:hover {
+    background: var(--graphite-1);
+  }
+}
+
+.listSymbol {
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.listName {
+  font-size: 0.9375rem;
+}
+
+.listCount {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--graphite-4);
+}
+
+/* ---------- Wide screens: the plane lies down, nose on the left ---------- */
+
+@media (orientation: landscape) and (min-width: 1024px) and (pointer: fine), (orientation: landscape) and (min-width: 1280px) {
+  .wideOnly {
+    display: block;
+  }
+
+  .tallOnly {
+    display: none;
+  }
+
+  .cabin {
+    aspect-ratio: var(--ww) / var(--wh);
+    --u: calc(100cqw / var(--ww));
+  }
+
+  .seat {
+    left: calc(var(--wx) * var(--u));
+    top: calc(var(--wy) * var(--u));
+    border-radius: 28% 16% 16% 28%;
+  }
+
+  /* The seat back is aft: to the right. */
+  .seat::after {
+    left: auto;
+    top: 7%;
+    bottom: 7%;
+    right: -1px;
+    width: 22%;
+    height: auto;
+    border-radius: 3px 5px 5px 3px;
+  }
+
+  .symbol {
+    margin: 0 14% 0 0;
+  }
+
+  .body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .aside {
+    position: static;
+  }
+
+  .legendList {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+@media (orientation: landscape) and (min-width: 1280px) {
+  .body {
+    grid-template-columns: minmax(0, 1fr) 15.5rem;
+    gap: 2.5rem;
+  }
+
+  .aside {
+    position: sticky;
+    top: 6rem;
+  }
+
+  .legendList {
+    display: grid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seat,
+  .viewButton,
+  .cardProject {
+    transition: none;
+  }
+
+  /* No dim animation for a group booking, only the state change (stronger than the site's short fades). */
+  .seat {
+    transition-duration: 0s !important;
+  }
+
+  .seat:not(.empty):active {
+    transform: none;
+  }
+
+  .cabin[data-entered="run"] .seat,
+  .card {
+    animation: none;
+  }
+}

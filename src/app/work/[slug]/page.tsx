@@ -142,7 +142,7 @@ export default async function ProjectPage({ params }: PageProps<"/work/[slug]">)
             <ul className={styles.chips}>
               {project.stack.map((id) => (
                 <li key={id}>
-                  <HomeLink section="stack" className={styles.chip}>
+                  <HomeLink section={`seat-${id}`} className={styles.chip}>
                     {stackById.get(id)?.name ?? id}
                   </HomeLink>
                 </li>

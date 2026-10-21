@@ -20,7 +20,7 @@ export const journey: JourneyStamp[] = [
     line: "Moved to Mauritius for high school, from Grade 10 onwards.",
     period: "2019 to 2023",
     stamp: { port: "MRU", word: "ADMITTED", year: "2019", rotate: 5 },
-    notes: ["CHECK(owner): the old CV ends this school chapter in Nov 2022; the inventory says 2023. Using 2023."],
+    notes: ["Years confirmed by the owner (2026-10-21): 2019 to 2023."],
   },
   {
     country: "Malaysia",

@@ -220,7 +220,9 @@ export function Flowchart({ flow }: { flow: FlowCopy }) {
       return;
     }
     const io = new IntersectionObserver(
-      ([e]) => {
+      (entries) => {
+        // Several changes can arrive in one batch: the last entry is the current state.
+        const e = entries[entries.length - 1];
         if (!e.isIntersecting) return;
         el.setAttribute("data-drawn", "");
         io.disconnect();

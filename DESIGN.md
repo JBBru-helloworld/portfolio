@@ -100,7 +100,7 @@ Source of truth for tokens: `src/app/globals.css` (CSS variables, Tailwind `@the
 
 ## Overview
 
-**Window seat.** A monochrome, cinematic portfolio with one refined amber accent. It opens on a photorealistic dark cabin wall with one airplane window; the shade lifts and the scroll pushes the camera through the window and a cloud into the rest of the site. Everything after that is calm, precise and fast: a boarding-pass introduction, a split-flap departures board, passport stamps, selected work, a live fraud-detection demo, a periodic table of the stack, experience and contact.
+**Window seat.** A monochrome, cinematic portfolio with one refined amber accent. It opens on a photorealistic dark cabin wall with one airplane window; the shade lifts and the scroll pushes the camera through the window and a cloud into the rest of the site. Everything after that is calm, precise and fast: a boarding-pass introduction, a split-flap departures board, passport stamps, selected work, a live fraud-detection demo, an aircraft seat map of the stack, experience and contact.
 
 The mood is a night flight: dark cabin, soft reading light, quiet confidence. Premium and editorial, never cartoonish, never an "AI startup template".
 
@@ -272,12 +272,26 @@ All values live at the top of `src/components/scene/WindowScene.module.css`, so 
 - **Flowcharts:** hairline boxes and arrows, JetBrains Mono labels, monochrome, amber only on an outcome. A flow is steps in order, optionally forking into a pair side by side and joining again (Touch 'n Go has two charts: data requests, and the ChatGPT workflows; Plandora has its evaluation pipeline). Left to right on wide screens, with boxes sized to their labels and the drawing never larger than its natural size, so every chart's text matches; top to bottom on phones. The arrows draw in step by step as it scrolls into view (static under reduced motion); screen readers get the steps as a list and a description. Generic labels only.
 - **Videos:** a click-to-play facade (a self-hosted thumbnail and a play button); the `youtube-nocookie.com` player loads only when pressed.
 
+### Tech stack seat map (Gate 4, Phase 4b)
+
+- **Concept:** the stack is an aircraft seat map. Every technology is a seat showing its short, element-style symbol (one to three characters: `Py`, `Ts`, `Nx`). Zones are **categories, never skill levels**, front to back: A Languages, B Frontend, C Backend, D ML and data (including generative AI), E Cloud and DevOps, F Tools and design. No classes, ranks or proficiency anywhere.
+- **Seats:** numbered from the nose, six a row (A B C, the aisle, D E F); each zone starts a new row, so a zone's last row may have empty seats (faint dashed outlines). Seat numbers are derived from the order in `src/content/stack.ts`, never stored; a technology's anchor is its id (`#seat-python`).
+- **The aircraft:** a top-down fuselage in graphite hairlines: a pointed nose with the cockpit glazing, a long tail cone with the fin's centreline and a swept tailplane, wings at mid-cabin (with engines when lying down; a stub when standing), the tailplane, galleys (G) and lavatories (L) fore and aft. Before each zone, a band with "ZONE B · FRONTEND" in small mono capitals; between zones it is an exit row, with a hairline and chevrons at the doors.
+- **Orientation:** landscape screens at least 1024 px wide with a fine pointer (or any landscape screen at least 1280 px wide) show the plane lying down, nose on the left, with the legend and the seat card in a column beside it (below it under 1280 px). Phones, portrait screens and narrow touch screens show it standing, nose at the top. Seats stay at least 40 px on touch screens; nothing scrolls sideways at 360 px.
+- **Look:** seats are dark charcoal with a seat back on their aft side, the symbol in JetBrains Mono `paper` and a tiny zone letter. Monochrome: zones are told apart by labels and letters, never colour. **Amber only for the selected seat** (filled) and a group booking's seats (outlined).
+- **Selecting:** each seat is a button ("Seat 3A: Python, Languages"). Press scales to 0.96 (pointer only); the seat fills amber and its card opens: beside the plane on wide screens, a bottom sheet on phones (the page scrolls so the seat stays above it). The card: the symbol large, the name, zone and seat; "Used in" with each project's emblem, flight code and name (links to its page); "Also at" for roles from Experience; for a technology in neither, its source line. Not a boarding pass: no barcode, no passenger fields. The seat goes in the address (`#seat-<id>`, replaceState) and the corner sign reads "SEAT 7E · PANDAS" (phones "SEAT 7E").
+- **Keyboard:** the cabin is one tab stop (a roving tabindex); the arrow keys move in the physical layout (lying down: left and right along the cabin, up and down across it; standing: the reverse); Home and End go to the first and last seat; Enter or Space selects; Escape closes the card and returns focus to the seat. Keyboard moves are never animated.
+- **Group booking:** a designed dropdown (a Radix listbox in the site's greys, not the system menu): "No group booking", then Featured flights and All flights, each project with its tail-fin emblem and flight code, an amber tick on the booked one; keyboard and typeahead as a native select. Choosing one outlines its seats in amber and dims the rest (opacity, 200 ms; instant under reduced motion), with "6 seats booked · JB 201 Payments fraud detection", a link to the project and Clear, and a live summary for screen readers.
+- **List view:** "Seat map / List", remembered in localStorage. The list groups the stack by zone (symbol, name, number of projects) and links each to its seat. It is the only view without JavaScript.
+- **Entrance:** once per visit, as the cabin comes about 40% into view, the seats appear row by row from the nose (a fade and a 6 px rise, 70 ms apart, about 1.1 s in all). None under reduced motion.
+- **Links in:** project-page stack chips link to `/#seat-<id>`; the restore lands covered with the seat centred and opens it. Back from a project opened from a seat card returns to that seat, open.
+
 ### Signature components (to be built)
 
 - **Window landing:** photographic layers (the owner's window composition separated into frame, inner bezel and shade; two cloud videos), shade lift, scroll push through the window and a cloud. The only place `--ease-cinematic` and long durations are allowed.
 - **Split-flap departures board:** JetBrains Mono, tabular figures, `paper` on `cabin`; amber at most on one cell.
 - **Passport stamps:** the only place the stamp inks appear.
-- **Periodic table of the stack:** `graphite-4` category labels, `paper` symbols.
+- **Seat map of the stack (built in Phase 4b, above):** `graphite-4` zone labels, `paper` symbols; amber only for the selected and booked seats.
 - **Fraud "security check" demo:** the top driver may be amber; everything else monochrome.
 
 ## Motion

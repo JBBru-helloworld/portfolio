@@ -21,7 +21,20 @@ export const projects: Project[] = [
     role: "Full stack",
     summary:
       "Leakage-safe fraud model reaching 0.59 PR-AUC on 590K transactions at a 3.5% fraud rate, with a cost-based threshold and 50 tests.",
-    stack: ["python", "lightgbm", "shap", "optuna", "scikit-learn", "pandas", "fastapi", "docker", "pytest"],
+    stack: [
+      "python",
+      "lightgbm",
+      "shap",
+      "optuna",
+      "scikit-learn",
+      "pandas",
+      "numpy",
+      "pyarrow",
+      "matplotlib",
+      "fastapi",
+      "docker",
+      "pytest",
+    ],
     links: [
       { label: "GitHub", url: "https://github.com/JBBru-helloworld/payments-fraud-detection", kind: "repo" },
       { label: "Try the security check", url: "/#security-check", kind: "other" },
@@ -75,7 +88,7 @@ export const projects: Project[] = [
     role: "Built it end to end",
     summary:
       "Employment platform with Gemini resume parsing and job matching, Guardian AI that flags ableist language, and real-time text, voice and video messaging.",
-    stack: ["next-js", "fastapi", "google-gemini", "supabase", "livekit", "brevo", "vercel", "google-cloud-run", "railway"],
+    stack: ["next-js", "fastapi", "google-gemini", "supabase", "livekit", "brevo", "vercel", "google-cloud-run", "railway", "ci-cd"],
     links: [
       { label: "Live site", url: "https://inklusif.org", kind: "live" },
       { label: "GitHub", url: "https://github.com/JBBru-helloworld/inklusif", kind: "repo" },
@@ -178,7 +191,7 @@ export const projects: Project[] = [
     role: "Lead mobile app designer and integration engineer",
     summary:
       "Mobile app connecting people with nearby merchants through routine matching, location-based discovery and Gemini-powered semantic search.",
-    stack: ["flutter", "dart", "postgresql", "google-gemini", "docker"],
+    stack: ["flutter", "dart", "postgresql", "google-gemini", "docker", "ci-cd"],
     links: [{ label: "GitHub", url: "https://github.com/Spimy/mapetite", kind: "repo" }],
     video: { id: "rTA-m0tBtz0", list: "PLzMKtbh9mp9Dry3d248OlkvlP-zvM33WE", index: 16 },
     metrics: [],
@@ -253,7 +266,7 @@ export const projects: Project[] = [
     context: "Junior Software Engineer, Plandora",
     role: "Junior Software Engineer",
     summary: "Pipeline benchmarking AI chat outputs and token limits using an LLM as the judge.",
-    stack: ["deepeval", "langsmith", "python", "typescript"],
+    stack: ["deepeval", "langsmith", "python", "typescript", "elevenlabs", "ci-cd"],
     links: [{ label: "Plandora", url: "https://plandora.com/", kind: "live" }],
     metrics: [{ value: "4+", label: "accuracy and safety issues flagged" }],
     caseStudy: {
@@ -262,6 +275,7 @@ export const projects: Project[] = [
       did: [
         "Built an LLM-as-a-judge pipeline benchmarking AI chat outputs and token limits, with LangSmith and DeepEval.",
         "Wrote the evaluation tests in Python and TypeScript.",
+        "Tested ElevenLabs voice output while evaluating the AI clones.",
       ],
       result: "Helped flag 4+ issues in the AI outputs' accuracy and safety.",
     },

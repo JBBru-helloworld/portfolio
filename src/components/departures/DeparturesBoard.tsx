@@ -186,7 +186,9 @@ export function DeparturesBoard({ board, destinations }: { board: Departures; de
     }
     let first = true;
     const io = new IntersectionObserver(
-      ([entry]) => {
+      (entries) => {
+        // Several changes can arrive in one batch: the last entry is the current state.
+        const entry = entries[entries.length - 1];
         onScreen.current = entry.isIntersecting;
         if (!entry.isIntersecting) return;
         if (first && !reduce) {

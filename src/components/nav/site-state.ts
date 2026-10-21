@@ -53,9 +53,11 @@ export interface NavState {
   visited: ReadonlySet<string>;
   /** The destination being glided to, if any. */
   boarding: string | null;
+  /** The seat chosen on the Tech stack seat map, for the corner sign ("SEAT 3A · PYTHON"). */
+  seat: { code: string; name: string } | null;
 }
 
-const INITIAL: NavState = { current: null, visited: new Set(), boarding: null };
+const INITIAL: NavState = { current: null, visited: new Set(), boarding: null, seat: null };
 let state: NavState = INITIAL;
 const listeners = new Set<() => void>();
 
@@ -84,6 +86,10 @@ export function remarkOf(d: Destination, s: NavState = state): DestinationRemark
 
 export function setBoarding(id: string | null) {
   if (state.boarding !== id) update({ boarding: id });
+}
+
+export function setSeat(seat: NavState["seat"]) {
+  if (state.seat?.code !== seat?.code) update({ seat });
 }
 
 // ---------- Restore ----------
@@ -140,6 +146,26 @@ export function sectionTop(id: string): number | null {
 }
 
 /**
+ * Where a restore to `id` should scroll. Most targets go to the top of the screen (less the origin offset);
+ * an element marked data-restore-center (a seat) is centred, and one that is not shown (a seat while the
+ * list view is up) restores to its section instead.
+ */
+function restoreTop(id: string): number | null {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  if (el.hasAttribute("data-restore-center")) {
+    const r = el.getBoundingClientRect();
+    if (!r.height) {
+      const section = el.closest("section[id]");
+      return section ? sectionTop(section.id) : null;
+    }
+    return r.top + window.scrollY - (window.innerHeight - r.height) / 2;
+  }
+  const top = sectionTop(id);
+  return top === null ? null : top - restoreOffset;
+}
+
+/**
  * Jumps (instantly) to the restore target, if any, and starts everything that waits for the restore.
  * Called once the scroll sequence's pin exists (or straight away when there is no sequence).
  */
@@ -152,8 +178,8 @@ export function restoreNow(afterJump?: () => void) {
     // The sequence was torn down and rebuilt straight after the jump (React runs effects twice in
     // development): its pin spacing went and came back, so jump again.
     if (lastJump && performance.now() - lastJump.at < REJUMP_MS) {
-      const top = sectionTop(lastJump.id);
-      if (top !== null) window.scrollTo({ top: Math.max(0, top - restoreOffset), behavior: "instant" });
+      const top = restoreTop(lastJump.id);
+      if (top !== null) window.scrollTo({ top: Math.max(0, top), behavior: "instant" });
       afterJump?.();
     }
     return;
@@ -161,8 +187,8 @@ export function restoreNow(afterJump?: () => void) {
   const id = pendingRestore();
   lastJump = null;
   if (id) {
-    const top = sectionTop(id);
-    if (top !== null) window.scrollTo({ top: Math.max(0, top - restoreOffset), behavior: "instant" });
+    const top = restoreTop(id);
+    if (top !== null) window.scrollTo({ top: Math.max(0, top), behavior: "instant" });
     lastJump = { id, at: performance.now() };
     afterJump?.();
     if (window.__jbHash) history.replaceState(history.state, "", `#${window.__jbHash}`);

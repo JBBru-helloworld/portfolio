@@ -27,7 +27,7 @@ import { SoundToggle } from "@/components/sound/SoundToggle";
 import { bootSound, chime, soundStats } from "@/lib/sound";
 import styles from "./SiteNav.module.css";
 
-const SIGN_TILES = 24; // "GATE 3 · LIVE FRAUD DEMO"
+const SIGN_TILES = 28; // "SEAT 12A · OCI GENERATIVE AI" (check:content keeps seat names to 17 characters)
 const PHONE_MEDIA = "(max-width: 639px)";
 /** A label change: 2 to 4 flips of 70 ms, under 400 ms in all. */
 const LABEL_FLIP = { rowStagger: 0, tileJitter: 40, stepsBefore: [2, 4] as [number, number] };
@@ -104,9 +104,13 @@ export function SiteNav({ name, board, destinations, flight }: Props) {
       : `${flight.code} · ${flight.sign}`
     : !here
       ? board.nav.board
-      : phone
-        ? `${board.nav.gate} ${here.gate}`
-        : `${board.nav.gate} ${here.gate} · ${here.destination}`;
+      : here.id === "stack" && nav.seat
+        ? phone
+          ? `SEAT ${nav.seat.code}`
+          : `SEAT ${nav.seat.code} · ${nav.seat.name}`
+        : phone
+          ? `${board.nav.gate} ${here.gate}`
+          : `${board.nav.gate} ${here.gate} · ${here.destination}`;
 
   // Flips the tiles to the label; as the sign fades in, the label is simply set.
   useEffect(() => {

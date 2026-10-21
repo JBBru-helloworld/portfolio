@@ -258,26 +258,47 @@ export interface WorkCopy {
   flows: Record<string, FlowCopy[]>;
 }
 
-export type StackCategory =
-  | "ML and Data"
-  | "GenAI"
-  | "Languages"
-  | "Frontend"
-  | "Backend"
-  | "Cloud and DevOps"
-  | "Tools";
+/** The seat map's zones, front to back. Categories, never skill levels. */
+export type StackZone = "Languages" | "Frontend" | "Backend" | "ML and data" | "Cloud and DevOps" | "Tools and design";
+
+export interface Zone {
+  /** A (nearest the nose) to F. */
+  letter: "A" | "B" | "C" | "D" | "E" | "F";
+  name: StackZone;
+}
 
 export interface StackElement {
-  /** Stable id (the name in kebab case), referenced by projects and, later, the tile's anchor. */
+  /** Stable id (the name in kebab case): referenced by projects, and the seat's anchor (#seat-<id>). */
   id: string;
-  /** Assigned in category order. */
-  number: number;
-  /** 1 to 3 letters, first capitalised (periodic-table style). Unique. */
+  /** One to three characters (Py, Ts, Nx). Unique. */
   symbol: string;
   name: string;
-  category: StackCategory;
+  zone: StackZone;
   /** One line naming the project or role it came from. */
   usedFor: string;
+}
+
+/** Labels for the Tech stack section's seat map (src/content/seat-map.ts). */
+export interface SeatMapCopy {
+  /** Small mono label above the heading. */
+  label: string;
+  intro: string;
+  /** The cabin's accessible name. */
+  cabinLabel: string;
+  groupBooking: string;
+  groupPlaceholder: string;
+  /** The dropdown's first option, which clears the booking. */
+  groupNone: string;
+  /** The dropdown's two groups. */
+  groupHeadings: { featured: string; all: string };
+  /** "6 seats booked" */
+  booked: string;
+  clear: string;
+  viewFlight: string;
+  views: { map: string; list: string };
+  legend: { title: string; selected: string; empty: string };
+  card: { seat: string; zone: string; usedIn: string; alsoAt: string; close: string; none: string };
+  projectCount: { one: string; many: string };
 }
 
 export type CredentialKind = "degree" | "academic" | "scholarship" | "certification" | "award" | "community";

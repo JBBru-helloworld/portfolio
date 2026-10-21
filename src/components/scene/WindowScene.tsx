@@ -240,7 +240,9 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
     };
 
     const io = new IntersectionObserver(
-      ([entry]) => {
+      (entries) => {
+        // Several changes can arrive in one batch: the last entry is the current state.
+        const entry = entries[entries.length - 1];
         inView.current = entry.isIntersecting;
         sync();
       },

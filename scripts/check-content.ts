@@ -3,7 +3,7 @@
  *
  * Fails on: excluded words and phrases, the Sunway Tech Club outside its two approved lines, em dashes, common US spellings in strings,
  * third-person pronouns in strings (the site speaks in the first person),
- * duplicate or malformed periodic-table symbols, departures-board rows that do not fit, destinations
+ * seat-map problems (symbols, zones, seat-sign names), departures-board rows that do not fit, destinations
  * whose section is not on the page, and project problems (duplicate slugs or flight codes, unknown stack ids,
  * a featured project without a summary, seat-sign names off the flaps, repeated emblems, image counts that
  * do not match the built media).
@@ -128,19 +128,35 @@ for (const file of files) {
   }
 }
 
-// Periodic table: symbols unique, 1 to 3 letters, first capitalised.
+// Seat map (the tech stack): symbols unique (ignoring case), one to three characters starting with a capital;
+// every technology in exactly one known zone; no empty zone; names that fit the corner sign's flaps.
 {
   const rel = "src/content/stack.ts";
-  const text = readFileSync(join(contentDir, "stack.ts"), "utf8");
-  const seen = new Map<string, number>();
-  const re = /symbol:\s*"([^"]*)"/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(text))) {
-    const symbol = m[1];
-    const line = lineOf(text, m.index);
-    if (!/^[A-Z][a-z]{0,2}$/.test(symbol)) failures.push(`${rel}:${line}  symbol "${symbol}" is not 1 to 3 letters, first capitalised`);
-    if (seen.has(symbol)) failures.push(`${rel}:${line}  duplicate symbol "${symbol}" (first on line ${seen.get(symbol)})`);
-    else seen.set(symbol, line);
+  const { stack, zones } = await import(join(contentDir, "stack.ts"));
+  const seqFile = readFileSync(join(root, "src", "lib", "flap-sequence.ts"), "utf8");
+  const flaps = new Set(seqFile.match(/FLAP_SEQUENCE\s*=\s*"([^"]*)"/)?.[1] ?? "");
+  const zoneNames = new Set(zones.map((z: { name: string }) => z.name));
+  const symbols = new Map<string, string>();
+  const ids = new Set<string>();
+  const perZone = new Map<string, number>();
+  for (const e of stack as { id: string; symbol: string; name: string; zone: string }[]) {
+    const at = `${rel} (${e.name})`;
+    if (!/^[A-Z][A-Za-z0-9]{0,2}$/.test(e.symbol)) failures.push(`${at}  symbol "${e.symbol}" is not one to three characters starting with a capital`);
+    const key = e.symbol.toLowerCase();
+    if (symbols.has(key)) failures.push(`${at}  symbol "${e.symbol}" clashes with ${symbols.get(key)}`);
+    else symbols.set(key, e.name);
+    if (ids.has(e.id)) failures.push(`${at}  duplicate id "${e.id}"`);
+    ids.add(e.id);
+    if (!zoneNames.has(e.zone)) failures.push(`${at}  zone "${e.zone}" is not one of the six zones`);
+    perZone.set(e.zone, (perZone.get(e.zone) ?? 0) + 1);
+    // The corner sign reads "SEAT 12A · <NAME>" on 28 flap tiles: at most 17 characters, all on the flaps.
+    const sign = e.name.toUpperCase();
+    if (sign.length > 17) failures.push(`${at}  name is ${sign.length} characters; the seat sign fits 17`);
+    const off = [...new Set([...sign].filter((c) => !flaps.has(c)))];
+    if (off.length) failures.push(`${at}  name uses characters not on the flaps: ${off.map((c) => JSON.stringify(c)).join(" ")}`);
+  }
+  for (const z of zones as { letter: string; name: string }[]) {
+    if (!perZone.get(z.name)) failures.push(`${rel}  zone ${z.letter} (${z.name}) is empty`);
   }
 }
 

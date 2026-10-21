@@ -141,7 +141,9 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
       if (!isConstrainedNetwork()) frames.current?.load();
     };
 
-    mm.add({ motion: "(prefers-reduced-motion: no-preference)", touch: TOUCH_ONLY }, (ctx) => {
+    // GSAP runs this only while at least one condition matches: "reduce" makes sure it also runs on a
+    // desktop with reduced motion (otherwise neither matches, and the restore would never happen).
+    mm.add({ motion: "(prefers-reduced-motion: no-preference)", reduce: REDUCED_MOTION, touch: TOUCH_ONLY }, (ctx) => {
       const { motion, touch } = ctx.conditions as { motion: boolean; touch: boolean };
 
       if (!motion) {
@@ -152,7 +154,9 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
         if (next.getBoundingClientRect().top < window.innerHeight) return; // restored to it, or below
         next.style.opacity = "0";
         next.style.transition = "opacity 400ms ease";
-        const io = new IntersectionObserver(([e]) => {
+        const io = new IntersectionObserver((entries) => {
+          // Several changes can arrive in one batch: the last entry is the current state.
+          const e = entries[entries.length - 1];
           if (e.isIntersecting) {
             next.style.opacity = "1";
             io.disconnect();

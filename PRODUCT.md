@@ -36,7 +36,7 @@ jbbru.com is the personal portfolio of Joshua Bonham. It must communicate three 
 ## Brand Commitments
 
 - Name: Joshua Bonham; domain jbbru.com.
-- The concept "Window seat", with its signature elements (the cabin-window landing, the split-flap departures board, passport stamps, a periodic table of the stack, the live fraud demo), is set by the owner. Visual specifics live in DESIGN.md.
+- The concept "Window seat", with its signature elements (the cabin-window landing, the split-flap departures board, passport stamps, an aircraft seat map of the stack, the live fraud demo), is set by the owner. Visual specifics live in DESIGN.md.
 - Voice: calm, precise and confident. Never hype.
 
 ## Evidence on Hand
