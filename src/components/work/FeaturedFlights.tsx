@@ -13,7 +13,7 @@
  * the details in a band below). Phones: the strips stack and the open one grows to its image and details.
  * Before hydration, and without JavaScript, CSS lays the same out with the first strip open.
  */
-import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import { useRouter } from "next/navigation";
 // The slim Motion build: the m component with only the animation features it needs.
 import { LazyMotion, domAnimation, useReducedMotion } from "motion/react";
@@ -64,7 +64,10 @@ export function FeaturedFlights({
     return Math.max(0, origin ? flights.findIndex((f) => `flight-${f.slug}` === origin.id) : 0);
   });
   const activeRef = useRef(active);
-  activeRef.current = active;
+  // Kept in step after each render (read by the pointer handlers), never written during render.
+  useLayoutEffect(() => {
+    activeRef.current = active;
+  });
   const tap = useRef<{ pointer: string; wasActive: boolean }>({
     pointer: "",
     wasActive: false,

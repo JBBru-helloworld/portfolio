@@ -162,6 +162,9 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
     // is covered); the video waits for the visitor to scroll back up (wakeVideo).
     if (reduce || pendingRestore() !== null) {
       // Shade open (CSS), poster only, light at full strength; the view appears with the decoded frame.
+      // Set here, not at render: the server HTML (and the first client render) must be the closed shade,
+      // and whether to open at once is known only in the browser (reduced motion, or a restore).
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPhase("open");
       decodeImage(imgRef.current).then(() => !cancelled && setViewReady(true));
       return () => {

@@ -135,7 +135,7 @@ export const projects: Project[] = [
     ],
     emblem: { letters: "TG", livery: "band" },
     notes: [
-      "CHECK(owner): the two charts on this page, split as the owner asked (SQL requests; the ChatGPT workflows). Accurate enough, without showing internal detail?",
+      "The charts were reviewed by the owner (2026-10-21): the data-requests chart names the warehouse generically, \"SQL (data warehouse)\"; MaxCompute stays in the text.",
     ],
   },
   {
@@ -397,7 +397,7 @@ export const projects: Project[] = [
     caseStudy: {
       problem: "Grab's UMHackathon 2025 challenge: giving merchants business insights in plain language.",
       did: ["Designed the interface in Figma, as the team's UI designer."],
-      result: "TODO(owner): anything you are happy to publish about how the entry was received (it did not win).",
+      result: "Designed the full UI and a working prototype with an AI chatbot, which we pitched to the judges as a team.",
     },
     images: [
       {
@@ -468,7 +468,7 @@ export const projects: Project[] = [
     stack: ["php", "mysql", "docker", "figma"],
     links: [
       { label: "Live site", url: "https://recipe-roots.spimy.dev/", kind: "live" },
-      { label: "GitHub", url: "https://github.com/Spimy/recipe-roots", kind: "repo" },
+      { label: "GitHub", url: "https://github.com/JBBru-helloworld/recipe-roots-dockerised", kind: "repo" },
     ],
     metrics: [],
     caseStudy: {
@@ -478,9 +478,6 @@ export const projects: Project[] = [
     },
     images: [{ alt: "Recipe Roots home page: Your kitchen assistant, with a plated dish", caption: "The home page." }],
     emblem: { letters: "RR", livery: "stripe" },
-    notes: [
-      "CHECK(owner): the collaborator has two repos, recipe-roots and recipe-roots-dockerised. The link uses recipe-roots; which one should it be?",
-    ],
   },
   {
     slug: "eventsphere",

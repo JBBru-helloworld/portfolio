@@ -30,10 +30,10 @@ export const work: WorkCopy = {
         heading: "Data requests",
         caption: "How a data request was answered, from the ticket to the reply.",
         description:
-          "A data request arrives as a ticket. SQL is written in MaxCompute to find the data, and the data is reported back to whoever asked.",
+          "A data request arrives as a ticket. SQL is written against the data warehouse to find the data, and the data is reported back to whoever asked.",
         before: [
           { title: "Ticket", note: "a data request" },
-          { title: "SQL", note: "MaxCompute" },
+          { title: "SQL", note: "data warehouse" },
           { title: "Find the data" },
           { title: "Report back" },
         ],

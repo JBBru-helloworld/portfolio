@@ -64,7 +64,6 @@ export function SiteNav({ name, board, destinations, flight }: Props) {
   const tilesRef = useRef<HTMLSpanElement>(null);
   const engine = useRef<FlapBoard | null>(null);
   const wasVisible = useRef(false);
-  const lastLabel = useRef(board.nav.board);
   const listRef = useRef<HTMLOListElement>(null);
 
   useEffect(() => {
@@ -98,22 +97,24 @@ export function SiteNav({ name, board, destinations, flight }: Props) {
 
   const visible = flight ? true : nav.current !== null;
   const here = flight ? undefined : destinations.find((d) => d.id === nav.current);
-  // The label follows the current section; while hidden it keeps the last one.
+  // The label follows the current section (while hidden, the tiles keep what they show: see below).
   const label = flight
     ? phone
       ? flight.code
       : `${flight.code} · ${flight.sign}`
-    : !nav.current
-    ? lastLabel.current
     : !here
       ? board.nav.board
       : phone
         ? `${board.nav.gate} ${here.gate}`
         : `${board.nav.gate} ${here.gate} · ${here.destination}`;
-  lastLabel.current = label;
 
   // Flips the tiles to the label; as the sign fades in, the label is simply set.
   useEffect(() => {
+    // Hidden (fading out): the tiles keep their last label; the next one is set as the sign fades in.
+    if (!visible) {
+      wasVisible.current = false;
+      return;
+    }
     const el = tilesRef.current?.querySelector<HTMLElement>("[data-sign-tiles]");
     if (!el) return;
     const tiles = [...el.querySelectorAll<HTMLElement>("[data-target]")];
@@ -130,10 +131,6 @@ export function SiteNav({ name, board, destinations, flight }: Props) {
     } else e.run();
     wasVisible.current = visible;
   }, [label, visible]);
-
-  useEffect(() => {
-    if (!visible) setOpen(false);
-  }, [visible]);
 
   const go = (e: MouseEvent<HTMLAnchorElement>, id: string) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
@@ -170,7 +167,8 @@ export function SiteNav({ name, board, destinations, flight }: Props) {
         {name}
       </Link>
       <nav aria-label="Site" className={styles.nav}>
-        <Popover.Root open={open} onOpenChange={onOpenChange}>
+        {/* A hidden sign is never open. */}
+        <Popover.Root open={open && visible} onOpenChange={onOpenChange}>
           <Popover.Trigger asChild>
             <button type="button" className={styles.sign} data-current={nav.current ?? undefined}>
               <span className="sr-only">{`${board.nav.ariaLabel}. Now: ${currentName}`}</span>

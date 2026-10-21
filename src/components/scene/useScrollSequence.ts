@@ -5,7 +5,7 @@
  * hand-over to the fly-through, whiteout inside the cloud, emergence into --void). All beats and values
  * come from src/config/scene-timeline.ts.
  */
-import { useEffect, useRef, type MutableRefObject, type RefObject } from "react";
+import { useEffect, useLayoutEffect, useRef, type MutableRefObject, type RefObject } from "react";
 import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -92,7 +92,10 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
   const plateUpgrade = useRef<{ ready: boolean; applied: boolean; sizes: string } | null>(null);
   const { openNow, videoActive, videoHeld, wakeVideo } = opts;
   const openRef = useRef(opts.open);
-  openRef.current = opts.open;
+  // Kept in step after each render (before the effects below read it), never written during render.
+  useLayoutEffect(() => {
+    openRef.current = opts.open;
+  });
   // True while media loading is deferred (restored to a later section, not yet back in the sequence).
   const deferred = useRef(false);
 

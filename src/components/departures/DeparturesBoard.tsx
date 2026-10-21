@@ -123,6 +123,19 @@ export function DeparturesBoard({ board, destinations }: { board: Departures; de
       } else engine.run();
     });
 
+  // The one-time hint under the sound toggle, after the board first settles (only with sound off).
+  const showHint = () => {
+    if (isSoundOn()) return;
+    try {
+      if (window.sessionStorage.getItem(HINT_KEY)) return;
+      window.sessionStorage.setItem(HINT_KEY, "1");
+    } catch {
+      // Storage unavailable: show it anyway, once for this page.
+    }
+    setHint(true);
+    window.setTimeout(() => setHint(false), HINT_MS);
+  };
+
   // Brings every remark in line with the navigation state (DEPARTED after a visit), while on screen.
   const syncRemarks = () => {
     const el = boardRef.current;
@@ -201,19 +214,6 @@ export function DeparturesBoard({ board, destinations }: { board: Departures; de
     // syncRemarks and flipRemark only read refs and the store.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [destinations]);
-
-  // The first time the board settles in a visit (with sound off), a quiet hint beside the toggle.
-  const showHint = () => {
-    if (isSoundOn()) return;
-    try {
-      if (window.sessionStorage.getItem(HINT_KEY)) return;
-      window.sessionStorage.setItem(HINT_KEY, "1");
-    } catch {
-      // Storage unavailable: show it anyway, once for this page.
-    }
-    setHint(true);
-    window.setTimeout(() => setHint(false), HINT_MS);
-  };
 
   const choose = (e: MouseEvent<HTMLAnchorElement>, d: Destination) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; // new tab or window
