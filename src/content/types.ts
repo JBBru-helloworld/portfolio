@@ -74,11 +74,73 @@ export interface Destination {
 }
 
 /** The live security check (fraud demo): the model behind it and its headline result. */
+export type ScannerVerdict = "CLEARED" | "SCREENING" | "STOPPED";
+export type ScannerObjectId = "receipt" | "clock" | "cards" | "phone" | "compass" | "envelope" | "other";
+
+/** One object in the X-ray: a group of the model's features, with its line for each direction. */
+export interface ScannerObject {
+  id: ScannerObjectId;
+  label: string;
+  meaning: string;
+  raised: string;
+  lowered: string;
+}
+
+/** A field a visitor can set on the luggage tag (the scanner API's inputs). */
+export interface ScannerInput {
+  id: string;
+  /** The luggage tag's label ("VALUE"). */
+  tag: string;
+  label: string;
+  type: "number" | "integer" | "choice";
+  min?: number;
+  max?: number;
+  step?: number;
+  options?: string[];
+  feature: string;
+  note?: string;
+}
+
+/** One object in a result: its share of the explanation and whether it raised or lowered the risk. */
+export interface ScannerResultObject {
+  id: ScannerObjectId;
+  share: number;
+  direction: "raised" | "lowered";
+  line: string;
+}
+
+/** A synthetic passenger, with its real result from the scanner (the fallback when the scanner is offline). */
+export interface ScannerPreset {
+  id: string;
+  name: string;
+  expected: ScannerVerdict;
+  inputs: Record<string, string | number>;
+  cached: { verdict: ScannerVerdict; percentile: number; score: number; objects: ScannerResultObject[] };
+}
+
+/** The scanner's public configuration, copied by `pnpm security-check:sync` (security-check-scanner.json). */
+export interface ScannerConfig {
+  about: string;
+  modelVersion: string;
+  /** The verdict edges on the model's score scale and as percentiles of the validation scores. */
+  bands: Record<"screening" | "stopped", { score: number; percentile: number }>;
+  inputs: ScannerInput[];
+  objects: ScannerObject[];
+  presets: ScannerPreset[];
+}
+
 export interface SecurityCheck {
   /** Slug of the project in projects.ts. */
   projectSlug: string;
   headline: string;
   source: string;
+  /** The verdict words, lowest risk first. */
+  verdicts: ScannerVerdict[];
+  /** The short, accurate note for visitors. */
+  note: string;
+  /** What the percentile means, for the report. */
+  percentileNote: string;
+  scanner: ScannerConfig;
 }
 
 export interface Departures {

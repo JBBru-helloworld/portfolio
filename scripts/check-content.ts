@@ -77,7 +77,8 @@ function stringLiterals(text: string): { value: string; index: number }[] {
   return out;
 }
 
-const files = readdirSync(contentDir).filter((f) => f.endsWith(".ts"));
+// The content modules, and the scanner's copied configuration (its lines are visitor-facing copy too).
+const files = readdirSync(contentDir).filter((f) => f.endsWith(".ts") || f === "security-check-scanner.json");
 
 for (const file of files) {
   const path = join(contentDir, file);
@@ -297,6 +298,34 @@ for (const file of files) {
   const slugs = new Set(projects.map((p: { slug: string }) => p.slug));
   for (const e of experience as { slug: string; project?: string }[]) {
     if (e.project && !slugs.has(e.project)) failures.push(`src/content/experience.ts  ${e.slug}: project "${e.project}" is not a project slug`);
+  }
+}
+
+// The Security check: the scanner's copied configuration is complete and its passengers are synthetic.
+{
+  const rel = "src/content/security-check-scanner.json";
+  try {
+    const scanner = JSON.parse(readFileSync(join(contentDir, "security-check-scanner.json"), "utf8"));
+    const objectIds = ["receipt", "clock", "cards", "phone", "compass", "envelope", "other"];
+    const verdicts = ["CLEARED", "SCREENING", "STOPPED"];
+    const ids = scanner.objects.map((o: { id: string }) => o.id);
+    if (ids.join() !== objectIds.join()) failures.push(`${rel}  objects are ${ids.join(", ")} (expected ${objectIds.join(", ")})`);
+    for (const o of scanner.objects) if (!o.raised || !o.lowered) failures.push(`${rel}  object ${o.id} needs both lines`);
+    for (const p of scanner.presets) {
+      if (!verdicts.includes(p.expected)) failures.push(`${rel}  ${p.id}: unknown verdict ${p.expected}`);
+      if (p.cached?.verdict !== p.expected) failures.push(`${rel}  ${p.id}: cached result ${p.cached?.verdict} differs from its expected ${p.expected} (run pnpm security-check:sync)`);
+      const shares = (p.cached?.objects ?? []).reduce((sum: number, o: { share: number }) => sum + o.share, 0);
+      if (Math.abs(shares - 1) > 1e-6) failures.push(`${rel}  ${p.id}: object shares add up to ${shares}`);
+    }
+    for (const v of verdicts) if (!scanner.presets.some((p: { expected: string }) => p.expected === v)) failures.push(`${rel}  no passenger lands on ${v}`);
+    if (!(scanner.bands.screening.score < scanner.bands.stopped.score)) failures.push(`${rel}  band edges out of order`);
+  } catch {
+    failures.push(`${rel}  missing or unreadable (run pnpm security-check:sync with the scanner running)`);
+  }
+  // Never a real transaction: no transaction IDs and nothing from the fraud repo's local examples, anywhere in content.
+  for (const file of readdirSync(contentDir)) {
+    const text = readFileSync(join(contentDir, file), "utf8");
+    if (/TransactionID|local_examples/.test(text)) failures.push(`src/content/${file}  names a real transaction (TransactionID or local_examples)`);
   }
 }
 

@@ -1,0 +1,557 @@
+{
+  "about": "Copied from the scanner API by pnpm security-check:sync. Synthetic passengers only; no real transaction.",
+  "modelVersion": "1f4cbbc11228",
+  "bands": {
+    "screening": {
+      "score": 0.00002817647271815681,
+      "percentile": 87.7
+    },
+    "stopped": {
+      "score": 0.00006505720324921712,
+      "percentile": 91.1
+    }
+  },
+  "inputs": [
+    {
+      "id": "amount",
+      "tag": "VALUE",
+      "label": "Amount",
+      "type": "number",
+      "min": 0.5,
+      "max": 5000,
+      "step": 0.01,
+      "feature": "TransactionAmt",
+      "note": "In the dataset's currency units."
+    },
+    {
+      "id": "hour",
+      "tag": "TIME",
+      "label": "Hour",
+      "type": "integer",
+      "min": 0,
+      "max": 23,
+      "feature": "TransactionDT",
+      "note": "Hour on the dataset's clock, whose reference time is unknown, so it is not a local time."
+    },
+    {
+      "id": "product",
+      "tag": "PRODUCT",
+      "label": "Product code",
+      "type": "choice",
+      "options": [
+        "C",
+        "H",
+        "R",
+        "S",
+        "W"
+      ],
+      "feature": "ProductCD",
+      "note": "The dataset's product code; its meaning is not published."
+    },
+    {
+      "id": "network",
+      "tag": "CLASS",
+      "label": "Card network",
+      "type": "choice",
+      "options": [
+        "visa",
+        "mastercard",
+        "american express",
+        "discover"
+      ],
+      "feature": "card4"
+    },
+    {
+      "id": "card_type",
+      "tag": "CLASS",
+      "label": "Card type",
+      "type": "choice",
+      "options": [
+        "debit",
+        "credit"
+      ],
+      "feature": "card6"
+    },
+    {
+      "id": "device",
+      "tag": "DEVICE",
+      "label": "Device",
+      "type": "choice",
+      "options": [
+        "desktop",
+        "mobile",
+        "unknown"
+      ],
+      "feature": "DeviceType",
+      "note": "unknown: no device or identity details, as for most transactions in the data."
+    },
+    {
+      "id": "distance",
+      "tag": "FROM → TO",
+      "label": "Distance",
+      "type": "choice",
+      "options": [
+        "short",
+        "long",
+        "unknown"
+      ],
+      "feature": "dist1",
+      "note": "short and long are the 25th and 95th percentiles of dist1 on the train window."
+    },
+    {
+      "id": "email",
+      "tag": "EMAIL",
+      "label": "Email provider",
+      "type": "choice",
+      "options": [
+        "google",
+        "yahoo",
+        "microsoft",
+        "apple",
+        "aol",
+        "anonymous",
+        "other",
+        "none"
+      ],
+      "feature": "P_emaildomain",
+      "note": "Each provider is sent as one representative domain; none sends no domain."
+    }
+  ],
+  "objects": [
+    {
+      "id": "receipt",
+      "label": "Receipt",
+      "meaning": "The amount and the product code",
+      "raised": "The amount and product type raised the risk.",
+      "lowered": "The amount and product type lowered the risk."
+    },
+    {
+      "id": "clock",
+      "label": "Clock",
+      "meaning": "The hour and day on the dataset's clock",
+      "raised": "The time of the purchase raised the risk.",
+      "lowered": "The time of the purchase lowered the risk."
+    },
+    {
+      "id": "cards",
+      "label": "Stack of cards",
+      "meaning": "The card's network and type, its masked details and its usual spending",
+      "raised": "The card and its usual spending raised the risk.",
+      "lowered": "The card and its usual spending lowered the risk."
+    },
+    {
+      "id": "phone",
+      "label": "Phone",
+      "meaning": "The device type and device details",
+      "raised": "The device raised the risk.",
+      "lowered": "The device lowered the risk."
+    },
+    {
+      "id": "compass",
+      "label": "Compass",
+      "meaning": "The masked address codes and the distance field",
+      "raised": "The location and distance raised the risk.",
+      "lowered": "The location and distance lowered the risk."
+    },
+    {
+      "id": "envelope",
+      "label": "Envelope",
+      "meaning": "The purchaser's and recipient's email domains",
+      "raised": "The email domain raised the risk.",
+      "lowered": "The email domain lowered the risk."
+    },
+    {
+      "id": "other",
+      "label": "Sealed box",
+      "meaning": "Every anonymised signal (C, D, M, V and id columns) and the missing-value counts",
+      "raised": "Other signals raised the risk.",
+      "lowered": "Other signals lowered the risk."
+    }
+  ],
+  "presets": [
+    {
+      "id": "routine-top-up",
+      "name": "Routine top-up",
+      "expected": "CLEARED",
+      "inputs": {
+        "amount": 20,
+        "hour": 15,
+        "product": "W",
+        "network": "visa",
+        "card_type": "debit",
+        "device": "unknown",
+        "distance": "short",
+        "email": "google"
+      },
+      "cached": {
+        "verdict": "CLEARED",
+        "percentile": 58.7,
+        "score": 0.0000012320484743978004,
+        "objects": [
+          {
+            "id": "compass",
+            "share": 0.34559512931219055,
+            "direction": "lowered",
+            "line": "The location and distance lowered the risk."
+          },
+          {
+            "id": "cards",
+            "share": 0.3179438115165351,
+            "direction": "raised",
+            "line": "The card and its usual spending raised the risk."
+          },
+          {
+            "id": "receipt",
+            "share": 0.16398142306333882,
+            "direction": "lowered",
+            "line": "The amount and product type lowered the risk."
+          },
+          {
+            "id": "envelope",
+            "share": 0.0781882688976567,
+            "direction": "raised",
+            "line": "The email domain raised the risk."
+          },
+          {
+            "id": "clock",
+            "share": 0.07262771826617279,
+            "direction": "raised",
+            "line": "The time of the purchase raised the risk."
+          },
+          {
+            "id": "other",
+            "share": 0.012658848083168674,
+            "direction": "lowered",
+            "line": "Other signals lowered the risk."
+          },
+          {
+            "id": "phone",
+            "share": 0.009004800860937443,
+            "direction": "raised",
+            "line": "The device raised the risk."
+          }
+        ]
+      }
+    },
+    {
+      "id": "weekly-shop",
+      "name": "Weekly shop",
+      "expected": "CLEARED",
+      "inputs": {
+        "amount": 85.5,
+        "hour": 18,
+        "product": "W",
+        "network": "mastercard",
+        "card_type": "debit",
+        "device": "unknown",
+        "distance": "short",
+        "email": "yahoo"
+      },
+      "cached": {
+        "verdict": "CLEARED",
+        "percentile": 45,
+        "score": 4.6169077799983913e-7,
+        "objects": [
+          {
+            "id": "compass",
+            "share": 0.3680427717244293,
+            "direction": "lowered",
+            "line": "The location and distance lowered the risk."
+          },
+          {
+            "id": "cards",
+            "share": 0.30504583575316213,
+            "direction": "lowered",
+            "line": "The card and its usual spending lowered the risk."
+          },
+          {
+            "id": "clock",
+            "share": 0.09325738211390164,
+            "direction": "raised",
+            "line": "The time of the purchase raised the risk."
+          },
+          {
+            "id": "receipt",
+            "share": 0.09317907374138325,
+            "direction": "lowered",
+            "line": "The amount and product type lowered the risk."
+          },
+          {
+            "id": "envelope",
+            "share": 0.07683169540264852,
+            "direction": "lowered",
+            "line": "The email domain lowered the risk."
+          },
+          {
+            "id": "phone",
+            "share": 0.033685427828558635,
+            "direction": "raised",
+            "line": "The device raised the risk."
+          },
+          {
+            "id": "other",
+            "share": 0.029957813435916504,
+            "direction": "raised",
+            "line": "Other signals raised the risk."
+          }
+        ]
+      }
+    },
+    {
+      "id": "business-trip",
+      "name": "Business trip",
+      "expected": "CLEARED",
+      "inputs": {
+        "amount": 620,
+        "hour": 9,
+        "product": "R",
+        "network": "american express",
+        "card_type": "credit",
+        "device": "desktop",
+        "distance": "long",
+        "email": "microsoft"
+      },
+      "cached": {
+        "verdict": "CLEARED",
+        "percentile": 45.3,
+        "score": 4.71279662423926e-7,
+        "objects": [
+          {
+            "id": "compass",
+            "share": 0.24715928349171523,
+            "direction": "lowered",
+            "line": "The location and distance lowered the risk."
+          },
+          {
+            "id": "other",
+            "share": 0.22395159793127625,
+            "direction": "lowered",
+            "line": "Other signals lowered the risk."
+          },
+          {
+            "id": "cards",
+            "share": 0.17568192662746596,
+            "direction": "raised",
+            "line": "The card and its usual spending raised the risk."
+          },
+          {
+            "id": "envelope",
+            "share": 0.16059505925893539,
+            "direction": "lowered",
+            "line": "The email domain lowered the risk."
+          },
+          {
+            "id": "clock",
+            "share": 0.12479403412225873,
+            "direction": "raised",
+            "line": "The time of the purchase raised the risk."
+          },
+          {
+            "id": "receipt",
+            "share": 0.06312081119890918,
+            "direction": "raised",
+            "line": "The amount and product type raised the risk."
+          },
+          {
+            "id": "phone",
+            "share": 0.004697287369439128,
+            "direction": "raised",
+            "line": "The device raised the risk."
+          }
+        ]
+      }
+    },
+    {
+      "id": "duty-free-new-device",
+      "name": "Duty free, new device",
+      "expected": "SCREENING",
+      "inputs": {
+        "amount": 349,
+        "hour": 4,
+        "product": "C",
+        "network": "visa",
+        "card_type": "credit",
+        "device": "mobile",
+        "distance": "unknown",
+        "email": "other"
+      },
+      "cached": {
+        "verdict": "SCREENING",
+        "percentile": 89.2,
+        "score": 0.00003949354833460613,
+        "objects": [
+          {
+            "id": "cards",
+            "share": 0.330350304468266,
+            "direction": "raised",
+            "line": "The card and its usual spending raised the risk."
+          },
+          {
+            "id": "receipt",
+            "share": 0.2207020639244449,
+            "direction": "raised",
+            "line": "The amount and product type raised the risk."
+          },
+          {
+            "id": "envelope",
+            "share": 0.17551079713133558,
+            "direction": "lowered",
+            "line": "The email domain lowered the risk."
+          },
+          {
+            "id": "compass",
+            "share": 0.11860144014190664,
+            "direction": "raised",
+            "line": "The location and distance raised the risk."
+          },
+          {
+            "id": "other",
+            "share": 0.10923625893943638,
+            "direction": "raised",
+            "line": "Other signals raised the risk."
+          },
+          {
+            "id": "phone",
+            "share": 0.03637196753528131,
+            "direction": "lowered",
+            "line": "The device lowered the risk."
+          },
+          {
+            "id": "clock",
+            "share": 0.009227167859329184,
+            "direction": "lowered",
+            "line": "The time of the purchase lowered the risk."
+          }
+        ]
+      }
+    },
+    {
+      "id": "far-from-home",
+      "name": "Far from home, large amount",
+      "expected": "STOPPED",
+      "inputs": {
+        "amount": 1450,
+        "hour": 2,
+        "product": "W",
+        "network": "visa",
+        "card_type": "credit",
+        "device": "unknown",
+        "distance": "long",
+        "email": "anonymous"
+      },
+      "cached": {
+        "verdict": "STOPPED",
+        "percentile": 96,
+        "score": 0.0008060029107830998,
+        "objects": [
+          {
+            "id": "other",
+            "share": 0.6672266080633799,
+            "direction": "raised",
+            "line": "Other signals raised the risk."
+          },
+          {
+            "id": "envelope",
+            "share": 0.14631416800388727,
+            "direction": "lowered",
+            "line": "The email domain lowered the risk."
+          },
+          {
+            "id": "cards",
+            "share": 0.07162538423664529,
+            "direction": "raised",
+            "line": "The card and its usual spending raised the risk."
+          },
+          {
+            "id": "compass",
+            "share": 0.042344125173674405,
+            "direction": "raised",
+            "line": "The location and distance raised the risk."
+          },
+          {
+            "id": "receipt",
+            "share": 0.03381112455168431,
+            "direction": "raised",
+            "line": "The amount and product type raised the risk."
+          },
+          {
+            "id": "clock",
+            "share": 0.03040086950857737,
+            "direction": "raised",
+            "line": "The time of the purchase raised the risk."
+          },
+          {
+            "id": "phone",
+            "share": 0.008277720462151509,
+            "direction": "raised",
+            "line": "The device raised the risk."
+          }
+        ]
+      }
+    },
+    {
+      "id": "card-testing",
+      "name": "Card testing: small amounts",
+      "expected": "STOPPED",
+      "inputs": {
+        "amount": 4.99,
+        "hour": 3,
+        "product": "C",
+        "network": "discover",
+        "card_type": "credit",
+        "device": "mobile",
+        "distance": "unknown",
+        "email": "anonymous"
+      },
+      "cached": {
+        "verdict": "STOPPED",
+        "percentile": 97,
+        "score": 0.003428009247941185,
+        "objects": [
+          {
+            "id": "other",
+            "share": 0.6606728092474847,
+            "direction": "raised",
+            "line": "Other signals raised the risk."
+          },
+          {
+            "id": "cards",
+            "share": 0.1539748029537955,
+            "direction": "raised",
+            "line": "The card and its usual spending raised the risk."
+          },
+          {
+            "id": "envelope",
+            "share": 0.05682340315117944,
+            "direction": "lowered",
+            "line": "The email domain lowered the risk."
+          },
+          {
+            "id": "receipt",
+            "share": 0.041648510650277235,
+            "direction": "lowered",
+            "line": "The amount and product type lowered the risk."
+          },
+          {
+            "id": "phone",
+            "share": 0.03746414271846502,
+            "direction": "lowered",
+            "line": "The device lowered the risk."
+          },
+          {
+            "id": "clock",
+            "share": 0.02785584520958101,
+            "direction": "raised",
+            "line": "The time of the purchase raised the risk."
+          },
+          {
+            "id": "compass",
+            "share": 0.021560486069217014,
+            "direction": "raised",
+            "line": "The location and distance raised the risk."
+          }
+        ]
+      }
+    }
+  ]
+}
