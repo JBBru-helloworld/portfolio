@@ -11,4 +11,7 @@ export { stack, stackById, stackId, zones } from "./stack";
 export { seatMap } from "./seat-map";
 export { credentials } from "./credentials";
 export { landing } from "./landing";
+export { logbook } from "./logbook";
+export { dutyFree } from "./duty-free";
+export { footer } from "./footer";
 export type * from "./types";

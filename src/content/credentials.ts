@@ -16,8 +16,8 @@ export const credentials: Credential[] = [
     kind: "scholarship",
     title: "Jeffrey Cheah Entrance Scholarship",
     issuer: "Sunway University and Lancaster University",
-    date: "Sep 2023",
-    notes: ["CHECK(owner): the date comes from the old CV; the inventory gives no date."],
+    // The owner's resume confirms the scholarship but gives no date; the old CV's "Sep 2023" stays unshown.
+    notes: ["TODO(owner): the year of the scholarship, if you want it shown (the old CV says Sep 2023)."],
   },
   {
     kind: "certification",

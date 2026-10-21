@@ -1,16 +1,21 @@
-import { profile, work } from "@/content";
+import { footer, work } from "@/content";
+import { BackToWindow } from "./BackToWindow";
 import styles from "./SiteFooter.module.css";
 
-/** The site's foot: the name and the required Skiper UI credit (Featured flights is based on Skiper UI 52). */
+/** The quiet foot of every page: the copyright, how it was built, the Skiper UI credit, and back to the window. */
 export function SiteFooter() {
   return (
     <footer className={styles.footer}>
-      <p className={styles.name}>{profile.name}</p>
-      <p className={styles.credit}>
-        <a href={work.credit.url} target="_blank" rel="noopener">
-          {work.credit.label}
-        </a>
-      </p>
+      <div className={styles.meta}>
+        <p className={styles.line}>{footer.copyright}</p>
+        <p className={styles.line}>{footer.built}</p>
+        <p className={styles.line}>
+          <a href={work.credit.url} target="_blank" rel="noopener noreferrer" className={styles.link}>
+            {work.credit.label}
+          </a>
+        </p>
+      </div>
+      <BackToWindow className={`${styles.link} ${styles.back}`}>{footer.backToWindow}</BackToWindow>
     </footer>
   );
 }

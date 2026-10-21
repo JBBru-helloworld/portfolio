@@ -286,6 +286,30 @@ All values live at the top of `src/components/scene/WindowScene.module.css`, so 
 - **Entrance:** once per visit, as the cabin comes about 40% into view, the seats appear row by row from the nose (a fade and a 6 px rise, 70 ms apart, about 1.1 s in all). None under reduced motion.
 - **Links in:** project-page stack chips link to `/#seat-<id>`; the restore lands covered with the seat centred and opens it. Back from a project opened from a seat card returns to that seat, open.
 
+### Experience: the logbook (Gate 5, Phase 4c)
+
+- **Look:** a pilot's logbook page, related to the passport page: dark graphite (`cabin`), faint ruled lines every 2.25rem, a hairline margin rule down the left, column headers in small JetBrains Mono capitals. No handwriting fonts. The small mono label reads "LOGBOOK"; the `h2` is "Experience".
+- **Columns:** DATE ("OCT 2026 – PRESENT", mono), AIRCRAFT (the company; the name links to its website, with a faint underline, and turns amber on hover or focus), DUTY (the role), ROUTE (the city or "Remote", mono; empty while unknown), REMARKS (two or three short lines with the numbers). Newest first. A real `<table>` with proper headers on wide screens; under 900 px each entry stacks, with small mono labels beside its values, and nothing scrolls sideways at 360 px.
+- **Entrance:** each row writes in as it scrolls in (a fade and an 8 px rise, 110 ms apart), once per visit; none under reduced motion.
+- **Ratings and endorsements:** below the entries, the credentials as plain compact lines (name, issuer and date in mono, any detail). A field still holding an owner question is never shown.
+- **Taped-in photos:** small prints with a thin off-white border, a soft shadow, a translucent strip of tape slightly askew, and a fixed tilt (±3°). Faded at rest (about 40% saturation, slightly lifted blacks) and full colour on hover or focus, in CSS: the second colour exception after the project images. On wide screens the prints sit in a column beside their entry, inside the page and clear of its edge; on phones they sit above the remarks, smaller. Entries without photos show none.
+- **Photo stacks:** several photos are a slightly fanned stack. Every 4 s the top print slides off and tucks under (500 ms, `--ease-in-out`), only while the entry is at least half in view, the tab is visible, and it is the stack most in view (one moves at a time). Hover, keyboard focus or a tap pauses it until play is pressed. A click, a tap or the arrow keys flick by hand. A pause/play button and a "1 / 3" counter sit beside it. Reduced motion: never by itself, manual flicks instant.
+- **Publishing photos:** `pnpm experience:build` exports only photos that are described (alt text) and have no open `CHECK(owner)` (other people's faces, names, internal screens or figures); the rest never reach `public/`.
+
+### Contact: Duty free (Gate 6, Phase 4c)
+
+- **Concept:** the last stop before the gate. The small mono label reads "DUTY FREE"; the `h2` is "Contact", and below it "Before you fly, take something with you."
+- **Shelves:** softly lit, in the greys: each product stands in a pool of light from above, on a thin shelf edge with a faint highlight. Three to a shelf on wide screens (the last shelf centred), two on phones. Restrained, no shop clutter.
+- **Products:** one per link, drawn as monochrome hairline objects: the resume as a folded document in a small carrier bag, the email as an envelope, LinkedIn, GitHub and Instagram as boxed items with their official marks (unaltered, monochrome, small). Shelf-edge tags like duty-free price tags without prices: the name and the action ("CONNECT →") in JetBrains Mono.
+- **Interaction:** the product and its tag are one link; on hover or focus the product lifts 6 px and the action turns amber. External links open in a new tab (`noopener noreferrer`). Touch targets at least 44 px. No sound.
+- **Email:** the address is never in the server HTML: it is joined in the browser from two parts (a `<noscript>` line writes it as "[at]"). The link is a `mailto:`; a separate Copy button copies it, its flap label flipping to COPIED and back.
+- **Resume:** shown only once `pnpm resume:build` has published a clean PDF (metadata stripped; it fails on phone numbers, street addresses, availability or notice periods, visa or work-permit wording, Singapore or a Singapore company suffix, and the Sunway Tech Club); otherwise hidden, never a broken link.
+- **Entrance:** the products settle onto the shelves one after another (a 14 px drop, no bounce), once per visit; none under reduced motion.
+
+### Footer (Phase 4c)
+
+A quiet foot on every page: "© 2026 Joshua Bonham", "Built by me, with Next.js on Cloudflare", the "Gallery by Skiper UI" credit, and "Back to the window ↑", which reloads the home page at the top so the landing replays as on a fresh visit.
+
 ### Signature components (to be built)
 
 - **Window landing:** photographic layers (the owner's window composition separated into frame, inner bezel and shade; two cloud videos), shade lift, scroll push through the window and a cloud. The only place `--ease-cinematic` and long durations are allowed.

@@ -1,0 +1,105 @@
+{
+  "base": "/experience",
+  "roles": {
+    "coral-coders": {
+      "photos": [
+        {
+          "n": 1,
+          "source": "coralcoders-pic-1.PNG",
+          "width": 3375,
+          "height": 4219,
+          "widths": [
+            320,
+            640,
+            960
+          ],
+          "placeholder": "data:image/webp;base64,UklGRtgAAABXRUJQVlA4IMwAAAAQBwCdASoYAB4APulaqk2pJKQiN/VYASAdCWYAnTMy/N3Abcfn4AbivyZFX70Crv8ZdoFD0xE1Xuwvk7lcoUc+AAD+/C7KoWuuCBdw9HDrmd/Rnrsr3rnm7JJYQrBjKk4K6FVnVxmqf3X245eP+yKKZnjwMp5vUxi0voIdbL0UaCFrHV0fWCLAbq2Q7sPAkR/Ie2iujQdCa1li/fC5Xu7YHsYcjb5k+cn8jbesjww+Tge1P47wGmr5mh50c0L0sHYy7EDfoAuTuOR0AAA="
+        }
+      ]
+    },
+    "build-a-genius": {
+      "photos": [
+        {
+          "n": 1,
+          "source": "bac-pic-1.png",
+          "width": 1080,
+          "height": 1920,
+          "widths": [
+            320,
+            640,
+            960
+          ],
+          "placeholder": "data:image/webp;base64,UklGRsIAAABXRUJQVlA4ILYAAAAwBgCdASoYACsAPt1apE2opSOiOrZoARAbiUAX/YLJfyhAjb8D0K6BZskOyAO3ebP7WtYjtVClewwAAN0gqpF6PmIS3Qow28T0y6kyd+hzgCd9VUhp2qPFGmrHaycsh6v4A+hN6AUQseKrmeW+CYReOKoBmN3E4K8ZeyF6GnXsIL7AW+VUGA9cmL0owA0cGuRLg6sJ3GRmSyNoMv65pT4YjxfCp8AMN17b/UtYMUzErTAMAAAAAA=="
+        }
+      ]
+    },
+    "touch-n-go-digital": {
+      "photos": [
+        {
+          "n": 1,
+          "source": "tng-pic-1.png",
+          "width": 3024,
+          "height": 4032,
+          "widths": [
+            320,
+            640,
+            960
+          ],
+          "placeholder": "data:image/webp;base64,UklGRpYAAABXRUJQVlA4IIoAAABQBQCdASoYACAAPu1erE2ppSSiMBgMATAdiWwAnTKEdQD7w5PiMHph+i+2e/6gcQx6u4AA/uYLSYl5ldk32ylvD4W07dY7OFvptlqSFMMpwLKB+ooN4HkV7K27/0QRK40nlhLFpMREYJS3qGIqwQvq5o7ueIdlroRSnSb5jwmV2S31oHQW5IcAAAA="
+        },
+        {
+          "n": 5,
+          "source": "tng-pic-5.png",
+          "width": 3024,
+          "height": 4032,
+          "widths": [
+            320,
+            640,
+            960
+          ],
+          "placeholder": "data:image/webp;base64,UklGRrAAAABXRUJQVlA4IKQAAAAQBQCdASoYACAAPu1ys1MppqSiqAgBMB2JagCdMyX5haaA1VfJkZ+XAPkn6tF/VLFAAP6o0SuYW/QwNIMReQ7yTmEa3nB9sLALq3Rpz6jw64qxqVnSNNu+4Jwh4ccuQJQ5IjTL0rS3t3gjm7X1HsxLiRgaXjJFUizElPr1Ezq4rHHKfdfWRFYFrlMKUo3Jmx07bOhMsTLoXBEJRn4SAHgfxDYAAA=="
+        },
+        {
+          "n": 6,
+          "source": "tng-pic-6.png",
+          "width": 3024,
+          "height": 4032,
+          "widths": [
+            320,
+            640,
+            960
+          ],
+          "placeholder": "data:image/webp;base64,UklGRpYAAABXRUJQVlA4IIoAAACQBQCdASoYACAAPu1oqU2ppiQiMAgBMB2JQBdmarhWeRI07AmzPJ/jiJaQUhNYYCDIs/IXMAD+6/sIXR+FJoBMxKfkL62ATqzioZ4+7ryepTrHFMmA8JK8C12blCdCbpMvwsBWR7zqSelYCxoG6hdZvCXcHXhKuKm0rcib89VMSxPzRU/9tDvAAAA="
+        },
+        {
+          "n": 7,
+          "source": "tng-pic-7.png",
+          "width": 3024,
+          "height": 4032,
+          "widths": [
+            320,
+            640,
+            960
+          ],
+          "placeholder": "data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAABQBQCdASoYACAAPu1srFEppaQiqAqpMB2JQBOmUAFD/Qv3kO1qfOMfBmoufmECTdOseSAA7+NJ5nm0fkLFvbgWURgtDoNf5KyN9ns70cPdlQ8ZmPUo9FLFZgfasTr6UwwGSUuWRsxsWarckw+UCgTDEyH7sh3WDvR1XXxESyqwrOnx4JeuKoZmglUETij5/u83dGEmFF1VkAAA"
+        }
+      ]
+    },
+    "plandora": {
+      "photos": [
+        {
+          "n": 1,
+          "source": "plandora-pic.JPG",
+          "width": 4284,
+          "height": 5712,
+          "widths": [
+            320,
+            640,
+            960
+          ],
+          "placeholder": "data:image/webp;base64,UklGRpYAAABXRUJQVlA4IIoAAAAQBQCdASoYACAAPu1orVAppaQisBgIATAdiWMAvzhpX2fTuB4cDkQRhMcRREW9O8ggAP71Dqf6nIj8KL6po9lTvIMQv7iqOd/yjOx95flFwzcxMnmRwkd/bU9MPt44NojM410R61nG77FS3aUIWawllheQa8S/iahzJMlwUrxahpMeJfhn0ZMduAA="
+        }
+      ]
+    }
+  }
+}

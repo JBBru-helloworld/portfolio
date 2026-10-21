@@ -276,6 +276,7 @@ export const projects: Project[] = [
         "Built an LLM-as-a-judge pipeline benchmarking AI chat outputs and token limits, with LangSmith and DeepEval.",
         "Wrote the evaluation tests in Python and TypeScript.",
         "Tested ElevenLabs voice output while evaluating the AI clones.",
+        "As a QA tester, flagged and reported bugs across the product.",
       ],
       result: "Helped flag 4+ issues in the AI outputs' accuracy and safety.",
     },

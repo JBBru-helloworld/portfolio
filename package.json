@@ -17,7 +17,9 @@
     "scene:qa": "sh scripts/scene/run.sh qa.py",
     "sound:build": "scripts/scene/.venv/bin/python scripts/sound/build.py",
     "stamps:build": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/stamps/render.mjs && scripts/scene/.venv/bin/python scripts/stamps/ink.py",
-    "projects:build": "scripts/scene/.venv/bin/python scripts/projects/build.py"
+    "projects:build": "scripts/scene/.venv/bin/python scripts/projects/build.py",
+    "experience:build": "scripts/scene/.venv/bin/python scripts/experience/build.py",
+    "resume:build": "scripts/scene/.venv/bin/python scripts/resume/build.py"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

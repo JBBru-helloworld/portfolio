@@ -292,3 +292,29 @@
     animation: none !important;
   }
 }
+
+/*
+ * Staggered entrances (src/components/reveal/RevealGroup.tsx): items wait hidden, with JavaScript only,
+ * until they scroll in; once a visit has seen them all (or under reduced motion) they are simply there.
+ */
+html.js [data-reveal-group]:not([data-reveal-group="done"]) [data-reveal]:not([data-revealed]) {
+  opacity: 0;
+}
+
+[data-reveal-group="run"] [data-revealed] {
+  animation: reveal-in 460ms var(--ease-out) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    translate: 0 var(--reveal-rise, 8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal-group] [data-revealed] {
+    animation: none;
+  }
+}

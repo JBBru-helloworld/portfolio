@@ -293,6 +293,17 @@ for (const file of files) {
   if (projects.slice(0, featured).some((p: { featured: boolean }) => !p.featured)) failures.push(`${rel}  featured projects must come first`);
 }
 
+// The resume: a warning (not a failure) until `pnpm resume:build` has published a clean one.
+{
+  try {
+    const resume = JSON.parse(readFileSync(join(contentDir, "resume-media.json"), "utf8"));
+    if (!resume.available)
+      warnings.push("src/content/resume-media.json  no resume published: add the PDF to assets/resume/ and run pnpm resume:build (the Resume product is hidden meanwhile)");
+  } catch {
+    warnings.push("src/content/resume-media.json  missing: run pnpm resume:build");
+  }
+}
+
 if (warnings.length) {
   console.log(`\nOpen owner items (${warnings.length}, warnings until launch):`);
   for (const w of warnings) console.log(`  ! ${w}`);

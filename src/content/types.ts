@@ -42,7 +42,8 @@ export interface SiteLinks {
   github: Link;
   linkedin: Link;
   instagram: Link;
-  email: Link;
+  /** The address in two parts, joined only in the browser (never whole in the server HTML). */
+  email: { label: string; user: string; domain: string };
   resume: Link;
 }
 
@@ -122,14 +123,28 @@ export interface JourneyPage {
   label: string;
 }
 
+/** A photo taped into the logbook: built from assets/experience/<prefix>-<n> by `pnpm experience:build`. */
+export interface ExperiencePhoto {
+  alt: string;
+  /** CHECK(owner) while the owner has not confirmed a photo is safe to publish (it is then not shown). */
+  notes?: OwnerNotes;
+}
+
 export interface ExperienceItem {
   slug: string;
   organisation: string;
   role: string;
   dates: DateRange;
+  /** The city, or "Remote" (the logbook's ROUTE). A TODO(owner) is not shown. */
   location?: string;
   summary: string;
   highlights: string[];
+  /** The logbook's REMARKS: two or three short lines, with the numbers. */
+  remarks: string[];
+  /** File prefix for this role's photos in assets/experience/ ("tng" for tng-1.jpg, tng-2.jpg...). */
+  photoPrefix: string;
+  /** Alt text for each photo, in number order. A photo is shown only once built and described here. */
+  photos: ExperiencePhoto[];
   stack: string[];
   links: Link[];
   /** For internal work: describe the approach only, never confidential data. */
@@ -299,6 +314,40 @@ export interface SeatMapCopy {
   legend: { title: string; selected: string; empty: string };
   card: { seat: string; zone: string; usedIn: string; alsoAt: string; close: string; none: string };
   projectCount: { one: string; many: string };
+}
+
+/** Labels for the Experience logbook (src/content/logbook.ts). */
+export interface LogbookCopy {
+  label: string;
+  columns: { date: string; aircraft: string; duty: string; route: string; remarks: string };
+  /** For a role still running ("Present"). */
+  present: string;
+  ratingsTitle: string;
+  photos: { group: string; pause: string; play: string; next: string; of: string };
+}
+
+export interface DutyFreeProduct {
+  /** The shelf-edge tag, in capitals. */
+  tag: string;
+  /** The tag's action, in capitals ("CONNECT →"). */
+  action: string;
+  /** The product's accessible name. */
+  name: string;
+}
+
+/** Labels for the Contact section, Duty free (src/content/duty-free.ts). */
+export interface DutyFreeCopy {
+  label: string;
+  line: string;
+  products: Record<"resume" | "email" | "linkedin" | "github" | "instagram", DutyFreeProduct>;
+  copy: { idle: string; done: string; label: string };
+  emailFallback: string;
+}
+
+export interface FooterCopy {
+  copyright: string;
+  built: string;
+  backToWindow: string;
 }
 
 export type CredentialKind = "degree" | "academic" | "scholarship" | "certification" | "award" | "community";
