@@ -9,13 +9,18 @@
  * Hidden throughout the window sequence; it fades in once the curtain rise is over (the board covers the
  * scene) and out again on scrolling back into the sequence. Starts the section tracking after the scroll
  * restore (site-state.ts).
+ *
+ * On a project page (`flight` set) it is always shown and names the flight ("JB 201 · FRAUD DETECTION";
+ * phones "JB 201"); its list links back to the home page's sections, and the wordmark links home.
  */
 import { useEffect, useRef, useState, type MouseEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Popover } from "radix-ui";
 import { ChevronDown } from "lucide-react";
 import type { Departures, Destination } from "@/content";
-import { glideTo, jumpToTop, remarkOf, startTracking, useNavState, whenRestored } from "./site-state";
+import { glideTo, jumpToTop, loadVisited, remarkOf, startTracking, useNavState, whenRestored } from "./site-state";
+import { setHomeIntent } from "@/components/work/flight-nav";
 import { FlapBoard } from "@/components/departures/flap-engine";
 import tileStyles from "@/components/departures/DeparturesBoard.module.css";
 import { SoundToggle } from "@/components/sound/SoundToggle";
@@ -31,6 +36,8 @@ interface Props {
   name: string;
   board: Departures;
   destinations: Destination[];
+  /** On a project page: its flight code, its seat-sign name and its name. */
+  flight?: { code: string; sign: string; name: string };
 }
 
 function SignTiles({ text }: { text: string }) {
@@ -49,8 +56,9 @@ function SignTiles({ text }: { text: string }) {
   );
 }
 
-export function SiteNav({ name, board, destinations }: Props) {
+export function SiteNav({ name, board, destinations, flight }: Props) {
   const nav = useNavState();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [phone, setPhone] = useState(false);
   const tilesRef = useRef<HTMLSpanElement>(null);
@@ -61,7 +69,9 @@ export function SiteNav({ name, board, destinations }: Props) {
 
   useEffect(() => {
     let stop: (() => void) | undefined;
-    const cancel = whenRestored(() => (stop = startTracking()));
+    // A project page shows the remarks (DEPARTED) but does not track sections.
+    if (flight) loadVisited();
+    const cancel = flight ? () => undefined : whenRestored(() => (stop = startTracking()));
     // Sound saved as on from an earlier visit waits for the first click, tap or key press.
     const unboot = bootSound();
     (window as Window & { __soundStats?: typeof soundStats }).__soundStats = soundStats;
@@ -70,7 +80,7 @@ export function SiteNav({ name, board, destinations }: Props) {
       stop?.();
       unboot();
     };
-  }, []);
+  }, [flight]);
 
   // Opening the sign plays the cabin chime (only with sound on); closing it is silent.
   const onOpenChange = (next: boolean) => {
@@ -86,10 +96,14 @@ export function SiteNav({ name, board, destinations }: Props) {
     return () => mq.removeEventListener("change", apply);
   }, []);
 
-  const visible = nav.current !== null;
-  const here = destinations.find((d) => d.id === nav.current);
+  const visible = flight ? true : nav.current !== null;
+  const here = flight ? undefined : destinations.find((d) => d.id === nav.current);
   // The label follows the current section; while hidden it keeps the last one.
-  const label = !nav.current
+  const label = flight
+    ? phone
+      ? flight.code
+      : `${flight.code} · ${flight.sign}`
+    : !nav.current
     ? lastLabel.current
     : !here
       ? board.nav.board
@@ -125,16 +139,30 @@ export function SiteNav({ name, board, destinations }: Props) {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     e.preventDefault();
     setOpen(false); // focus returns to the button
+    if (flight) {
+      // Home, straight to that section (covered, no intro).
+      setHomeIntent({ kind: "section", id });
+      router.push("/", { scroll: false }); // the home page's restore does the scroll
+      return;
+    }
     glideTo(id, { focus: false });
   };
 
   const toTop = (e: MouseEvent<HTMLAnchorElement>) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    if (flight) {
+      setHomeIntent({ kind: "top" }); // the link itself goes home, to the landing
+      return;
+    }
     e.preventDefault();
     jumpToTop();
   };
 
-  const currentName = here ? `Gate ${here.gate}: ${here.name}` : "Departures board";
+  const currentName = flight
+    ? `${flight.code}: ${flight.name}`
+    : here
+      ? `Gate ${here.gate}: ${here.name}`
+      : "Departures board";
 
   return (
     <header className={styles.bar} data-visible={visible}>
@@ -172,11 +200,11 @@ export function SiteNav({ name, board, destinations }: Props) {
             <ol ref={listRef} className={styles.list}>
               {destinations.map((d) => {
                 const remark = remarkOf(d, nav);
-                const current = d.id === nav.current;
+                const current = !flight && d.id === nav.current;
                 return (
                   <li key={d.id}>
                     <a
-                      href={`#${d.id}`}
+                      href={flight ? `/#${d.id}` : `#${d.id}`}
                       className={styles.item}
                       aria-current={current ? "location" : undefined}
                       aria-label={`Gate ${d.gate}: ${d.name}, ${remark.toLowerCase()}`}

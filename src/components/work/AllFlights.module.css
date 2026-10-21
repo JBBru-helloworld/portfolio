@@ -1,0 +1,200 @@
+/*
+ * All flights: a flight manifest. Wide screens: code, emblem and plane, name, year, top three stack items
+ * and the arrow on one line, with the summary below the name. Phones: code and year, then the emblem and
+ * name; the summary and stack are hidden, and nothing scrolls sideways at 360 px.
+ */
+
+.manifest {
+  margin-top: clamp(3.5rem, 9svh, 6rem);
+}
+
+.label {
+  margin: 0 0 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  color: var(--graphite-4);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--graphite-2);
+}
+
+.item {
+  border-bottom: 1px solid var(--graphite-2);
+}
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4.5rem auto minmax(0, 1fr) auto 1.25rem;
+  grid-template-areas:
+    "code marks name year arrow"
+    ".    .     line line .";
+  align-items: center;
+  column-gap: 1rem;
+  padding: 0.875rem 0.75rem;
+  border-radius: 0.375rem;
+  color: var(--paper);
+  text-decoration: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The board's hover: a faint graphite panel behind the row. */
+.row::before {
+  content: "";
+  position: absolute;
+  inset: 0.25rem 0;
+  border-radius: inherit;
+  background: var(--graphite-1);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.row > * {
+  position: relative;
+}
+
+@media (hover: hover) {
+  .row:hover::before {
+    opacity: 0.7;
+  }
+
+  .row:hover .name {
+    color: var(--paper);
+  }
+
+  .row:hover .arrow {
+    transform: translateX(3px);
+    color: var(--paper);
+  }
+
+  .row:hover {
+    --livery: var(--amber);
+  }
+}
+
+.row:active::before {
+  opacity: 1;
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+  --livery: var(--amber);
+}
+
+.code {
+  grid-area: code;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--paper-muted);
+  white-space: nowrap;
+}
+
+.marks {
+  grid-area: marks;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.plane {
+  color: var(--graphite-4);
+}
+
+.name {
+  grid-area: name;
+  min-width: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--paper-muted);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.year {
+  grid-area: year;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--graphite-4);
+}
+
+.stack {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--graphite-4);
+  white-space: nowrap;
+}
+
+.summary {
+  display: none;
+}
+
+.arrow {
+  grid-area: arrow;
+  color: var(--graphite-4);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+/* Phones: the code and year on the first line, the emblem and name below. */
+@media (max-width: 767px) {
+  .row {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "code  code year"
+      "marks name arrow";
+    row-gap: 0.375rem;
+    column-gap: 0.75rem;
+    padding: 0.875rem 0.25rem;
+  }
+
+  .year {
+    justify-self: end;
+  }
+
+  .plane {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .row {
+    grid-template-columns: 4.5rem auto minmax(0, 1fr) auto auto 1.25rem;
+    grid-template-areas:
+      "code marks name stack year arrow"
+      ".    .     line line  .    .";
+    row-gap: 0.25rem;
+  }
+
+  .stack {
+    display: block;
+    grid-area: stack;
+  }
+
+  .summary {
+    display: block;
+    grid-area: line;
+    max-width: 68ch;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--graphite-4);
+    text-wrap: pretty;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow {
+    transition: none;
+  }
+}

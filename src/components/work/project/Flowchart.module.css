@@ -1,0 +1,118 @@
+.flow {
+  margin: 0;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border: 1px solid var(--graphite-2);
+  border-radius: 0.75rem;
+  background: var(--cabin);
+}
+
+.wide,
+.tall {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.tall {
+  display: none;
+  max-width: 22.5rem;
+  margin: 0 auto;
+}
+
+@media (max-width: 719px) {
+  .wide {
+    display: none;
+  }
+
+  .tall {
+    display: block;
+  }
+}
+
+.box {
+  fill: var(--void);
+  stroke: var(--graphite-3);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.title {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  fill: var(--paper);
+}
+
+.note {
+  font-family: var(--font-mono);
+  fill: var(--graphite-4);
+}
+
+.line {
+  fill: none;
+  stroke: var(--graphite-4);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.head {
+  fill: none;
+  stroke: var(--graphite-4);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.amber .line,
+.amber .head {
+  stroke: var(--amber);
+}
+
+.outcome {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  fill: var(--amber);
+}
+
+.caption {
+  margin-top: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--graphite-4);
+}
+
+/* ---------- Drawing in, step by step (--i), once in view ---------- */
+
+:global(html.js) .flow:not([data-drawn]) .node,
+:global(html.js) .flow:not([data-drawn]) .head,
+:global(html.js) .flow:not([data-drawn]) .outcome {
+  opacity: 0;
+}
+
+:global(html.js) .flow:not([data-drawn]) .line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.flow[data-drawn] .line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 520ms var(--ease-out) calc(var(--i) * 150ms);
+}
+
+.flow[data-drawn] .node,
+.flow[data-drawn] .outcome {
+  transition: opacity 360ms var(--ease-out) calc(var(--i) * 150ms);
+}
+
+.flow[data-drawn] .head {
+  transition: opacity 160ms var(--ease-out) calc(var(--i) * 150ms + 420ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow[data-drawn] .line,
+  .flow[data-drawn] .node,
+  .flow[data-drawn] .outcome,
+  .flow[data-drawn] .head {
+    transition: none;
+  }
+}

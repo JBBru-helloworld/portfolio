@@ -11,7 +11,15 @@ export const stackCategories: StackCategory[] = [
   "Tools",
 ];
 
-type ElementDraft = Omit<StackElement, "number">;
+type ElementDraft = Omit<StackElement, "number" | "id">;
+
+/** "Next.js" becomes "next-js", "CI/CD" becomes "ci-cd". */
+export const stackId = (name: string) =>
+  name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 
 const elements: ElementDraft[] = [
   // ML and Data
@@ -26,6 +34,7 @@ const elements: ElementDraft[] = [
   { symbol: "Pa", name: "PyArrow", category: "ML and Data", usedFor: "Fraud detection Parquet data (payments-fraud-detection: requirements.txt, src/fraud/features.py)" },
 
   // GenAI
+  { symbol: "Cg", name: "ChatGPT", category: "GenAI", usedFor: "Newsletter and performance snapshot workflows at Touch 'n Go Digital" },
   { symbol: "Gm", name: "Google Gemini", category: "GenAI", usedFor: "Inklusif, OCR Budget Tracker, Grab Buddy, PengYou and Mapetite search" },
   { symbol: "Ol", name: "Ollama", category: "GenAI", usedFor: "Grab Buddy (UMHackathon 2025)" },
   { symbol: "Ms", name: "Mistral 7B", category: "GenAI", usedFor: "Grab Buddy (UMHackathon 2025)" },
@@ -35,9 +44,10 @@ const elements: ElementDraft[] = [
   { symbol: "Oc", name: "OCI Generative AI", category: "GenAI", usedFor: "Oracle Generative AI Professional certification" },
 
   // Languages
-  { symbol: "Py", name: "Python", category: "Languages", usedFor: "Fraud detection, Budget Tracker backend, AWS receipt tool" },
+  { symbol: "Py", name: "Python", category: "Languages", usedFor: "Fraud detection, Budget Tracker backend, AWS receipt tool, Plandora evaluation tests" },
   { symbol: "Sq", name: "SQL", category: "Languages", usedFor: "MaxCompute SQL at Touch 'n Go Digital, MySQL in Recipe Roots" },
   { symbol: "Js", name: "JavaScript", category: "Languages", usedFor: "EventSphere" },
+  { symbol: "Ts", name: "TypeScript", category: "Languages", usedFor: "Evaluation tests for the LLM-as-a-judge pipeline at Plandora" },
   { symbol: "Jv", name: "Java", category: "Languages", usedFor: "Pokémon ASCII" },
   { symbol: "Sc", name: "Scala", category: "Languages", usedFor: "Harvest For All" },
   { symbol: "Ph", name: "PHP", category: "Languages", usedFor: "Recipe Roots" },
@@ -89,6 +99,9 @@ const elements: ElementDraft[] = [
 ];
 
 export const stack: StackElement[] = elements.map((element, index) => ({
+  id: stackId(element.name),
   number: index + 1,
   ...element,
 }));
+
+export const stackById = new Map(stack.map((element) => [element.id, element]));

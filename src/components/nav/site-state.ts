@@ -91,6 +91,37 @@ export function setBoarding(id: string | null) {
 let restored = false;
 const restoreListeners = new Set<() => void>();
 let restoreTarget: string | null | undefined;
+/** Pixels between the viewport top and the restore target (to land a gallery strip exactly where it was). */
+let restoreOffset = 0;
+let firstPage = true;
+
+/**
+ * True for the first page rendered in this document (its restore was set up by the head script); every
+ * later client-side page mount gets false. Each page calls this once as it mounts.
+ */
+export function consumeFirstPage(): boolean {
+  const first = firstPage;
+  firstPage = false;
+  return first;
+}
+
+/** True once a page has mounted in this document: any page rendering now is a client-side navigation. */
+export const isClientNavigation = () => !firstPage;
+
+/**
+ * Arms the restore again for a client-side return to the home page (the head script only runs on a full
+ * load): back from a project page to the gallery or manifest row the visitor left, or on to a section.
+ * Called in a layout effect, before the scroll sequence and Lenis mount. `hash` is put back in the address
+ * once restored.
+ */
+export function armRestore(target: string | null, { offset = 0, hash = null }: { offset?: number; hash?: string | null } = {}) {
+  restored = false;
+  restoreTarget = undefined;
+  restoreOffset = offset;
+  window.__jbRestore = target ?? undefined;
+  window.__jbHash = hash ?? undefined;
+  if (target) document.documentElement.setAttribute("data-restore", "");
+}
 
 /** The section to restore to on this load (validated against the page), or null for the top. */
 export function pendingRestore(): string | null {
@@ -112,12 +143,27 @@ export function sectionTop(id: string): number | null {
  * Jumps (instantly) to the restore target, if any, and starts everything that waits for the restore.
  * Called once the scroll sequence's pin exists (or straight away when there is no sequence).
  */
+/** The last jump (target and time): repeated if the scroll sequence is set up again at once. */
+let lastJump: { id: string; at: number } | null = null;
+const REJUMP_MS = 1000;
+
 export function restoreNow(afterJump?: () => void) {
-  if (restored) return;
+  if (restored) {
+    // The sequence was torn down and rebuilt straight after the jump (React runs effects twice in
+    // development): its pin spacing went and came back, so jump again.
+    if (lastJump && performance.now() - lastJump.at < REJUMP_MS) {
+      const top = sectionTop(lastJump.id);
+      if (top !== null) window.scrollTo({ top: Math.max(0, top - restoreOffset), behavior: "instant" });
+      afterJump?.();
+    }
+    return;
+  }
   const id = pendingRestore();
+  lastJump = null;
   if (id) {
     const top = sectionTop(id);
-    if (top !== null) window.scrollTo({ top, behavior: "instant" });
+    if (top !== null) window.scrollTo({ top: Math.max(0, top - restoreOffset), behavior: "instant" });
+    lastJump = { id, at: performance.now() };
     afterJump?.();
     if (window.__jbHash) history.replaceState(history.state, "", `#${window.__jbHash}`);
   } else if (window.__jbHash) {

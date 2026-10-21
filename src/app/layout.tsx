@@ -18,11 +18,13 @@ export const viewport: Viewport = {
 };
 
 // Runs before first paint. Lets CSS start the shade closed only when JavaScript will open it, and sets up
-// the scroll restore (src/components/nav/site-state.ts): the browser's own restoration is off, a URL hash
-// is taken off the address until the scroll sequence exists (so the browser does not jump to it first),
-// and on a reload the saved section is the target. data-restore hides the landing text meanwhile.
+// the scroll restore (src/components/nav/site-state.ts): the browser's own restoration is off, and on the
+// home page a URL hash is taken off the address until the scroll sequence exists (so the browser does not
+// jump to it first), and on a reload the saved section is the target. data-restore hides the landing text
+// meanwhile. Project pages (/work/...) simply load at the top.
 const headScript = `(function(){var d=document.documentElement;d.classList.add('js');
 try{history.scrollRestoration='manual'}catch(e){}
+if(location.pathname!=='/')return;
 var t=null;if(location.hash.length>1){try{t=decodeURIComponent(location.hash.slice(1))}catch(e){}
 window.__jbHash=t;history.replaceState(history.state,'',location.pathname+location.search)}
 if(!t){try{var n=performance.getEntriesByType('navigation')[0];if(n&&(n.type==='reload'||n.type==='back_forward'))t=sessionStorage.getItem('jbbru:section')}catch(e){}}

@@ -4,10 +4,12 @@ export const experience: ExperienceItem[] = [
   {
     slug: "coral-coders",
     organisation: "Coral Coders",
-    role: "Founder",
+    role: "Founder and lead tutor",
     dates: { start: "Oct 2026", end: "Present" },
     summary: "Online one-to-one coding lessons for children and adults.",
-    highlights: ["Founded and runs the business, including its website (Next.js on Cloudflare)."],
+    highlights: [
+      "Founded and runs the business as its lead tutor, and built its website (Next.js on Cloudflare).",
+    ],
     stack: ["Next.js", "Cloudflare"],
     links: [{ label: "coralcoders.com", url: "https://coralcoders.com", kind: "live" }],
   },
@@ -28,13 +30,13 @@ export const experience: ExperienceItem[] = [
     role: "Data Scientist Intern",
     dates: { start: "Jan 2026", end: "Apr 2026" },
     summary:
-      "Built AI workflows that automate commercial newsletters and weekly TPV and revenue snapshots for 30+ stakeholders.",
+      "Built ChatGPT workflows that automate commercial newsletters and weekly TPV and revenue snapshots for 30+ stakeholders, and answered data requests with SQL.",
     highlights: [
-      "Automated commercial newsletters and weekly TPV and revenue snapshots for 30+ stakeholders, including the CEO, CFO and CCO.",
+      "Built two ChatGPT workflows, the commercial newsletter and the weekly TPV and revenue performance snapshot, for 30+ stakeholders including the CEO, CFO and CCO: created the templates, cleaned up the data and engineered the prompts.",
       "Saved 7+ hours of manual reporting a week.",
-      "Used MaxCompute SQL, exploratory data analysis and feature engineering.",
+      "Took data requests as tickets, wrote MaxCompute SQL to find the data and reported it back, using exploratory data analysis and feature engineering.",
     ],
-    stack: ["MaxCompute SQL", "EDA", "Feature engineering"],
+    stack: ["MaxCompute SQL", "EDA", "Feature engineering", "ChatGPT"],
     links: [],
     confidentiality: "Internal work: describe the approach only, never confidential data, figures or screenshots.",
   },

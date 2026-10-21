@@ -200,6 +200,9 @@
     @apply bg-void font-sans text-paper antialiased;
     text-rendering: optimizeLegibility;
     font-optical-sizing: auto;
+    /* The site restores scroll positions itself (site-state.ts); the browser's scroll anchoring would move
+       a restored page again when the scroll sequence's pin spacing settles above it (seen in WebKit). */
+    overflow-anchor: none;
   }
 
   body {
@@ -255,5 +258,37 @@
   [data-motion="press"]:active,
   [data-motion="lift"]:hover {
     transform: none !important;
+  }
+}
+
+/*
+ * The flight (Phase 4a): opening a featured project, the gallery strip's image grows into the project
+ * page's header (view-transition name "flight-hero", set in src/components/work/flight-nav.ts). The two
+ * snapshots keep their crop (cover) while the box morphs; the rest of the page cross-fades quickly.
+ */
+::view-transition-group(flight-hero) {
+  animation-duration: 520ms;
+  animation-timing-function: var(--ease-out);
+}
+
+::view-transition-old(flight-hero),
+::view-transition-new(flight-hero) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation-duration: 520ms;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

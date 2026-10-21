@@ -2,8 +2,11 @@
  * Content checks for src/content/. Run with `pnpm check:content` (Node 24 runs TypeScript directly).
  *
  * Fails on: excluded words and phrases, the Sunway Tech Club outside its two approved lines, em dashes, common US spellings in strings,
- * duplicate or malformed periodic-table symbols, departures-board rows that do not fit, and destinations
- * whose section is not on the page.
+ * third-person pronouns in strings (the site speaks in the first person),
+ * duplicate or malformed periodic-table symbols, departures-board rows that do not fit, destinations
+ * whose section is not on the page, and project problems (duplicate slugs or flight codes, unknown stack ids,
+ * a featured project without a summary, seat-sign names off the flaps, repeated emblems, image counts that
+ * do not match the built media).
  * Warns (does not fail) on every TODO(owner) and CHECK(owner) until launch.
  */
 import { readdirSync, readFileSync } from "node:fs";
@@ -112,6 +115,12 @@ for (const file of files) {
     }
   }
 
+  // The site speaks in the first person ("I", "my"): no "he", "his" or "him" in site copy.
+  for (const { value, index } of stringLiterals(text)) {
+    const m = value.match(/\b(he|his|him|himself)\b/i);
+    if (m) failures.push(`${rel}:${lineOf(text, index)}  third person "${m[0]}" (the site speaks in the first person)`);
+  }
+
   // Owner markers count only inside string literals (doc comments may mention the convention).
   for (const { value, index } of stringLiterals(text)) {
     const at = value.search(/(TODO|CHECK)\(owner\)/);
@@ -213,6 +222,59 @@ for (const file of files) {
     }
     console.log(`Checked ${ids.length} destination sections against ${url}.`);
   }
+}
+
+// Projects: unique slugs and flight codes, real stack ids, a summary on every featured flight, signs that
+// fit the seat sign's flaps, distinct emblems, and screenshots that match the built media.
+{
+  const rel = "src/content/projects.ts";
+  // Loaded by path at run time (Node strips the types); a literal .ts import would not typecheck.
+  const load = (file: string) => import(join(contentDir, file));
+  const { projects } = await load("projects.ts");
+  const { stack } = await load("stack.ts");
+  const ids = new Set(stack.map((e: { id: string }) => e.id));
+  if (ids.size !== stack.length) failures.push("src/content/stack.ts  two elements share an id");
+  const seqFile = readFileSync(join(root, "src", "lib", "flap-sequence.ts"), "utf8");
+  const sequence = new Set(seqFile.match(/FLAP_SEQUENCE\s*=\s*"([^"]*)"/)?.[1] ?? "");
+  let media: Record<string, { images: unknown[] }> = {};
+  try {
+    media = JSON.parse(readFileSync(join(contentDir, "project-media.json"), "utf8")).projects;
+  } catch {
+    failures.push("src/content/project-media.json  missing or unreadable (run pnpm projects:build)");
+  }
+  const seen = { slug: new Set<string>(), flight: new Set<string>(), emblem: new Set<string>() };
+  const liveries = new Set(["stripe", "chevron", "dot", "band", "twin", "arc"]);
+  let featured = 0;
+  for (const p of projects) {
+    const at = `${rel} (${p.slug})`;
+    if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(p.slug)) failures.push(`${at}  slug is not kebab case`);
+    if (seen.slug.has(p.slug)) failures.push(`${at}  duplicate slug`);
+    seen.slug.add(p.slug);
+    if (!/^JB \d{3}$/.test(p.flight)) failures.push(`${at}  flight code "${p.flight}" is not "JB nnn"`);
+    if (seen.flight.has(p.flight)) failures.push(`${at}  duplicate flight code ${p.flight}`);
+    seen.flight.add(p.flight);
+    if (p.featured) {
+      featured++;
+      if (!p.summary?.trim() || /(TODO|CHECK)\(owner\)/.test(p.summary)) failures.push(`${at}  featured project without a summary`);
+    }
+    for (const id of p.stack) if (!ids.has(id)) failures.push(`${at}  stack id "${id}" is not in stack.ts`);
+    if (!p.stack.length) failures.push(`${at}  empty stack`);
+    if (p.sign.length > 15) failures.push(`${at}  sign "${p.sign}" is ${p.sign.length} characters (max 15)`);
+    const missing = [...new Set([...`${p.flight} ${p.sign}`].filter((c) => !sequence.has(c)))];
+    if (missing.length) failures.push(`${at}  sign or flight uses characters not on the flaps: ${missing.map((c) => JSON.stringify(c)).join(" ")}`);
+    if (!/^[A-Z]{1,2}$/.test(p.emblem.letters)) failures.push(`${at}  emblem letters "${p.emblem.letters}" are not one or two capitals`);
+    if (!liveries.has(p.emblem.livery)) failures.push(`${at}  unknown livery "${p.emblem.livery}"`);
+    const emblem = `${p.emblem.letters}/${p.emblem.livery}`;
+    if (seen.emblem.has(emblem)) failures.push(`${at}  emblem ${emblem} is not unique`);
+    seen.emblem.add(emblem);
+    const built = media[p.slug]?.images.length ?? 0;
+    if (built !== p.images.length) failures.push(`${at}  ${p.images.length} image texts but ${built} built images (pnpm projects:build)`);
+  }
+  if (featured !== 6) failures.push(`${rel}  ${featured} featured projects (expected 6)`);
+  // Featured first, in flight-code order, then All flights.
+  const codes = projects.map((p: { flight: string }) => Number(p.flight.slice(3)));
+  if (codes.some((c: number, i: number) => i > 0 && c <= codes[i - 1])) failures.push(`${rel}  projects are not in flight-code order`);
+  if (projects.slice(0, featured).some((p: { featured: boolean }) => !p.featured)) failures.push(`${rel}  featured projects must come first`);
 }
 
 if (warnings.length) {

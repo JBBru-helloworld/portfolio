@@ -1,0 +1,548 @@
+/*
+ * A project page (/work/<slug>): the emblem and flight code, the name as the h1, the role, dates and
+ * summary, the links, then the header image in colour, the stack, the figures, the case study, the
+ * screenshots (or the diagram), the video, and Previous / Next flight with Back to all flights.
+ */
+
+.page {
+  padding: clamp(6.5rem, 16svh, 9rem) clamp(1rem, 4vw, 3rem) clamp(4rem, 10svh, 6rem);
+}
+
+.inner {
+  max-width: 68rem;
+  margin: 0 auto;
+}
+
+/* ---------- Header ---------- */
+
+.header {
+  max-width: 48rem;
+}
+
+.flightLine {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  --livery: var(--amber); /* the current flight */
+}
+
+.emblem {
+  width: 4rem;
+  height: 4rem;
+}
+
+.code {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  color: var(--paper-muted);
+}
+
+.title {
+  margin: 1.25rem 0 0;
+  font-size: clamp(2.25rem, 5vw + 0.5rem, 3.75rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--paper);
+  text-wrap: balance;
+}
+
+.meta {
+  margin: 1rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--graphite-4);
+}
+
+.summary {
+  margin: 1.25rem 0 0;
+  max-width: 60ch;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--paper-muted);
+  text-wrap: pretty;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin: 1.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0 1rem;
+  border: 1px solid var(--graphite-3);
+  border-radius: var(--radius);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--paper);
+  text-decoration: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-press) var(--ease-out);
+}
+
+.button:hover {
+  background: var(--graphite-1);
+}
+
+.button:active {
+  transform: scale(0.97);
+}
+
+.button:focus-visible,
+.chip:focus-visible,
+.flight:focus-visible,
+.back:focus-visible,
+.shotButton:focus-visible,
+.videoButton:focus-visible,
+.lightboxClose:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+/* ---------- Header image ---------- */
+
+.hero {
+  margin: clamp(2.5rem, 6svh, 4rem) 0 0;
+}
+
+.heroFrame,
+.posterFrame {
+  overflow: hidden;
+  border: 1px solid var(--graphite-2);
+  border-radius: 0.75rem;
+  background: var(--cabin);
+}
+
+.posterFrame {
+  aspect-ratio: 16 / 9;
+  margin-top: clamp(2.5rem, 6svh, 4rem);
+}
+
+.heroPicture,
+.shotPicture,
+.videoPicture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.heroImg,
+.shotImg,
+.videoImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.caption {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--graphite-4);
+}
+
+/* ---------- Blocks ---------- */
+
+.block {
+  margin-top: clamp(3rem, 8svh, 5rem);
+}
+
+.label {
+  margin: 0 0 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--graphite-4);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--graphite-2);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--paper-muted);
+  text-decoration: none;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.chip:hover {
+  border-color: var(--graphite-3);
+  color: var(--paper);
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 1.5rem 2rem;
+  margin: 0;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.375rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--graphite-2);
+}
+
+.metricValue {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(2.25rem, 3vw + 1rem, 3.25rem);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--paper);
+}
+
+.metricLabel {
+  font-size: 0.875rem;
+  color: var(--graphite-4);
+}
+
+.case {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 900px) {
+  .case {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.5rem;
+  }
+}
+
+.caseItem {
+  padding-top: 1rem;
+  border-top: 1px solid var(--graphite-2);
+}
+
+.caseItem p,
+.did {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--paper-muted);
+  text-wrap: pretty;
+}
+
+.caseHeading {
+  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.did {
+  display: grid;
+  gap: 0.625rem;
+  padding-left: 1.1rem;
+  list-style: disc;
+}
+
+.did li::marker {
+  color: var(--graphite-4);
+}
+
+/* ---------- Screenshots and the full-screen view ---------- */
+
+.shots {
+  display: grid;
+  gap: clamp(2rem, 5svh, 3rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shot {
+  margin: 0;
+}
+
+.shotButton {
+  display: block;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--graphite-2);
+  border-radius: 0.75rem;
+  background: var(--cabin);
+  cursor: zoom-in;
+}
+
+.lightbox {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  padding: clamp(1rem, 4vw, 3rem);
+  border: 0;
+  background: transparent;
+  color: var(--paper);
+}
+
+.lightbox[open] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.lightbox::backdrop {
+  background: rgb(10 10 10 / 0.94);
+}
+
+.lightboxPicture {
+  display: flex;
+  min-height: 0;
+  max-width: 100%;
+  background: none !important;
+}
+
+.lightboxImg {
+  max-width: 100%;
+  max-height: calc(100dvh - 8rem);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 0.375rem;
+}
+
+.lightboxCaption {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--paper-muted);
+  text-align: center;
+}
+
+.lightboxClose {
+  position: fixed;
+  top: max(1rem, env(safe-area-inset-top));
+  right: max(1rem, env(safe-area-inset-right));
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--graphite-3);
+  border-radius: 999px;
+  background: var(--cabin);
+  color: var(--paper);
+  cursor: pointer;
+}
+
+/* ---------- Video ---------- */
+
+.video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--graphite-2);
+  border-radius: 0.75rem;
+  background: var(--cabin);
+}
+
+.videoButton {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.videoFrame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  border: 1px solid rgb(245 245 242 / 0.5);
+  border-radius: 999px;
+  background: rgb(10 10 10 / 0.72);
+  color: var(--paper);
+  transform: translate(-50%, -50%);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.videoButton:hover .play {
+  background: rgb(10 10 10 / 0.88);
+  transform: translate(-50%, -50%) scale(1.04);
+}
+
+/* ---------- Previous, Next and Back ---------- */
+
+.flights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: clamp(4rem, 10svh, 6rem);
+  padding-top: 2rem;
+  border-top: 1px solid var(--graphite-2);
+}
+
+.flight {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--graphite-2);
+  border-radius: 0.75rem;
+  color: var(--paper);
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.flight:hover {
+  background: var(--graphite-1);
+  --livery: var(--amber);
+}
+
+.next {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.flightDir {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--graphite-4);
+}
+
+.flightBody {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.next .flightBody {
+  flex-direction: row-reverse;
+}
+
+.flightBody > span {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.flightCode {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: var(--paper-muted);
+}
+
+.flightName {
+  font-size: 1rem;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.back {
+  grid-column: 1 / -1;
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0 1.25rem;
+  margin-top: 0.5rem;
+  border: 1px solid var(--graphite-3);
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--paper);
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.back:hover {
+  background: var(--graphite-1);
+}
+
+.backPlane {
+  transform: scaleX(-1);
+  color: var(--graphite-4);
+}
+
+@media (max-width: 559px) {
+  .flights {
+    grid-template-columns: 1fr;
+  }
+
+  .next {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .next .flightBody {
+    flex-direction: row;
+  }
+
+  .next .flightDir {
+    order: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .play {
+    transition: none;
+  }
+
+  .button:active {
+    transform: none;
+  }
+}

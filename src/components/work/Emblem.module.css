@@ -1,0 +1,36 @@
+.emblem {
+  flex: none;
+  display: block;
+  overflow: visible;
+}
+
+.fin {
+  fill: var(--cabin);
+}
+
+.livery {
+  fill: var(--livery, var(--graphite-4));
+  stroke: var(--livery, var(--graphite-4));
+  transition: fill var(--duration-base) var(--ease-out), stroke var(--duration-base) var(--ease-out);
+}
+
+.edge {
+  fill: none;
+  stroke: var(--graphite-3);
+  stroke-width: 0.9;
+  vector-effect: non-scaling-stroke;
+}
+
+.base {
+  stroke: var(--graphite-3);
+  stroke-width: 0.9;
+  vector-effect: non-scaling-stroke;
+}
+
+.letters {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  fill: var(--paper);
+}

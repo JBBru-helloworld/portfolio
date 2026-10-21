@@ -28,7 +28,7 @@ export const credentials: Credential[] = [
   {
     kind: "award",
     title: "1st Runner-Up and Best Pitch, ImagineHack 2024",
-    detail: "For PengYou, a budgeting web app with a virtual-pet reward system. Joshua led the pitch.",
+    detail: "For PengYou, a budgeting web app with a virtual-pet reward system. I was the lead presenter.",
     date: "Jun 2024",
   },
   {

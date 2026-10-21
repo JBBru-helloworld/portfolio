@@ -137,24 +137,125 @@ export interface ExperienceItem {
   notes?: OwnerNotes;
 }
 
-export type ProjectStatus = "featured" | "also-built" | "archive";
+/** The livery painted on a project's tail-fin emblem; with the letters, no two projects match. */
+export type Livery = "stripe" | "chevron" | "dot" | "band" | "twin" | "arc";
+
+/** Each project's small aircraft tail-fin emblem, as if each project were an airline. */
+export interface Emblem {
+  /** One or two capital letters. */
+  letters: string;
+  livery: Livery;
+}
+
+/** A YouTube video, shown behind a click-to-play facade (youtube-nocookie.com, loaded only on click). */
+export interface ProjectVideo {
+  id: string;
+  /** The playlist it sits in, and its position there, when the owner linked it that way. */
+  list?: string;
+  index?: number;
+}
+
+/** A headline figure, shown large in JetBrains Mono. */
+export interface ProjectMetric {
+  value: string;
+  label: string;
+}
+
+/** One screenshot, in file order (`<prefix>-1` first: the strip image and the page header). */
+export interface ProjectImage {
+  alt: string;
+  caption: string;
+}
+
+export interface CaseStudy {
+  problem: string;
+  /** What Joshua did, one point per item. */
+  did: string[];
+  result: string;
+}
 
 export interface Project {
   slug: string;
+  /** Flight code: featured JB 201 to 206 in gallery order, then JB 207 onwards (newest first). */
+  flight: string;
+  /** Featured flights are the six gallery strips; the rest are in All flights. */
+  featured: boolean;
+  /** The project's name, as shown on the site (the page's h1). */
+  name: string;
+  /** Short name for the seat sign's flaps, in capitals (at most 15 flap characters). */
+  sign: string;
+  /** The full descriptive title, for metadata. */
   title: string;
   date: DateRange;
-  /** Context such as "Capstone", "UMHackathon 2025 entry" or "Client work". */
+  /** Context such as "Solo capstone project" or "UMHackathon 2025 entry". */
   context?: string;
   /** Joshua's own role, especially on team projects. */
-  role?: string;
-  stack: string[];
-  links: Link[];
-  status: ProjectStatus;
+  role: string;
   /** One line. */
   summary: string;
-  /** Featured projects only: the angle the case study takes. */
-  caseStudyAngle?: string;
+  /** Ids from stack.ts, most characteristic first (All flights shows the first three). */
+  stack: string[];
+  /** Live site, GitHub, design and other links (the video is in `video`). */
+  links: Link[];
+  video?: ProjectVideo;
+  metrics: ProjectMetric[];
+  caseStudy: CaseStudy;
+  /** Alt text and captions for the screenshots in assets/projects/, in number order. Empty: a poster. */
+  images: ProjectImage[];
+  emblem: Emblem;
   notes?: OwnerNotes;
+}
+
+/** One box of a project flowchart: its title and an optional small note below it. */
+export interface FlowNode {
+  title: string;
+  note?: string;
+}
+
+/**
+ * A project flowchart: steps in order, optionally forking into two steps side by side (the pair) and
+ * joining again, with an optional outcome (the one amber element) below the last step.
+ */
+export interface FlowCopy {
+  /** The section heading on the project page. */
+  heading: string;
+  caption: string;
+  /** The whole flow in a sentence or two, for screen readers. */
+  description: string;
+  /** The steps before the pair (or all of them, for a straight flow). At least one. */
+  before: FlowNode[];
+  pair?: [FlowNode, FlowNode];
+  /** The steps after the pair joins. */
+  after?: FlowNode[];
+  outcome?: string;
+}
+
+/** Labels for Selected work and the project pages (src/content/work.ts). */
+export interface WorkCopy {
+  featuredLabel: string;
+  /** Small mono capitals above the manifest. */
+  allFlights: string;
+  viewFlight: string;
+  backToAll: string;
+  previous: string;
+  next: string;
+  headings: {
+    stack: string;
+    metrics: string;
+    caseStudy: string;
+    problem: string;
+    did: string;
+    result: string;
+    screenshots: string;
+    video: string;
+  };
+  watchOnYouTube: string;
+  playVideo: string;
+  enlarge: string;
+  close: string;
+  credit: { label: string; url: string };
+  /** Flowcharts on project pages, by project slug (shown in order). */
+  flows: Record<string, FlowCopy[]>;
 }
 
 export type StackCategory =
@@ -167,6 +268,8 @@ export type StackCategory =
   | "Tools";
 
 export interface StackElement {
+  /** Stable id (the name in kebab case), referenced by projects and, later, the tile's anchor. */
+  id: string;
   /** Assigned in category order. */
   number: number;
   /** 1 to 3 letters, first capitalised (periodic-table style). Unique. */
