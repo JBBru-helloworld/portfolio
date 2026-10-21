@@ -24,7 +24,7 @@ const TILTS = [-2.4, 1.8, -1.2, 2.6, -2.8, 1.1];
 export function prints(item: ExperienceItem): Print[] {
   return (roles[item.slug]?.photos ?? []).flatMap((b, k) => {
     const text = item.photos[b.n - 1];
-    if (!text?.alt || open(text.notes)) return [];
+    if (!text?.alt || text.publish === false || open(text.notes)) return [];
     const at = (ext: string) => b.widths.map((w) => `${manifest.base}/${item.slug}/${b.n}-${w}.${ext} ${w}w`).join(", ");
     const picture: Picture = {
       avif: at("avif"),
@@ -34,6 +34,14 @@ export function prints(item: ExperienceItem): Print[] {
       height: b.height,
       placeholder: b.placeholder,
     };
-    return [{ picture, alt: text.alt, rotate: TILTS[(k + item.slug.length) % TILTS.length] }];
+    return [
+      {
+        picture,
+        alt: text.alt,
+        rotate: TILTS[(k + item.slug.length) % TILTS.length],
+        landscape: text.frame === "landscape",
+        focus: text.focus ?? 50,
+      },
+    ];
   });
 }

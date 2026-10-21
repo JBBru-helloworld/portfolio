@@ -291,6 +291,13 @@ for (const file of files) {
   const codes = projects.map((p: { flight: string }) => Number(p.flight.slice(3)));
   if (codes.some((c: number, i: number) => i > 0 && c <= codes[i - 1])) failures.push(`${rel}  projects are not in flight-code order`);
   if (projects.slice(0, featured).some((p: { featured: boolean }) => !p.featured)) failures.push(`${rel}  featured projects must come first`);
+
+  // The logbook's "View flight" links: each points at a real project page.
+  const { experience } = await load("experience.ts");
+  const slugs = new Set(projects.map((p: { slug: string }) => p.slug));
+  for (const e of experience as { slug: string; project?: string }[]) {
+    if (e.project && !slugs.has(e.project)) failures.push(`src/content/experience.ts  ${e.slug}: project "${e.project}" is not a project slug`);
+  }
 }
 
 // The resume: a warning (not a failure) until `pnpm resume:build` has published a clean one.

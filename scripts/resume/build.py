@@ -5,8 +5,9 @@ Reads the owner's resume PDF from assets/resume/ (any file name; exactly one PDF
 
   1. extracts its text (poppler's pdftotext) and FAILS, naming what it found, if it contains a phone number,
      a street address, availability or notice-period lines, visa or work-permit wording, "Singapore" (or a
-     Singapore company suffix, "Pte. Ltd."), or the Sunway Tech Club (on the site's exclusions list). A failed
-     check also removes any previously published resume;
+     Singapore company suffix, "Pte. Ltd."), or the Sunway Tech Club outside its entry for the GenAI Study Jam
+     or the portfolio workshop (the only two items the site may name it for). A failed check also removes any
+     previously published resume;
   2. rewrites it with pypdf, keeping the pages and dropping the document information (author, creator and
      producer tools, dates) and the XMP metadata;
   3. writes public/resume/joshua-bonham-resume.pdf and src/content/resume-media.json ({ "available": ... }),
@@ -38,8 +39,6 @@ FORBIDDEN: list[tuple[str, re.Pattern[str]]] = [
     ("Singapore", re.compile(r"\bsingapore\b", re.I)),
     # A Singapore-registered company's suffix points to Singapore just the same.
     ("Singapore company suffix (Pte. Ltd.)", re.compile(r"\bpte\.?\s*ltd\b", re.I)),
-    # The site's exclusions apply to the resume too (CLAUDE.md): the club is named only in two approved lines.
-    ("Sunway Tech Club (exclusions list)", re.compile(r"\bsunway\s+tech\s+club\b", re.I)),
     (
         "availability or notice period",
         re.compile(
@@ -79,13 +78,37 @@ def phones(text: str) -> list[str]:
     return found
 
 
+# The site's exclusions apply to the resume too (CLAUDE.md): the club may be named only for the GenAI Study
+# Jam and the portfolio workshop. Each mention must sit in an entry that names one of them: its own line, the
+# line before, or up to three lines after, stopping at the next section heading (a line in capitals).
+CLUB = re.compile(r"\bsunway\s+tech\s+club\b", re.I)
+CLUB_ITEMS = re.compile(r"\bstudy\s+jam\b|\bportfolio\s+workshop\b", re.I)
+HEADING = re.compile(r"^[A-Z][A-Z &/]{2,}$")
+
+
+def club_problems(text: str) -> list[str]:
+    lines = text.splitlines()
+    out = []
+    for i, line in enumerate(lines):
+        if not CLUB.search(line):
+            continue
+        entry = [line] + ([lines[i - 1]] if i > 0 else [])
+        for after in lines[i + 1 : i + 4]:
+            if HEADING.match(after.strip()):
+                break
+            entry.append(after)
+        if not any(CLUB_ITEMS.search(x) for x in entry):
+            out.append(f"Sunway Tech Club outside the Study Jam or portfolio workshop: {line.strip()[:90]!r}")
+    return out
+
+
 def problems(text: str) -> list[str]:
     out = [f"phone number: {p!r}" for p in phones(text)]
     for label, pattern in FORBIDDEN:
         for m in pattern.finditer(text):
             line = text[max(0, text.rfind("\n", 0, m.start()) + 1) : text.find("\n", m.end()) if "\n" in text[m.end():] else len(text)]
             out.append(f"{label}: {m.group(0)!r} in {line.strip()[:90]!r}")
-    return out
+    return out + club_problems(text)
 
 
 def extract(pdf: Path) -> str:

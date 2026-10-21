@@ -48,6 +48,30 @@
           "placeholder": "data:image/webp;base64,UklGRpYAAABXRUJQVlA4IIoAAABQBQCdASoYACAAPu1erE2ppSSiMBgMATAdiWwAnTKEdQD7w5PiMHph+i+2e/6gcQx6u4AA/uYLSYl5ldk32ylvD4W07dY7OFvptlqSFMMpwLKB+ooN4HkV7K27/0QRK40nlhLFpMREYJS3qGIqwQvq5o7ueIdlroRSnSb5jwmV2S31oHQW5IcAAAA="
         },
         {
+          "n": 2,
+          "source": "tng-pic-2.JPG",
+          "width": 2560,
+          "height": 1440,
+          "widths": [
+            320,
+            640,
+            960
+          ],
+          "placeholder": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAABQBACdASoYAA4APu1iqU2ppaOiMAgBMB2JZgCdOUAAnST52vxl1TM7NFcAAPwdhpm//tWuNnPfd8oz6DHEWl8/miuYNtknydtabJbVv1VvrPGlyx9W4zdHNfVXbTPP+dVg2AxRk8eE6BVgAAA="
+        },
+        {
+          "n": 3,
+          "source": "tng-pic-3.png",
+          "width": 4032,
+          "height": 3024,
+          "widths": [
+            320,
+            640,
+            960
+          ],
+          "placeholder": "data:image/webp;base64,UklGRpgAAABXRUJQVlA4IIwAAABQBQCdASoYABIAPu1iqk+ppSOiMBgIATAdiWQAsR7QwReLbpnVPyBpyPELrYR8ze/4kAAAzb5f3dZCtE2zF+4wd9x2WvMdZC7Fqw6rfZZj+qqxzeeoGglYsPXvfMpvTC8YF5P5uB5kQABEuB0F6OKMHapPHXDVcBDm6NNOC8dZLFoac9EBQcNc4sAAAA=="
+        },
+        {
           "n": 5,
           "source": "tng-pic-5.png",
           "width": 3024,

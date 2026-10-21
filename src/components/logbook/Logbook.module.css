@@ -84,17 +84,20 @@
   border-bottom: 0;
 }
 
+/* Narrow: the range breaks after the dash ("OCT 2026 –" over "PRESENT"). */
 .date {
-  width: 11.5rem;
+  width: 6.5rem;
   font-family: var(--font-mono);
   font-size: 0.75rem;
+  line-height: 1.6;
   letter-spacing: 0.06em;
-  white-space: nowrap;
   color: var(--paper-muted);
 }
 
+/* The company and the role stay on one line. */
 .aircraft {
   font-weight: 500;
+  white-space: nowrap;
   color: var(--paper);
 }
 
@@ -121,6 +124,7 @@
 }
 
 .duty {
+  white-space: nowrap;
   color: var(--paper-muted);
 }
 
@@ -146,20 +150,56 @@
   text-wrap: pretty;
 }
 
+/* As narrow as its print. */
 .photoHead,
 .photos {
-  width: 13rem;
+  width: 1px;
   padding-right: 0;
+}
+
+/* Under the remarks: the link to this role's project page. */
+.viewFlight {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--graphite-4);
+  text-decoration: none;
+  transition: color 160ms var(--ease-out);
+}
+
+.viewFlight:hover,
+.viewFlight:focus-visible {
+  color: var(--amber);
+}
+
+.viewFlight:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 /* ---------- Photos: prints taped into the book ---------- */
 
+/*
+ * Small prints, about 180 px tall: a 4:3 landscape crop where the photo allows, else 4:5 portrait. Inside the
+ * page, clear of its edge (the fanned prints reach a little to the right), and within their own row, with
+ * room between one entry's prints and the next.
+ */
 .stack {
   position: relative;
-  width: 12rem;
-  /* Inside the page, clear of its edge (the fanned prints reach a little to the right). */
-  margin: 0.25rem clamp(0.75rem, 2vw, 1.75rem) 0 auto;
+  margin: 0.25rem clamp(0.75rem, 1.5vw, 1.25rem) 0.5rem auto;
   outline: none;
+}
+
+.landscape {
+  width: 14rem;
+}
+
+.portrait {
+  width: 9rem;
 }
 
 .stack:focus-visible {
@@ -181,7 +221,11 @@
 .prints {
   position: relative;
   width: 100%;
-  max-height: 16rem;
+  aspect-ratio: 4 / 5;
+}
+
+.landscape .prints {
+  aspect-ratio: 4 / 3;
 }
 
 .print {
@@ -194,8 +238,9 @@
   box-shadow:
     0 1px 2px rgb(0 0 0 / 0.5),
     0 10px 24px rgb(0 0 0 / 0.45);
-  /* The fan: each print further down the stack sits a little offset and turned. */
-  transform: translate(calc(var(--pos) * 5px), calc(var(--pos) * 4px)) rotate(calc(var(--rotate) + var(--pos) * 2.2deg));
+  /* The fan: each print further down the stack sits a little offset and turned (up to the third; the rest are hidden beneath it). */
+  --fan: min(var(--pos), 2);
+  transform: translate(calc(var(--fan) * 5px), calc(var(--fan) * 4px)) rotate(calc(var(--rotate) + var(--fan) * 2.2deg));
   transition: transform 500ms var(--ease-in-out);
 }
 
@@ -234,6 +279,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% var(--focus, 50%);
   /* Faded at rest: about 40% saturation, slightly lifted blacks. Full colour on hover or focus. */
   filter: saturate(0.4) contrast(0.88) brightness(1.06);
   transition: filter 320ms var(--ease-out);
@@ -288,7 +334,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 0.625rem;
-  margin-top: 1.75rem;
+  margin-top: 1rem;
 }
 
 .playButton {
@@ -366,9 +412,10 @@
   color: var(--paper-muted);
 }
 
-/* ---------- Phones and narrow screens: each entry stacks, with small labels ---------- */
+/* ---------- Phones, tablets and small laptops: each entry stacks, with small labels ---------- */
 
-@media (max-width: 899px) {
+/* Under 1280 px the six columns leave the remarks too little room, so each entry stacks. */
+@media (max-width: 1279px) {
   .table thead {
     position: absolute;
     width: 1px;
@@ -412,8 +459,15 @@
   }
 
   .date,
-  .route {
+  .route,
+  .aircraft,
+  .duty {
+    width: auto;
     white-space: normal;
+  }
+
+  .viewFlight {
+    grid-column: 2;
   }
 
   .remarks ul {
@@ -421,23 +475,24 @@
     padding-bottom: 0.25rem;
   }
 
-  /* Photos sit above the remarks, smaller. */
+  /* Photos come after the remarks, smaller. */
   .entry[data-has-photos] .photos {
     display: block;
     grid-column: 1 / -1;
-    order: 0;
     width: auto;
-    padding: 0.75rem 0 1.25rem;
-  }
-
-  .entry[data-has-photos] .remarks::before,
-  .entry[data-has-photos] .remarks ul {
-    order: 1;
+    padding: 1.25rem 0 0.25rem;
   }
 
   .stack {
-    width: 9.5rem;
     margin: 0 auto 0 calc(5.5rem + 0.75rem);
+  }
+
+  .landscape {
+    width: min(14rem, 100% - 6.25rem);
+  }
+
+  .portrait {
+    width: 9.5rem;
   }
 
   .stackControls {

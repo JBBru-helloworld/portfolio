@@ -13,4 +13,5 @@ export const logbook: LogbookCopy = {
     next: "Next photo",
     of: "of",
   },
+  viewFlight: "View flight →",
 };

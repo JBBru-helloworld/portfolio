@@ -126,6 +126,12 @@ export interface JourneyPage {
 /** A photo taped into the logbook: built from assets/experience/<prefix>-<n> by `pnpm experience:build`. */
 export interface ExperiencePhoto {
   alt: string;
+  /** The print's shape: "portrait" (4:5, the default) or "landscape" (4:3, cropped from the photo). */
+  frame?: "portrait" | "landscape";
+  /** For a cropped print: where the crop sits, from the top of the photo (0) to the bottom (100). Default 50. */
+  focus?: number;
+  /** false: never published (the owner decided against it). */
+  publish?: boolean;
   /** CHECK(owner) while the owner has not confirmed a photo is safe to publish (it is then not shown). */
   notes?: OwnerNotes;
 }
@@ -146,7 +152,10 @@ export interface ExperienceItem {
   /** Alt text for each photo, in number order. A photo is shown only once built and described here. */
   photos: ExperiencePhoto[];
   stack: string[];
+  /** Links; the first live https link is the company's website (its name in the logbook links there). */
   links: Link[];
+  /** The slug of this role's project page, for the logbook's "View flight →" link. */
+  project?: string;
   /** For internal work: describe the approach only, never confidential data. */
   confidentiality?: string;
   notes?: OwnerNotes;
@@ -324,6 +333,8 @@ export interface LogbookCopy {
   present: string;
   ratingsTitle: string;
   photos: { group: string; pause: string; play: string; next: string; of: string };
+  /** The link from an entry to its project page ("View flight →"). */
+  viewFlight: string;
 }
 
 export interface DutyFreeProduct {

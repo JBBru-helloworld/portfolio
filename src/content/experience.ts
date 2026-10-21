@@ -9,19 +9,20 @@ export const experience: ExperienceItem[] = [
     location: "Remote", // confirmed by the owner (2026-10-21)
     summary: "Online one-to-one coding lessons for children and adults.",
     highlights: [
-      "Founded and runs the business as its lead tutor, and built its website (Next.js on Cloudflare).",
+      "Founded the business and teach one-to-one as its lead tutor, and built its website (Next.js on Cloudflare).",
     ],
     remarks: [
-      "Founded the business; teaches one to one as lead tutor.",
+      "Founded the business and teach one-to-one as lead tutor.",
       "Built its website with Next.js on Cloudflare.",
     ],
     photoPrefix: "coralcoders",
     // coralcoders-pic-1 only (the owner removed the second photo, 2026-10-21). Its WhatsApp number is blurred.
     photos: [
-      { alt: "A Coral Coders flyer: Join our coding course, one to one online lessons" },
+      { alt: "A Coral Coders flyer: Join our coding course, one-to-one online lessons" },
     ],
     stack: ["Next.js", "Cloudflare"],
     links: [{ label: "coralcoders.com", url: "https://coralcoders.com", kind: "live" }],
+    project: "coral-coders-website",
   },
   {
     slug: "build-a-genius",
@@ -30,11 +31,11 @@ export const experience: ExperienceItem[] = [
     dates: { start: "Jun 2026", end: "Present" },
     location: "Remote",
     summary: "One-to-one coding lessons for 14 children.",
-    highlights: ["Teaches Scratch, Minecraft Education and Python to 14 children one to one."],
-    remarks: ["Teaches 14 children one to one.", "Scratch, Minecraft Education and Python."],
+    highlights: ["Teach 14 children one-to-one in Scratch, Minecraft Education and Python."],
+    remarks: ["Teach 14 children one-to-one in Scratch, Minecraft Education and Python."],
     photoPrefix: "bac",
     // The student's camera, name and username are blurred by the pipeline.
-    photos: [{ alt: "Teaching a Scratch lesson over Zoom, with the student's camera blurred" }],
+    photos: [{ alt: "Teaching a Scratch lesson over Zoom, with the student's camera blurred", frame: "landscape", focus: 42 }],
     stack: ["Scratch", "Minecraft Education", "Python"],
     links: [{ label: "buildagenius.com", url: "https://buildagenius.com/", kind: "live" }],
   },
@@ -60,26 +61,20 @@ export const experience: ExperienceItem[] = [
     // In file order: tng-pic-1 to tng-pic-7 (assets/experience/). A photo with a CHECK(owner) note is never
     // exported (experience:build holds it back) until the owner confirms it.
     photos: [
-      { alt: "Me in front of the Touch 'n Go eWallet sign at the office" },
-      {
-        alt: "With the team in front of the Touch 'n Go eWallet sign",
-        notes: ["CHECK(owner): shows colleagues' faces and their staff ID badges. Do they agree to it being published?"],
-      },
-      {
-        alt: "A selfie with the team in front of the Touch 'n Go eWallet sign",
-        notes: ["CHECK(owner): shows colleagues' faces and staff lanyards. Do they agree to it being published?"],
-      },
-      {
-        alt: "Me at my desk in the Touch 'n Go Digital office",
-        notes: ["CHECK(owner): the monitors and laptops show internal work (a spreadsheet and code). Safe to publish, or leave it out?"],
-      },
-      { alt: "Lion dance costumes in front of the Touch 'n Go eWallet sign at the office" },
-      { alt: "The road outside the office buildings, in low sun" },
+      { alt: "Me in front of the Touch 'n Go eWallet sign at the office", frame: "landscape", focus: 60 },
+      // tng-pic-2 and tng-pic-3: cleared by the owner (2026-10-21); experience:build blurs the staff ID badges.
+      { alt: "With the team in front of the Touch 'n Go eWallet sign", frame: "landscape" },
+      { alt: "A selfie with the team in front of the Touch 'n Go eWallet sign", frame: "landscape", focus: 45 },
+      // Not published: the owner decided (2026-10-21). Its screens show internal work.
+      { alt: "Me at my desk in the Touch 'n Go Digital office", publish: false },
+      { alt: "Lion dance costumes in front of the Touch 'n Go eWallet sign at the office", frame: "landscape", focus: 52 },
+      { alt: "The road outside the office buildings, in low sun", frame: "landscape", focus: 60 },
       // The screens are blurred by experience:build, as the owner asked (2026-10-21).
-      { alt: "My desk, with a monitor and two laptops, their screens blurred" },
+      { alt: "My desk, with a monitor and two laptops, their screens blurred", frame: "landscape", focus: 63 },
     ],
     stack: ["MaxCompute SQL", "EDA", "Feature engineering", "ChatGPT"],
     links: [{ label: "tngdigital.com.my", url: "https://www.tngdigital.com.my/", kind: "live" }],
+    project: "touch-n-go-reporting",
     confidentiality: "Internal work: describe the approach only, never confidential data, figures or screenshots.",
   },
   {
@@ -93,9 +88,8 @@ export const experience: ExperienceItem[] = [
     highlights: [
       "Built an LLM-as-a-judge pipeline benchmarking AI chat outputs and token limits with LangSmith and DeepEval.",
       "Added llms.txt for AI discoverability.",
-      "Built AI trip planner features, and UI and UX features such as onboarding.",
-      "Tested the AI influencer clones, including their ElevenLabs voice output.",
-      "Worked as a QA tester, flagging and reporting bugs.",
+      "Built UI and UX features such as onboarding.",
+      "Worked as a QA tester on the AI features, including the influencer clones and their ElevenLabs voice output, flagging and reporting bugs.",
       "Worked in React with REST APIs and CI/CD.",
     ],
     remarks: [
@@ -107,9 +101,10 @@ export const experience: ExperienceItem[] = [
     // plandora-pic (assets/experience/).
     photos: [
       // Cleared by the owner (2026-10-21): the team's faces are already public on Plandora's own website.
-      { alt: "With the Plandora team outdoors" },
+      { alt: "With the Plandora team outdoors", frame: "landscape", focus: 68 },
     ],
     stack: ["LangSmith", "DeepEval", "ElevenLabs", "React", "REST APIs", "CI/CD"],
     links: [{ label: "plandora.com", url: "https://plandora.com/", kind: "live" }],
+    project: "plandora-llm-judge",
   },
 ];

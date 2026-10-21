@@ -14,8 +14,8 @@ The camera's rotation is applied first, then every output is re-encoded from bar
 ICC, GPS or other metadata survives (the same cleaning as projects:build). HEIC files are converted with
 macOS `sips` first. Photos are shipped in colour; the site fades them with CSS.
 
-Only photos that are described in experience.ts and have no open TODO(owner) or CHECK(owner) note are
-exported: a photo waiting for the owner's confirmation (other people's faces, names, internal screens) is
+Only photos that are described in experience.ts, not marked `publish: false`, and have no open TODO(owner) or
+CHECK(owner) note are exported: a photo waiting for the owner's confirmation (other people's faces, names, internal screens) is
 held back and never reaches public/, so it cannot be fetched from the site either. The manifest
 is src/content/experience-media.json. Originals are never committed (assets/ is ignored).
 """
@@ -53,6 +53,9 @@ HDR_PROFILE = re.compile(r"HLG|PQ|2100", re.I)
 
 REDACT = {
     "tng-pic-7": [(1405, 1145, 2280, 1660), (1005, 1785, 1775, 2280), (1995, 1860, 2875, 2435)],
+    # tng-pic-2 and tng-pic-3: the staff ID badges (the owner cleared the photos with the badges blurred).
+    "tng-pic-2": [(335, 660, 440, 790), (775, 600, 870, 715), (965, 705, 1055, 815), (1480, 745, 1560, 855), (1535, 795, 1635, 920)],
+    "tng-pic-3": [(925, 1960, 1200, 2180)],
     "bac-pic-1": [(505, 490, 965, 752), (830, 748, 1080, 800)],
     "coralcoders-pic-1": [(1540, 3680, 2060, 3810)],
 }
@@ -64,7 +67,7 @@ def roles() -> list[dict]:
         "const { experience } = await import('./src/content/experience.ts');"
         "const open = (n) => (n ?? []).some((x) => /(TODO|CHECK)\\(owner\\)/.test(x));"
         "console.log(JSON.stringify(experience.map(e => ({ slug: e.slug, prefix: e.photoPrefix,"
-        " described: e.photos.length, cleared: e.photos.map((p) => !!p.alt && !open(p.notes)) }))));"
+        " described: e.photos.length, cleared: e.photos.map((p) => !!p.alt && p.publish !== false && !open(p.notes)) }))));"
     )
     out = subprocess.run(
         ["node", "--disable-warning=MODULE_TYPELESS_PACKAGE_JSON", "--input-type=module", "-e", code],
@@ -124,7 +127,7 @@ def main() -> None:
             held = []
             for n, f in files:
                 if n > role["described"] or not role["cleared"][n - 1]:
-                    held.append(f"{f.name} ({'needs alt text' if n > role['described'] else 'waiting for CHECK(owner)'})")
+                    held.append(f"{f.name} ({'needs alt text' if n > role['described'] else 'not cleared: a CHECK(owner) note or publish: false'})")
                     continue
                 im = clean(open_photo(f, tmp))
                 if f.stem in REDACT:

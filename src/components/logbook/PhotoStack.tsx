@@ -21,6 +21,10 @@ export interface Print {
   alt: string;
   /** Fixed per photo, within ±3°. */
   rotate: number;
+  /** A 4:3 print cropped from the photo; otherwise a 4:5 portrait print. A stack takes its first print's shape. */
+  landscape: boolean;
+  /** Where the crop sits, from the top of the photo (0) to the bottom (100). */
+  focus: number;
 }
 
 const INTERVAL = 4000;
@@ -134,11 +138,10 @@ export function PhotoStack({ prints, label, copy }: { prints: Print[]; label: st
     setPaused(true);
   };
 
+  const landscape = prints[0].landscape;
+  const shape = landscape ? styles.landscape : styles.portrait;
   const prints_ = (
-    <div
-      className={styles.prints}
-      style={{ "--count": n, aspectRatio: `${prints[0].picture.width} / ${prints[0].picture.height}` } as CSSProperties}
-    >
+    <div className={styles.prints} style={{ "--count": n } as CSSProperties}>
       {prints.map((p, i) => (
         <figure
           key={i}
@@ -146,12 +149,12 @@ export function PhotoStack({ prints, label, copy }: { prints: Print[]; label: st
           data-pos={pos(i)}
           data-flick={flicking === i ? (pos(i) === n - 1 ? "out" : "in") : undefined}
           aria-hidden={pos(i) !== 0 || undefined}
-          style={{ "--pos": pos(i), "--rotate": `${p.rotate}deg`, zIndex: n - pos(i) } as CSSProperties}
+          style={{ "--pos": pos(i), "--rotate": `${p.rotate}deg`, "--focus": `${p.focus}%`, zIndex: n - pos(i) } as CSSProperties}
         >
           <ProjectPicture
             picture={p.picture}
             alt={pos(i) === 0 ? p.alt : ""}
-            sizes="(min-width: 900px) 13rem, 11rem"
+            sizes={landscape ? "14rem" : "9.5rem"}
             className={styles.printPicture}
             imgClassName={styles.printImg}
           />
@@ -160,12 +163,12 @@ export function PhotoStack({ prints, label, copy }: { prints: Print[]; label: st
     </div>
   );
 
-  if (n === 1) return <div className={`${styles.stack} ${styles.single}`}>{prints_}</div>;
+  if (n === 1) return <div className={`${styles.stack} ${styles.single} ${shape}`}>{prints_}</div>;
 
   return (
     <div
       ref={ref}
-      className={styles.stack}
+      className={`${styles.stack} ${shape}`}
       role="group"
       aria-roledescription="photo stack"
       // State for QA and styling: whether this stack is the one allowed to move, and whether it is moving.

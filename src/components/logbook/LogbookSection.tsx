@@ -1,7 +1,8 @@
 import type { Credential, DateRange, Destination, ExperienceItem } from "@/content";
-import { credentials, experience, logbook } from "@/content";
+import { credentials, experience, logbook, projects } from "@/content";
 import { RevealGroup } from "@/components/reveal/RevealGroup";
 import { PhotoStack } from "./PhotoStack";
+import { ViewFlight } from "./ViewFlight";
 import { prints } from "./media";
 import styles from "./Logbook.module.css";
 
@@ -69,8 +70,9 @@ export function LogbookSection({ destination }: { destination: Destination }) {
               <tbody>
                 {entries.map((e: ExperienceItem) => {
                   const photos = prints(e);
+                  const flight = e.project ? projects.find((p) => p.slug === e.project) : undefined;
                   return (
-                    <tr key={e.slug} className={styles.entry} data-reveal="" data-has-photos={photos.length ? "" : undefined}>
+                    <tr key={e.slug} id={`log-${e.slug}`} className={styles.entry} data-reveal="" data-has-photos={photos.length ? "" : undefined}>
                       <td className={styles.date} data-label={c.date}>
                         {dates(e.dates)}
                       </td>
@@ -102,6 +104,9 @@ export function LogbookSection({ destination }: { destination: Destination }) {
                             <li key={r}>{r}</li>
                           ))}
                         </ul>
+                        {flight ? (
+                          <ViewFlight slug={flight.slug} label={logbook.viewFlight} name={`${logbook.viewFlight.replace(/\s*→$/, "")}: ${flight.flight}, ${flight.name}`} />
+                        ) : null}
                       </td>
                       <td className={styles.photos}>
                         {photos.length ? (

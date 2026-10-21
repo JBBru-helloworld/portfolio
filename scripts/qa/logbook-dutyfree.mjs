@@ -17,6 +17,9 @@ const SIZES = {
   "2560x1440": { width: 2560, height: 1440, deviceScaleFactor: 1 },
 };
 const touch = (name) => !!SIZES[name].hasTouch;
+// --sizes=360x800,1440x900 limits the captures to those sizes.
+const sizeArg = process.argv.find((a) => a.startsWith("--sizes="));
+const captureSizes = sizeArg ? sizeArg.slice(8).split(",") : Object.keys(SIZES);
 await mkdir(outDir, { recursive: true });
 const browser = engine === "chrome" ? await chromium.launch({ channel: "chrome" }) : await webkit.launch();
 const report = { engine, url };
@@ -94,7 +97,7 @@ const stacks = (page) =>
 // ---------- Captures ----------
 if (only.includes("captures")) {
   report.captures = {};
-  for (const name of Object.keys(SIZES)) {
+  for (const name of captureSizes) {
     const { context, page } = await open(name);
     const shot = (n) => page.screenshot({ path: `${outDir}/${engine}-${n}-${name}.png` });
     await page.goto(url + "#experience", { waitUntil: "load" });
@@ -107,6 +110,24 @@ if (only.includes("captures")) {
       rows: document.querySelectorAll("#experience tbody tr").length,
       revealed: document.querySelectorAll("#experience [data-revealed]").length,
       table: getComputedStyle(document.querySelector("#experience table")).display,
+      // Each row's print or stack: its size, and whether it reaches into the next row's print.
+      prints: [...document.querySelectorAll("#experience tbody tr")].map((tr, i, rows) => {
+        const box = (r) => r.querySelector("[class*='prints']")?.getBoundingClientRect();
+        const b = box(tr);
+        const next = rows[i + 1] && box(rows[i + 1]);
+        return b ? { row: tr.id, width: Math.round(b.width), height: Math.round(b.height), gapToNext: next ? Math.round(next.top - b.bottom) : null } : { row: tr.id, none: true };
+      }),
+      // Company and role on one line in the table layout.
+      oneLine: [...document.querySelectorAll("#experience tbody tr")].map((tr) => {
+        // Lines of text in a cell: distinct line tops of its text's client rects.
+        const lines = (el) => {
+          const r = document.createRange();
+          r.selectNodeContents(el);
+          return new Set([...r.getClientRects()].map((x) => Math.round(x.top))).size;
+        };
+        return { row: tr.id, aircraft: lines(tr.querySelector("td:nth-child(2)")), duty: lines(tr.querySelector("td:nth-child(3)")) };
+      }),
+      viewFlight: [...document.querySelectorAll("#experience a[href^='/work/']")].map((a) => ({ row: a.closest("tr").id, href: a.getAttribute("href"), text: a.textContent })),
     }));
     // A stack mid-flick.
     await place(page, STACK, 160, 300);
