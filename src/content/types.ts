@@ -145,6 +145,36 @@ export interface SecurityCheck {
   /** The label for results scored in advance. */
   precomputedLabel: string;
   scanner: ScannerConfig;
+  /** The scanner's words (Phase 5c). */
+  ui: SecurityCheckUi;
+}
+
+export interface SecurityCheckUi {
+  eyebrow: string;
+  lead: string;
+  queueLabel: string;
+  /** Before a passenger's name in the queue buttons' names ("Passenger: Routine top-up"). */
+  passengerPrefix: string;
+  pack: string;
+  random: string;
+  ready: string;
+  incoming: string;
+  /** The one error state, on the monitor. */
+  error: string;
+  prompt: string;
+  packCaption: string;
+  packNote: string;
+  bagLegend: string;
+  send: string;
+  next: string;
+  reportLabel: string;
+  /** "Riskier than {percent} of transactions". */
+  riskier: string;
+  validation: string;
+  repo: string;
+  viewFlight: string;
+  /** Under the report: the product field shows the dataset's anonymised codes. */
+  productNote: string;
 }
 
 export interface Departures {

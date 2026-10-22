@@ -20,7 +20,8 @@
     "stamps:build": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/stamps/render.mjs && scripts/scene/.venv/bin/python scripts/stamps/ink.py",
     "projects:build": "scripts/scene/.venv/bin/python scripts/projects/build.py",
     "experience:build": "scripts/scene/.venv/bin/python scripts/experience/build.py",
-    "resume:build": "scripts/scene/.venv/bin/python scripts/resume/build.py"
+    "resume:build": "scripts/scene/.venv/bin/python scripts/resume/build.py",
+    "bags:build": "scripts/scene/.venv/bin/python scripts/security-check/bags.py"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

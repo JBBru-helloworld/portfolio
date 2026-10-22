@@ -54,10 +54,20 @@ function decode(record) {
   return { verdict: header.verdicts[verdict], percentile: percentile / 10, score, objects };
 }
 
+// How many cells of each verdict every chunk holds, so a random passenger can pick a verdict first and then
+// a chunk that has it (downloading only that chunk).
+const counts = [];
+for (const name of header.chunks) {
+  const { records } = await readJson(join(gridRoot, version, name));
+  const c = header.verdicts.map(() => 0);
+  for (const r of records) c[r[0]]++;
+  counts.push(c);
+}
+
 const { presets: presetRecords, ...gridHeader } = header;
 await writeFile(
   join(root, "src", "content", "security-check-grid.json"),
-  JSON.stringify({ ...gridHeader, path: `/security-check/grid/${version}/` }, null, 2) + "\n",
+  JSON.stringify({ ...gridHeader, counts, path: `/security-check/grid/${version}/` }, null, 2) + "\n",
 );
 
 const passengers = presets.map((p) => {

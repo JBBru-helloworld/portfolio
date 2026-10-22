@@ -3,7 +3,7 @@
  * (public/security-check/grid/<model version>/, see security-check-grid.ts). There is no live server.
  * The six passengers' results are in the content (securityCheck.scanner.presets).
  */
-import { securityCheck } from "@/content";
+import { securityCheck } from "@/content/security-check";
 import grid from "@/content/security-check-grid.json";
 import { createGridLookup, type GridHeader } from "./security-check-grid";
 

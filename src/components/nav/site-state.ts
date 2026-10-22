@@ -294,6 +294,26 @@ export function startTracking(): () => void {
 const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
 /**
+ * Glides to a scroll position, the way glideTo moves between sections: Lenis on desktop, native smooth
+ * scrolling on touch, an instant jump under reduced motion. Used to bring a part of a section into view.
+ */
+export function glideToY(top: number) {
+  top = Math.max(0, top);
+  if (window.matchMedia(REDUCED_MOTION).matches) {
+    if (window.__lenis) window.__lenis.scrollTo(top, { immediate: true, force: true });
+    else window.scrollTo({ top, behavior: "instant" });
+    return;
+  }
+  const lenis = window.__lenis;
+  if (lenis && !window.matchMedia(TOUCH_ONLY).matches) {
+    const duration = Math.min(0.9, Math.max(0.45, Math.abs(top - window.scrollY) / 1600));
+    lenis.scrollTo(top, { duration, easing: easeInOutCubic, force: true });
+    return;
+  }
+  window.scrollTo({ top, behavior: "smooth" });
+}
+
+/**
  * Glides to a section: Lenis on desktop, native smooth scrolling on touch, an instant jump under reduced
  * motion. Updates the hash, and moves focus to the section once there (unless `focus` is false).
  */

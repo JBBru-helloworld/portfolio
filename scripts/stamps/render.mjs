@@ -98,4 +98,33 @@ for (const entry of journey) {
   await page.screenshot({ path: join(OUT, `clean-${entry.ink}.png`), omitBackground: true });
   console.log(`stamps: rendered ${entry.ink} (${w}x${h} at ${SCALE}x)`);
 }
+// The Security check's verdict stamps (Phase 5c): a rectangle with a double rule, the line name above and
+// the verdict word large, stamped diagonally across the luggage tag.
+function verdict(word) {
+  const w = 360;
+  const h = 132;
+  return {
+    w,
+    h,
+    body: `
+      <rect x="5" y="5" width="${w - 10}" height="${h - 10}" rx="8" fill="none" stroke="#fff" stroke-width="6"/>
+      <rect x="15" y="15" width="${w - 30}" height="${h - 30}" rx="4" fill="none" stroke="#fff" stroke-width="1.8"/>
+      ${t(w / 2, 40, 14, "JB AIR · SECURITY", 'letter-spacing="5"')}
+      ${t(w / 2, 98, word.length > 8 ? 46 : 54, word, 'letter-spacing="6" font-weight="500"')}`,
+  };
+}
+for (const word of ["CLEARED", "SCREENING", "STOPPED"]) {
+  const { w, h, body } = verdict(word);
+  await page.setViewportSize({ width: w, height: h });
+  await page.setContent(`<!doctype html><html><head><style>
+    @font-face { font-family: "JB"; src: url("${font}") format("woff2"); font-weight: 400 500; }
+    html, body { margin: 0; background: transparent; }
+    svg { display: block; font-family: "JB"; font-weight: 500; fill: #fff; }
+  </style></head><body>
+    <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${body}</svg>
+  </body></html>`);
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: join(OUT, `clean-verdict-${word.toLowerCase()}.png`), omitBackground: true });
+  console.log(`stamps: rendered verdict ${word} (${w}x${h} at ${SCALE}x)`);
+}
 await browser.close();

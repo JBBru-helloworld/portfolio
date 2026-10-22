@@ -26,6 +26,9 @@ OUT = ROOT / "public" / "journey"
 RENDER_SCALE = 3
 OUT_SCALE = 2
 SEEDS = {"za": 11, "mu": 23, "my": 37}
+# The Security check's verdict stamps (Phase 5c), written to public/security-check/.
+VERDICT_SEEDS = {"cleared": 41, "screening": 53, "stopped": 67}
+VERDICT_OUT = ROOT / "public" / "security-check"
 
 
 def noise(rng: np.random.Generator, h: int, w: int, cell: int) -> np.ndarray:
@@ -96,8 +99,11 @@ def guilloche() -> None:
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     guilloche()
-    for ink, seed in SEEDS.items():
-        rgba = np.asarray(Image.open(SRC / f"clean-{ink}.png").convert("RGBA")).astype(np.float32) / 255
+    jobs = [(f"clean-{ink}.png", OUT / f"stamp-{ink}.webp", seed) for ink, seed in SEEDS.items()]
+    VERDICT_OUT.mkdir(parents=True, exist_ok=True)
+    jobs += [(f"clean-verdict-{v}.png", VERDICT_OUT / f"stamp-{v}.webp", seed) for v, seed in VERDICT_SEEDS.items()]
+    for clean, path, seed in jobs:
+        rgba = np.asarray(Image.open(SRC / clean).convert("RGBA")).astype(np.float32) / 255
         worn = wear(rgba[..., 3], seed)
         h, w = worn.shape
         size = (round(w * OUT_SCALE / RENDER_SCALE), round(h * OUT_SCALE / RENDER_SCALE))
@@ -105,7 +111,6 @@ def main() -> None:
         out = np.zeros((size[1], size[0], 4), np.uint8)
         out[..., :3] = 255
         out[..., 3] = np.round(small * 255).astype(np.uint8)
-        path = OUT / f"stamp-{ink}.webp"
         Image.fromarray(out, "RGBA").save(path, "WEBP", quality=82, alpha_quality=80, method=6)
         print(f"stamps: {path.relative_to(ROOT)} {size[0]}x{size[1]} {path.stat().st_size / 1024:.1f} KB")
 

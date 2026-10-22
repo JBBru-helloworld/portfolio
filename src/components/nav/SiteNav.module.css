@@ -36,6 +36,25 @@
   pointer-events: auto;
 }
 
+/* A soft fade behind the wordmark and the seat sign, so content scrolling underneath never clashes with
+   them. Part of the bar, so it shows and hides with it (hidden during the window sequence). */
+.bar::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: calc(clamp(5rem, 4.4rem + 1.5vw, 6rem) + env(safe-area-inset-top));
+  /* Solid behind the wordmark and the sign, then a soft fall-off below them. */
+  background: linear-gradient(
+    to bottom,
+    var(--void) 0%,
+    var(--void) 58%,
+    color-mix(in oklch, var(--void) 55%, transparent) 78%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
 @media (max-width: 767px) {
   .bar {
     --edge-y: 0.75rem;

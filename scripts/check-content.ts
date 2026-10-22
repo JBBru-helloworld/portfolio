@@ -9,7 +9,7 @@
  * do not match the built media).
  * Warns (does not fail) on every TODO(owner) and CHECK(owner) until launch.
  */
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const root = process.cwd();
@@ -342,8 +342,57 @@ for (const file of files) {
       const input = scanner.inputs.find((i: { id: string }) => i.id === c.id);
       if (!input || input.options.join() !== c.values.join()) failures.push(`${gridRel}  ${c.id} values differ from the scanner's inputs`);
     }
+    // The random passenger's weighting needs every chunk's verdict counts.
+    if (!Array.isArray(grid.counts) || grid.counts.length !== grid.chunks.length) failures.push(`${gridRel}  verdict counts missing (run pnpm security-check:sync)`);
+    for (let v = 0; v < verdicts.length; v++)
+      if (Array.isArray(grid.counts) && !grid.counts.some((c: number[]) => c[v] > 0)) failures.push(`${gridRel}  no cell is ${verdicts[v]}`);
   } catch {
     failures.push(`${rel} or the grid  missing or unreadable (run pnpm security-check:sync)`);
+  }
+
+  // The scanner's words (Phase 5c): the dataset's clock is not a local time and its amounts are US dollars,
+  // the results are precomputed, and the score is not a probability.
+  const words: { label: string; pattern: RegExp }[] = [
+    { label: "a clock time", pattern: /\b\d{1,2}(:\d{2})?\s*(a\.?m\.?|p\.?m\.?)(?![a-z])/i },
+    { label: "a time of day", pattern: /late[- ]night|midnight|\bovernight\b|o'clock|small hours/i },
+    { label: "ringgit (amounts are US dollars)", pattern: /\bRM\s?\d/ },
+    { label: "\"live\" (results are precomputed)", pattern: /(?<!aria-)\blive\b/i },
+    { label: "\"probability\" (the score is a percentile)", pattern: /probabilit/i },
+  ];
+  const scannerFiles = [
+    "src/content/security-check.ts",
+    "src/content/security-check-scanner.json",
+    ...readdirSync(join(root, "src", "components", "security")).map((f) => `src/components/security/${f}`),
+  ];
+  for (const file of scannerFiles) {
+    const text = readFileSync(join(root, file), "utf8");
+    // Comments may explain the rules; only strings and markup reach the page.
+    const visible = text.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "").replace(/\{\/\*[\s\S]*?\*\/\}/g, "");
+    for (const w of words) {
+      const m = w.pattern.exec(visible);
+      if (m) failures.push(`${file}  ${w.label}: "${m[0]}"`);
+    }
+  }
+  const destinationsText = readFileSync(join(contentDir, "destinations.ts"), "utf8");
+  if (/LIVE FRAUD|Live fraud/.test(destinationsText)) failures.push(`src/content/destinations.ts  the fraud demo is precomputed: "FRAUD DEMO", not "LIVE FRAUD DEMO"`);
+
+  // The bags: every bag's images and packing area exist.
+  try {
+    const bags = JSON.parse(readFileSync(join(contentDir, "security-check-bags.json"), "utf8")).bags;
+    if (bags.length !== 3) failures.push(`src/content/security-check-bags.json  ${bags.length} bags (expected 3)`);
+    for (const b of bags) {
+      if (!(b.packing?.length >= 3)) failures.push(`src/content/security-check-bags.json  ${b.id}: no packing area`);
+      for (const kind of ["photo", "xray"])
+        for (const w of b.widths)
+          for (const ext of ["avif", "webp"])
+            if (!existsSync(join(root, "public", "security-check", "bags", `${b.id}-${kind}-${w}.${ext}`)))
+              failures.push(`public/security-check/bags/${b.id}-${kind}-${w}.${ext}  missing (run pnpm bags:build)`);
+      if (!existsSync(join(root, "public", "security-check", "bags", `${b.id}-shadow.webp`))) failures.push(`public/security-check/bags/${b.id}-shadow.webp  missing (run pnpm bags:build)`);
+    }
+    for (const v of ["cleared", "screening", "stopped"])
+      if (!existsSync(join(root, "public", "security-check", `stamp-${v}.webp`))) failures.push(`public/security-check/stamp-${v}.webp  missing (run pnpm stamps:build)`);
+  } catch {
+    failures.push("src/content/security-check-bags.json  missing or unreadable (run pnpm bags:build)");
   }
   // Never a real transaction: no transaction IDs and nothing from the fraud repo's local examples, anywhere in content.
   for (const file of readdirSync(contentDir)) {

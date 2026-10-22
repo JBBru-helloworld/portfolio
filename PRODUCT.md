@@ -17,7 +17,7 @@ jbbru.com is the personal portfolio of Joshua Bonham. It must communicate three 
 
 ## Positioning
 
-**Software engineer, ML and data.** ML, data and AI lead; full-stack is how the work gets shipped. The site's distinguishing mechanism is demonstration over description: a live fraud-detection "security check" demo runs a real model from Joshua's own project rather than describing one.
+**Software engineer, ML and data.** ML, data and AI lead; full-stack is how the work gets shipped. The site's distinguishing mechanism is demonstration over description: a fraud-detection "security check" demo shows a real model from Joshua's own project at work (every result precomputed by the model) rather than describing one.
 
 ## Operating Context
 
@@ -36,12 +36,12 @@ jbbru.com is the personal portfolio of Joshua Bonham. It must communicate three 
 ## Brand Commitments
 
 - Name: Joshua Bonham; domain jbbru.com.
-- The concept "Window seat", with its signature elements (the cabin-window landing, the split-flap departures board, passport stamps, an aircraft seat map of the stack, the live fraud demo), is set by the owner. Visual specifics live in DESIGN.md.
+- The concept "Window seat", with its signature elements (the cabin-window landing, the split-flap departures board, passport stamps, an aircraft seat map of the stack, the fraud demo), is set by the owner. Visual specifics live in DESIGN.md.
 - Voice: calm, precise and confident. Never hype.
 
 ## Evidence on Hand
 
-- **Fraud-detection project** (real, owner's own): `github.com/JBBru-helloworld/payments-fraud-detection`, local at `../payments-fraud-detection`. LightGBM on the IEEE-CIS dataset with a chronological split; test PR-AUC 0.5879 (95% bootstrap interval 0.5673 to 0.6020) against a 3.48% fraud rate; SHAP and error analysis, a cost-based threshold and a Dockerised FastAPI service. This is the basis of the live demo. Only figures in that repo's reports may be quoted.
+- **Fraud-detection project** (real, owner's own): `github.com/JBBru-helloworld/payments-fraud-detection`, local at `../payments-fraud-detection`. LightGBM on the IEEE-CIS dataset with a chronological split; test PR-AUC 0.5879 (95% bootstrap interval 0.5673 to 0.6020) against a 3.48% fraud rate; SHAP and error analysis, a cost-based threshold and a Dockerised FastAPI service. This is the basis of the fraud demo (results precomputed by the model). Only figures in that repo's reports may be quoted.
 - **Old-site projects** (11, inventoried in `docs/AUDIT.md`), including Budget Tracker, Harvest For All, an AWS receipt pipeline, Grab Buddy (UMHackathon 2025) and Pengyou (ImagineHack 2024). Several have unresolved inconsistencies listed in the audit.
 - **CV facts** listed in `docs/AUDIT.md` section 7, each pending owner confirmation.
 - **Absent, must not be fabricated:** testimonials, client names, employer names beyond the confirmed record, award wins not in the record, metrics not in a source.

@@ -21,6 +21,8 @@ export interface GridHeader {
   verdicts: GridVerdict[];
   bands: Record<"screening" | "stopped", { score: number; percentile: number }>;
   chunks: string[];
+  /** Cells of each verdict in each chunk (same order as chunks and verdicts). */
+  counts: number[][];
   /** Where the chunks are served, ending in a slash ("/security-check/grid/<model version>/"). */
   path: string;
 }
@@ -77,6 +79,40 @@ export function recordIndex(header: GridHeader, choices: Record<string, string>)
   return index;
 }
 
+/** The choice values at a record's position (the inverse of recordIndex). */
+export function choicesAt(header: GridHeader, index: number): Record<string, string> {
+  const choices: Record<string, string> = {};
+  for (let i = header.choices.length - 1; i >= 0; i--) {
+    const { id, values } = header.choices[i];
+    choices[id] = values[index % values.length];
+    index = Math.floor(index / values.length);
+  }
+  return choices;
+}
+
+/** The amount step and hour band of a chunk, from its name ("a-<i>-h-<j>.json"). */
+export function chunkCell(name: string): { amountStep: number; hourBand: number } {
+  const m = /^a-(\d+)-h-(\d+)\.json$/.exec(name);
+  if (!m) throw new RangeError(`not a grid chunk: ${name}`);
+  return { amountStep: Number(m[1]), hourBand: Number(m[2]) };
+}
+
+/**
+ * A random draw for the "random passenger": the verdict first (each equally likely, as most of the grid is
+ * CLEARED), then a chunk weighted by how many cells of that verdict it holds. The cell itself is chosen once
+ * the chunk is loaded (see lookup.random), so a draw downloads at most one chunk.
+ */
+export function drawChunk(header: GridHeader, rand: () => number): { verdict: number; chunk: string } {
+  const verdict = Math.min(header.verdicts.length - 1, Math.floor(rand() * header.verdicts.length));
+  const total = header.counts.reduce((sum, c) => sum + c[verdict], 0);
+  let r = rand() * total;
+  for (let i = 0; i < header.chunks.length; i++) {
+    r -= header.counts[i][verdict];
+    if (r < 0) return { verdict, chunk: header.chunks[i] };
+  }
+  return { verdict, chunk: header.chunks[header.chunks.length - 1] };
+}
+
 /** A stored record as a result, the objects sorted by share, largest first. */
 export function decodeRecord(header: GridHeader, lines: Lines, record: number[]): GridResult {
   const [verdict, percentile, score, ...shares] = record;
@@ -118,6 +154,19 @@ export function createGridLookup(header: GridHeader, lines: Lines, fetcher: Fetc
     async lookup(bag: GridBag): Promise<GridResult> {
       const chunk = await load(chunkName(bag.amountStep, bag.hourBand));
       return decodeRecord(header, lines, chunk.records[recordIndex(header, bag.choices)]);
+    },
+    /** Starts loading a drawn chunk (see drawChunk) before the visitor presses. */
+    prefetchChunk(name: string): void {
+      load(name).catch(() => undefined);
+    },
+    /** A random cell with the drawn verdict, from the drawn chunk, and its stored result. */
+    async random(draw: { verdict: number; chunk: string }, rand: () => number): Promise<{ bag: GridBag; result: GridResult }> {
+      const chunk = await load(draw.chunk);
+      const matching: number[] = [];
+      chunk.records.forEach((r, i) => r[0] === draw.verdict && matching.push(i));
+      const index = matching.length ? matching[Math.floor(rand() * matching.length)] : Math.floor(rand() * chunk.records.length);
+      const bag = { ...chunkCell(draw.chunk), choices: choicesAt(header, index) };
+      return { bag, result: decodeRecord(header, lines, chunk.records[index]) };
     },
   };
 }

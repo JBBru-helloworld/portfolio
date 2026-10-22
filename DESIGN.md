@@ -100,7 +100,7 @@ Source of truth for tokens: `src/app/globals.css` (CSS variables, Tailwind `@the
 
 ## Overview
 
-**Window seat.** A monochrome, cinematic portfolio with one refined amber accent. It opens on a photorealistic dark cabin wall with one airplane window; the shade lifts and the scroll pushes the camera through the window and a cloud into the rest of the site. Everything after that is calm, precise and fast: a boarding-pass introduction, a split-flap departures board, passport stamps, selected work, a live fraud-detection demo, an aircraft seat map of the stack, experience and contact.
+**Window seat.** A monochrome, cinematic portfolio with one refined amber accent. It opens on a photorealistic dark cabin wall with one airplane window; the shade lifts and the scroll pushes the camera through the window and a cloud into the rest of the site. Everything after that is calm, precise and fast: a boarding-pass introduction, a split-flap departures board, passport stamps, selected work, a fraud-detection demo (an X-ray security check of precomputed results), an aircraft seat map of the stack, experience and contact.
 
 The mood is a night flight: dark cabin, soft reading light, quiet confidence. Premium and editorial, never cartoonish, never an "AI startup template".
 
@@ -148,11 +148,11 @@ The clouds seen through the landing's window keep their own soft, muted, cool bl
 
 ### Named Rules
 
-- **The Single Accent Rule.** Amber is used only for focus rings, at most one highlight per section, and the top driver in the fraud demo. Never as a large fill, a glow, a gradient, a background wash or a decorative border.
+- **The Single Accent Rule.** Amber is used only for focus rings, at most one highlight per section, and in the fraud demo for the objects that raised the risk (stronger for bigger shares), the SCREENING lamp and its stamp. Never as a large fill, a glow, a gradient, a background wash or a decorative border.
 - **Amber contrast.** Amber meets 3:1 for focus rings and 4.5:1 for text on `void` and `cabin` (it measures 8.79:1 and 8.18:1). Re-check if it is ever placed on any other surface.
 - **The Window View Rule.** The cloud loop and the opening of the fly-through are the only other colour, and only as photography inside the window (and the push through it). Nothing is ever sampled from them.
 - **The Project Image Rule (colour exception, Phase 4a).** Project screenshots are the third place colour appears, and only as the owner's own images. On the site they show in **greyscale at rest** (the gallery's closed strips, `filter: grayscale(1)`) and in **full colour when expanded or on their own page** (the open strip, the project page's header and screenshots, the full-screen view, video thumbnails), like the view through the window. The change is CSS only (a 420 ms `--ease-out` filter transition; instant under reduced motion), never separate files. Nothing is ever sampled from the images for UI colour.
-- **The Stamp Ink Rule.** `ink-za`, `ink-mu` and `ink-my` may be used only inside the passport stamp section. Nowhere else, for anything. They clear 3:1 as graphics; stamp text set in them must be large (at least 24px, or 18.66px bold) and the same information must also exist as real text in `paper` or `paper-muted`.
+- **The Stamp Ink Rule.** `ink-za`, `ink-mu` and `ink-my` may be used only inside the passport stamp section, with one exception: the Security check's CLEARED stamp and lamp use `ink-za` (Phase 5c). Nowhere else, for anything. They clear 3:1 as graphics; stamp text set in them must be large (at least 24px, or 18.66px bold) and the same information must also exist as real text in `paper` or `paper-muted`.
 - **shadcn naming.** shadcn's `--accent` is a hover fill mapped to `graphite-1`; it is not the amber accent. Amber is reached through `--ring` and the `amber` utilities only.
 - **Muted text floor.** Small text never uses anything darker than `graphite-4`. `graphite-3` and darker are for borders and surfaces.
 - **Surface pairing.** `graphite-3` borders and the stamp inks sit on `void` or `cabin` only. On `graphite-1` they fall below 3:1 (`graphite-3` 2.77, `ink-mu` 2.91).
@@ -160,7 +160,7 @@ The clouds seen through the landing's window keep their own soft, muted, cool bl
 ## Typography
 
 - **Display and body:** Instrument Sans (variable, weight 400 to 600, width 100).
-- **Accent:** Newsreader Italic (weight 400, optical size 24 to 72) for **one word or a short phrase inside a heading**, never whole sentences, never body copy. Use the `accent-serif` utility.
+- **Accent:** Newsreader Italic (weight 400, optical size 24 to 72) for **one word or a short phrase inside a heading**, never whole sentences, never body copy. Use the `accent-serif` utility. One exception: the Security check's luggage tags print their small field labels in it (Phase 5c).
 - **Data, code and the departures board:** JetBrains Mono (variable, weight 400 to 500). Use tabular figures (`tabular-nums`) for any numbers that change or align.
 
 All three are self-hosted, Latin-subset WOFF2 files in `src/fonts/` (SIL OFL 1.1), loaded with `next/font/local`.
@@ -256,6 +256,7 @@ All values live at the top of `src/components/scene/WindowScene.module.css`, so 
 - **Look:** a fixed top-right pill like an illuminated cabin sign: near-black, hairline `--graphite-2` border, small flap tiles in JetBrains Mono capitals ("GATE 2 · SELECTED WORK"; phones "GATE 2"; on the board, "DEPARTURES"), and a small chevron. The pill fits its label. The wordmark sits top left, exactly where the landing's wordmark is, and links back to the top.
 - **Behaviour:** hidden through the whole window sequence; it fades in once the curtain rise is complete and out again on scrolling back into the sequence. The label flips on small tiles in under 400 ms. It opens a compact departures list (a Radix Popover): gate, destination, remark (matching the board), the current one in amber. Opening it plays the cabin chime when sound is on (closing is silent), and its foot carries the same sound toggle as the board. Choosing one glides there; Escape, an outside click or a choice closes it with focus back on the button. No motion under reduced motion. Inside the safe areas, and inside the board's and sections' top padding.
 
+- **Header fade (Phase 5c tweaks):** behind the fixed wordmark and seat sign, a soft fade from `void` (solid behind them, about 80 to 96 px tall in all, no pointer events), part of the bar, so it shows and hides with it; content scrolling underneath never clashes with them.
 ### Selected work (Gate 2, Phase 4a)
 
 - **Featured flights:** six strips in a row (JB 201 to 206), adapted from Skiper UI 52 (ExpandOnHover) with `motion/react` (the slim `m` build) and `spring.soft`. Hover or keyboard focus opens a strip (flex-grow 10 to 1) while the others narrow; the open strip's image box is exactly 16:10, the screenshots' shape, so the image shows whole, with the emblem (livery in amber), flight code, name, summary (two lines) and "View flight →" in a band below. Closed strips are the image, full height and darkened, with the code and name running up them; no bar. The image inside never resizes while the strips move: it is as wide as an open strip and only revealed. Clicking opens the project page. Phones: the strips stack (76 px closed); the first tap opens one (its image at full width, the details below, height to fit), the second tap or View flight opens the page. Nothing depends on hover. Reduced motion: no expand animation, the detail swaps instantly. An ordered list of links named "JB 201: Payments fraud detection", described by the summary.
@@ -310,13 +311,29 @@ All values live at the top of `src/components/scene/WindowScene.module.css`, so 
 
 A quiet foot on every page: "© 2026 Joshua Bonham", "Built by me, with Next.js on Cloudflare", the "Gallery by Skiper UI" credit, and "Back to the window ↑", which reloads the home page at the top so the landing replays as on a fresh visit.
 
+### Security check: the X-ray scanner (Gate 3, Phase 5c)
+
+- **Concept:** each transaction is a passenger's bag with a luggage tag. The visitor picks a passenger from the queue (or packs a bag, or asks for a random passenger), the bag rides the conveyor belt into the X-ray scanner, the monitor shows the objects inside (one per reason behind the model's decision), a lamp lights and the tag is stamped CLEARED, SCREENING or STOPPED. Every result is the model's real, precomputed output (the grid, Phase 5b); the score is shown as a percentile ("Riskier than 97% of transactions"), never as a probability, and the section never says "live".
+- **Bags:** the owner's three vintage photos (`pnpm bags:build`): clean cut-outs with a soft edge, a separate contact shadow, the handwritten name and cabin on the Polish Ocean Lines label blurred. Shown faded like the logbook prints (saturate 0.4) and in full colour inside the scanner. Each has an X-ray version made from the photo (inverted density as a soft glow, the frame and fittings brought out, stickers as faint ghosts, monochrome on transparency) and a packing polygon.
+- **Luggage tag:** HTML and SVG, aged cream card (a warm step from `paper-muted`, paper grain, worn corners), clipped top, reinforced eyelet with a loop of string, "JB AIR · BAGGAGE CHECK" in Instrument Sans capitals, field labels in Newsreader Italic (the one place it labels fields, for the printed-tag look), values in JetBrains Mono, hairline rules, a tag number in the margin and a dotted tear-off strip. The verdict stamp reuses the passport stamps' worn ink (`pnpm stamps:build` renders the three words), diagonal, with the same press and take, and the thunk if sound is on.
+- **Stage:** the queue as tags on a rail (a strip that scrolls inside itself on phones); a code-drawn belt (ribs on a looping transform, rails, rollers); a housing with a rounded casing, two mouths with rubber curtain strips that sway as the bag passes, a row of twelve vent lights that come on one by one while the bag is inside and then all take the verdict's colour, and a lamp panel (labels sized to the housing; lamps alone on phones); the monitor (scan lines, thin bezel, "READY"), above the scanner on desktop and below it on phones.
+- **Sequence (about 4 s):** drop 0.3 s, ride 1.1 s, scan 1.1 s (a moving clip with the scan line on its edge), objects (largest first, 80 ms apart, the X-ray dims to half), verdict (lamp, monitor, tag stamp), exit 0.7 s, then "Next passenger". Phases are set by timers; everything moving is a transform or opacity. A new passenger interrupts at any time. One error state: "The scanner could not load. Refresh to try again." on the monitor.
+- **Objects:** X-ray line drawings (receipt, clock, stack of cards, phone, compass, envelope, sealed box), side proportional to the square root of the share (minimum 17% of the area's width), packed without overlap inside the bag's polygon. Raised: amber, stronger for bigger shares; lowered: pale grey; a faint neutral glow, never an amber one. Hover, focus or tap shows the line and share.
+- **Report:** the verdict, "Riskier than X% of transactions", a 0 to 100 bar with the band edges, "Model score" small, the objects as a list (icon, line, direction, share), "Precomputed", the note, and links to JB 201 and the repo. A polite live region announces the verdict and the two main reasons.
+- **One screen (desktop):** at 1280x800 and up, the queue, monitor, scanner, belt and tag fit together under the header (monitor at most 24rem wide, a 16:6 stage, the Next button in the stage's free top-right corner, a smaller tag). When a scan starts and the stage is not fully in view, it glides there (Lenis; instant under reduced motion); on phones the belt and monitor are brought into view. The report sits below.
+- **Verdict bar:** zoomed where the verdicts are decided: 0 to 80 in the first quarter (with a break mark), 80 to 100 across the rest; ticks at the real values (0, 80, 87.7, 91.1, 100) and each verdict named under its own segment.
+- **Product:** the dataset's anonymised codes, shown as "TYPE C"; the report notes "Product types are anonymised codes in the dataset."
+- **Words:** amounts in US dollars ("$250"), times as "TIME BAND A" to "F" (the dataset's own clock, not local time); check:content rejects clock times, ringgit, "live" and "probability" here.
+- **Reduced motion:** nothing moves; the bag waits at the scanner, the X-ray cross-fades in, the objects and verdict appear at once.
+- **Loading:** the scanner's code (its own chunk, about 21 KB gzip) loads only when the section is near; until then the server renders the scanner at rest with the same markup, so loading changes nothing on screen and glides or restores past the section land exactly. Without JavaScript, a text summary of the six passengers and their verdicts.
+
 ### Signature components (to be built)
 
 - **Window landing:** photographic layers (the owner's window composition separated into frame, inner bezel and shade; two cloud videos), shade lift, scroll push through the window and a cloud. The only place `--ease-cinematic` and long durations are allowed.
 - **Split-flap departures board:** JetBrains Mono, tabular figures, `paper` on `cabin`; amber at most on one cell.
-- **Passport stamps:** the only place the stamp inks appear.
+- **Passport stamps:** the only place the stamp inks appear (apart from the Security check's CLEARED stamp in `ink-za`).
 - **Seat map of the stack (built in Phase 4b, above):** `graphite-4` zone labels, `paper` symbols; amber only for the selected and booked seats.
-- **Fraud "security check" demo:** the top driver may be amber; everything else monochrome.
+- **Fraud "security check" demo:** objects that raised the risk are amber (their strength follows their share), objects that lowered it pale grey; the verdict stamps are CLEARED in `ink-za`, SCREENING in `amber` and STOPPED in `error`; everything else monochrome, apart from the bag photos (faded, full colour only inside the scanner).
 
 ## Motion
 
@@ -376,5 +393,5 @@ From **emil-design-eng**:
 - No Inter.
 - No stock imagery.
 - No motion without a purpose, and no second spectacle after the landing.
-- No amber fills, glows or gradients. No stamp inks outside the stamp section.
+- No amber fills, glows or gradients. No stamp inks outside the stamp section (except the Security check's CLEARED stamp).
 - No em dashes in site copy; UK English throughout.

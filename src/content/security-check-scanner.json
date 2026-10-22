@@ -129,8 +129,8 @@
       "id": "clock",
       "label": "Clock",
       "meaning": "The hour and day on the dataset's clock",
-      "raised": "The time of the purchase raised the risk.",
-      "lowered": "The time of the purchase lowered the risk."
+      "raised": "The time band raised the risk.",
+      "lowered": "The time band lowered the risk."
     },
     {
       "id": "cards",
@@ -216,7 +216,7 @@
             "id": "clock",
             "share": 0.073,
             "direction": "raised",
-            "line": "The time of the purchase raised the risk."
+            "line": "The time band raised the risk."
           },
           {
             "id": "other",
@@ -274,7 +274,7 @@
             "id": "clock",
             "share": 0.093,
             "direction": "raised",
-            "line": "The time of the purchase raised the risk."
+            "line": "The time band raised the risk."
           },
           {
             "id": "envelope",
@@ -344,7 +344,7 @@
             "id": "clock",
             "share": 0.125,
             "direction": "raised",
-            "line": "The time of the purchase raised the risk."
+            "line": "The time band raised the risk."
           },
           {
             "id": "receipt",
@@ -420,7 +420,7 @@
             "id": "clock",
             "share": 0.009,
             "direction": "lowered",
-            "line": "The time of the purchase lowered the risk."
+            "line": "The time band lowered the risk."
           }
         ]
       }
@@ -478,7 +478,7 @@
             "id": "clock",
             "share": 0.03,
             "direction": "raised",
-            "line": "The time of the purchase raised the risk."
+            "line": "The time band raised the risk."
           },
           {
             "id": "phone",
@@ -542,7 +542,7 @@
             "id": "clock",
             "share": 0.028,
             "direction": "raised",
-            "line": "The time of the purchase raised the risk."
+            "line": "The time band raised the risk."
           },
           {
             "id": "compass",

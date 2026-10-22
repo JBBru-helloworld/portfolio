@@ -8,6 +8,7 @@ import { WorkSection } from "@/components/work/WorkSection";
 import { StackSection } from "@/components/stack/StackSection";
 import { LogbookSection } from "@/components/logbook/LogbookSection";
 import { DutyFreeSection } from "@/components/dutyfree/DutyFreeSection";
+import { SecurityCheckSection } from "@/components/security/SecurityCheckSection";
 import { HomeEntry } from "@/components/work/HomeEntry";
 import { SiteFooter } from "@/components/footer/SiteFooter";
 import { SkipIntro } from "@/components/scroll/SkipIntro";
@@ -49,6 +50,8 @@ export default function Home() {
             <JourneySection key={destination.id} destination={destination} page={journeyPage} entries={journeyEntries} />
           ) : destination.id === "work" ? (
             <WorkSection key={destination.id} destination={destination} />
+          ) : destination.id === "security-check" ? (
+            <SecurityCheckSection key={destination.id} destination={destination} />
           ) : destination.id === "stack" ? (
             <StackSection key={destination.id} destination={destination} />
           ) : destination.id === "experience" ? (
