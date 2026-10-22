@@ -17,7 +17,7 @@ jbbru.com is the personal portfolio of Joshua Bonham. It must communicate three 
 
 ## Positioning
 
-**Software engineer, ML and data.** ML, data and AI lead; full-stack is how the work gets shipped. The site's distinguishing mechanism is demonstration over description: a fraud-detection "security check" demo shows a real model from Joshua's own project at work (every result precomputed by the model) rather than describing one.
+**Software & ML Engineer.** ML, data and AI lead; full-stack is how the work gets shipped. The site's distinguishing mechanism is demonstration over description: a fraud-detection "security check" demo shows a real model from Joshua's own project at work (every result precomputed by the model) rather than describing one.
 
 ## Operating Context
 

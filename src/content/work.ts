@@ -22,7 +22,7 @@ export const work: WorkCopy = {
   playVideo: "Play video",
   enlarge: "View full screen",
   close: "Close",
-  credit: { label: "Gallery by Skiper UI", url: "https://skiper-ui.com/" },
+  credit: { label: "Components adapted from Skiper UI", url: "https://skiper-ui.com/" },
   // Project flowcharts: generic labels only (no internal systems, teams or people).
   flows: {
     "touch-n-go-reporting": [

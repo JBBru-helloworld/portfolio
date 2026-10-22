@@ -401,6 +401,22 @@ for (const file of files) {
   }
 }
 
+// The passport (Phase 5d): the machine-readable zone is two lines of exactly 44 characters, A to Z and "<",
+// and the data page carries nothing that looks like real passport data.
+{
+  const rel = "src/content/passport.ts";
+  const text = readFileSync(join(contentDir, "passport.ts"), "utf8");
+  const mrz = text.match(/mrz:\s*\[\s*"([^"]*)",\s*"([^"]*)"\s*\]/);
+  if (!mrz) failures.push(`${rel}  mrz not found`);
+  else
+    for (const line of [mrz[1], mrz[2]]) {
+      if (line.length !== 44) failures.push(`${rel}  MRZ line is ${line.length} characters, not 44: ${line}`);
+      if (!/^[A-Z<]+$/.test(line)) failures.push(`${rel}  MRZ line has characters other than A to Z and "<": ${line}`);
+    }
+  const values = text.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+  if (/date of birth|passport no|passport number|\bdob\b/i.test(values)) failures.push(`${rel}  no passport number or date of birth on the data page`);
+}
+
 // The resume: a warning (not a failure) until `pnpm resume:build` has published a clean one.
 {
   try {

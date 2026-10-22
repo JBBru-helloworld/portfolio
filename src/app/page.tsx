@@ -13,7 +13,7 @@ import { HomeEntry } from "@/components/work/HomeEntry";
 import { SiteFooter } from "@/components/footer/SiteFooter";
 import { SkipIntro } from "@/components/scroll/SkipIntro";
 import { SmoothScroll } from "@/components/scroll/SmoothScroll";
-import { departures, destinations, journey, journeyPage, landing, profile } from "@/content";
+import { departures, destinations, journey, journeyPage, landing, passport, profile } from "@/content";
 
 export default function Home() {
   const scene = getSceneData();
@@ -40,6 +40,8 @@ export default function Home() {
           role={profile.roleLines.default}
           sceneLabel={landing.sceneLabel}
           scrollCue={landing.scrollCue}
+          flightDeck={landing.flightDeck}
+          passenger={landing.passenger}
         />
 
         <DeparturesBoard board={departures} destinations={destinations} />
@@ -47,7 +49,7 @@ export default function Home() {
         {/* The board's destinations, in page order (placeholders until each section is built). */}
         {destinations.map((destination) =>
           destination.id === "journey" ? (
-            <JourneySection key={destination.id} destination={destination} page={journeyPage} entries={journeyEntries} />
+            <JourneySection key={destination.id} destination={destination} page={journeyPage} entries={journeyEntries} passport={passport} />
           ) : destination.id === "work" ? (
             <WorkSection key={destination.id} destination={destination} />
           ) : destination.id === "security-check" ? (

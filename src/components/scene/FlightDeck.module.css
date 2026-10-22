@@ -1,0 +1,238 @@
+/*
+ * The flight-deck block: small, muted JetBrains Mono capitals with generous spacing, top right of the
+ * landing (the logo is top left), right-aligned, with the altimeter tape on its outer edge. It appears
+ * with the Scroll cue once the shade is open and fades with the rest of the landing text during the push
+ * (it lives in the same layer).
+ */
+
+.deck {
+  --size: clamp(0.625rem, 0.58rem + 0.12vw, 0.6875rem);
+  --lh: 1.75;
+  --margin: clamp(1rem, 4vw, 3rem);
+  position: absolute;
+  right: var(--margin);
+  top: clamp(1rem, 3vw, 2rem);
+  display: flex;
+  align-items: stretch;
+  gap: 0.85rem;
+  opacity: 0;
+  transition: opacity 500ms var(--ease-out);
+}
+
+:global(section[data-phase="open"]) .deck,
+:global(html:not(.js)) .deck {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deck {
+    opacity: 1;
+    transition: none;
+  }
+}
+
+.lines {
+  --track: 0.16em;
+  /* Fixed to the longest greeting line, so a greeting change never moves the block's edge. */
+  min-width: calc(var(--chars) * (1ch + var(--track)));
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--size);
+  line-height: var(--lh);
+  letter-spacing: var(--track);
+  text-transform: uppercase;
+  color: var(--paper-muted);
+}
+
+.lines p {
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* The greeting's line keeps one line's height whatever the language. */
+.greeting {
+  height: calc(var(--size) * var(--lh));
+  overflow: hidden;
+  color: var(--paper);
+}
+
+/* Adapted from Skiper UI 8: the new word fades in (the old one has gone with the re-mount). */
+.word {
+  display: inline-block;
+  animation: wordIn 300ms var(--ease-out) both;
+}
+
+/* The server's placeholder greeting: unseen while JavaScript is about to supply the right one. */
+:global(html.js) .word[data-pending],
+:global(html.js) .time[data-pending] {
+  visibility: hidden;
+  animation: none;
+}
+
+/* Mandarin, Japanese and Korean: system faces at the same visual size as the mono capitals. */
+.word[data-cjk] {
+  font-size: 0.95em;
+  letter-spacing: 0.12em;
+  vertical-align: top;
+}
+
+.word[data-cjk="mandarin"] {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", sans-serif;
+}
+
+.word[data-cjk="japanese"] {
+  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans CJK JP", "Yu Gothic", "Meiryo", sans-serif;
+}
+
+.word[data-cjk="korean"] {
+  font-family: "Apple SD Gothic Neo", "Noto Sans CJK KR", "Malgun Gothic", sans-serif;
+}
+
+@keyframes wordIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.time {
+  color: var(--paper);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word {
+    animation: none;
+  }
+}
+
+/* ---------- The altimeter tape ---------- */
+
+.tape {
+  --step: 3px; /* per 100 ft */
+  position: relative;
+  flex: none;
+  width: 3.4rem;
+  overflow: hidden;
+  border-right: 1px solid var(--graphite-2);
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.04em;
+  color: var(--graphite-4);
+  -webkit-mask: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+  mask: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+}
+
+/* The ticks and numbers drift a few pixels around the readout, very slowly. */
+.tapeDrift {
+  position: absolute;
+  inset: -40% 0;
+  animation: hold 11s var(--ease-in-out) infinite alternate;
+}
+
+:global(section[data-inview="false"]) .tapeDrift {
+  animation-play-state: paused;
+}
+
+@keyframes hold {
+  from {
+    transform: translateY(-3px);
+  }
+  to {
+    transform: translateY(3px);
+  }
+}
+
+/* Hairline ticks every 100 ft, a longer one every 500 ft. The strip starts a whole number of 500 ft steps
+   above the middle, so its ticks line up with the numbers. */
+.ticks {
+  position: absolute;
+  right: 0;
+  width: 0.55rem;
+  top: calc(50% - var(--step) * 50);
+  height: calc(var(--step) * 100);
+  background:
+    repeating-linear-gradient(to bottom, var(--graphite-3) 0 1px, transparent 1px calc(var(--step) * 5)) 100% 0 / 0.55rem 100% no-repeat,
+    repeating-linear-gradient(to bottom, var(--graphite-2) 0 1px, transparent 1px var(--step)) 100% 0 / 0.3rem 100% no-repeat;
+  transform: translateY(-0.5px);
+}
+
+.mark {
+  position: absolute;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  line-height: 1;
+}
+
+/* The readout stays still in the middle, over the moving tape. */
+.readout {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0.45rem;
+  transform: translateY(-50%);
+  padding: 0.12rem 0.25rem;
+  border: 1px solid var(--graphite-3);
+  border-radius: 2px;
+  background: var(--void);
+  font-size: 0.5625rem;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tapeDrift {
+    animation: none;
+  }
+}
+
+/* Phones and short landscape screens: closer to the edge (above the window on portrait phones). */
+@media (max-aspect-ratio: 3/4), (max-height: 500px) and (min-aspect-ratio: 1/1) {
+  .deck {
+    top: 0.75rem;
+  }
+}
+
+/* Short landscape screens and small phones: a step smaller. */
+@media (max-height: 500px) and (min-aspect-ratio: 1/1), (max-width: 420px) {
+  .deck {
+    --size: 0.5625rem;
+    --lh: 1.6;
+    gap: 0.6rem;
+  }
+
+  .tape {
+    width: 2.9rem;
+    --step: 2.4px;
+  }
+
+  .lines {
+    --track: 0.12em;
+  }
+}
+
+/* Portrait phones: tighter lines, so the block stays clear of the window below it. */
+@media (max-aspect-ratio: 3/4) {
+  .deck {
+    --lh: 1.5;
+  }
+}
+
+/* The narrowest phones: a slimmer tape (ticks and the readout, no small numbers) and gap, so the block keeps
+   clear of the logo. */
+@media (max-width: 380px) {
+  .deck {
+    gap: 0.45rem;
+  }
+
+  .tape {
+    width: 2.55rem;
+  }
+
+  .mark {
+    display: none;
+  }
+}

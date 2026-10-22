@@ -14,17 +14,18 @@
  * phones "JB 201"); its list links back to the home page's sections, and the wordmark links home.
  */
 import { useEffect, useRef, useState, type MouseEvent } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Popover } from "radix-ui";
 import { ChevronDown } from "lucide-react";
 import type { Departures, Destination } from "@/content";
-import { glideTo, jumpToTop, loadVisited, remarkOf, startTracking, useNavState, whenRestored } from "./site-state";
+import { glideTo, loadVisited, remarkOf, startTracking, useNavState, whenRestored } from "./site-state";
 import { setHomeIntent } from "@/components/work/flight-nav";
 import { FlapBoard } from "@/components/departures/flap-engine";
 import tileStyles from "@/components/departures/DeparturesBoard.module.css";
 import { SoundToggle } from "@/components/sound/SoundToggle";
 import { bootSound, chime, soundStats } from "@/lib/sound";
+import { BackToWindow } from "@/components/footer/BackToWindow";
+import { JbLogo } from "@/components/brand/JbLogo";
 import styles from "./SiteNav.module.css";
 
 const SIGN_TILES = 28; // "SEAT 12A · OCI GENERATIVE AI" (check:content keeps seat names to 17 characters)
@@ -149,16 +150,6 @@ export function SiteNav({ name, board, destinations, flight }: Props) {
     glideTo(id, { focus: false });
   };
 
-  const toTop = (e: MouseEvent<HTMLAnchorElement>) => {
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-    if (flight) {
-      setHomeIntent({ kind: "top" }); // the link itself goes home, to the landing
-      return;
-    }
-    e.preventDefault();
-    jumpToTop();
-  };
-
   const currentName = flight
     ? `${flight.code}: ${flight.name}`
     : here
@@ -167,9 +158,10 @@ export function SiteNav({ name, board, destinations, flight }: Props) {
 
   return (
     <header className={styles.bar} data-visible={visible}>
-      <Link href="/" className={styles.wordmark} onClick={toTop}>
-        {name}
-      </Link>
+      {/* The JB monogram: home, replaying the landing, like "Back to the window". */}
+      <BackToWindow className={styles.wordmark} ariaLabel={`${name}, home`}>
+        <JbLogo className={styles.logo} />
+      </BackToWindow>
       <nav aria-label="Site" className={styles.nav}>
         {/* A hidden sign is never open. */}
         <Popover.Root open={open && visible} onOpenChange={onOpenChange}>

@@ -1,6 +1,6 @@
 ---
 name: jbbru.com, Window seat
-description: Monochrome, cinematic portfolio of a software engineer in ML and data, with one refined amber accent.
+description: Monochrome, cinematic portfolio of a software and ML engineer, with one refined amber accent.
 colors:
   void: "oklch(14.5% 0 0)"
   cabin: "oklch(19.1% 0 0)"
@@ -227,6 +227,13 @@ All values live at the top of `src/components/scene/WindowScene.module.css`, so 
 - **Scroll sequence (Phase 2c):** the landing is pinned for 280vh (200vh on touch screens) and every beat is scrubbed, so it plays backwards too; all beats live in `src/config/scene-timeline.ts`. The text fades and drifts up (0 to 10%); the camera pushes into the window, scaling about the glass on `--ease-cinematic` until the viewport sits inside the visible view (5 to 55%, exact at every size); the fly-through fades in *inside the window* early (15 to 30%), so the cloud video is never magnified, and flies forward into the cloud (20 to 70%); the screen goes near-white (58 to 72%), and dusk falls inside the cloud (84 to 100%): the white thins while black rises over the still-drifting mist, with a very slight push, to a deep, dim dusk (about 20% brightness, never black). Then the **curtain rise**: the scene stays pinned for one more screen while the departures section slides up over the drifting mist, through a soft 22vh feathered top edge (no card edge, no corners); once it covers the scene, the scene stops drawing. Scrolling back reverses everything. The dark emergence frames are not used. Lenis smooths wheel and trackpad only; touch and keyboard scrolling stay native. Reduced motion: no pin, no zoom, no frames; the next section fades in.
 - **Film grain:** static (no movement), one texel per device pixel (a 256 px tile shown at 256 / devicePixelRatio CSS px, so it never clumps on Retina screens), **soft-light at 2%** over the whole landing and **1%** inside the glass. At this strength it is at the edge of perception: it changes pixels by about one grey level and never greys the blacks.
 
+### The landing's four corners (Phase 5d)
+
+- **One thing per corner,** the window alone in the middle: the JB logo top left, the flight-deck block top right, the name and "Software & ML Engineer" bottom left, the passenger number bottom right. All of it sits in the landing's text layer, appears with the Scroll cue once the shade is open, and fades during the push. Nothing overlaps the window, the cue or each other at 360 to 1920 px and on short landscape screens.
+- **Logo:** the owner's JB monogram as an inline SVG in `currentColor` (`src/components/brand/`), about 28 to 32 px tall, `paper`, amber on hover and keyboard focus (200 ms) with the amber focus ring. It goes home and replays the landing ("Joshua Bonham, home"); the `<h1>` keeps the name on the page. The same drawing is in the fixed header.
+- **Flight-deck block:** JetBrains Mono capitals, small, `paper-muted`, wide tracking, right-aligned: a greeting "from the flight deck" in eleven languages (English first, then the owner's journey, then German, Japanese, Korean and Spanish; CJK in system faces at the same visual size), by the visitor's clock: morning, afternoon, evening, "Flight JB 001 · Captain J. Bonham", "Cruising at 38,000 ft" and "Your local time HH:MM" (the visitor's own, never the owner's location). The greeting holds about 2 s, then the next fades in (300 ms, adapted from Skiper UI 8), English first, the cycle starting only once the shade is open; the server's "Welcome aboard" stays invisible while JavaScript runs (shown only without it), so nothing visibly swaps on a refresh; reduced motion shows English only; screen readers get one static line. An altimeter tape on its outer edge: hairline ticks every 100 ft, numbers every 500 ft, a boxed 38,000 readout, the tape drifting ±3 px over 11 s (static under reduced motion, paused off screen).
+- **Passenger number:** "You are passenger Nº" in small mono capitals and the number on the board's split-flap tiles (small), padded to four digits, flipping up once it arrives. Hidden if the counter or storage is unavailable; reduced motion shows it without flipping.
+
 ### Departures board (built in Phase 3a, the site map since the Phase 3a tweak)
 
 - **Look:** a physical split-flap board, rendered with restraint. Each character is a flap tile (charcoal between `--cabin` and `--graphite-1`, a very slight top-to-bottom gradient, a hairline hinge across the middle, a faint top-edge highlight, a tiny gap between tiles), JetBrains Mono in `--paper`; remarks in `--paper-muted`; "NOW BOARDING" is the section's one amber highlight. No glow, no neon, no reflections. Header: "DEPARTURES" in small mono capitals with a quiet aeroplane icon and a hairline rule.
@@ -243,6 +250,14 @@ All values live at the top of `src/components/scene/WindowScene.module.css`, so 
 - **Gestures:** switching the toggle on unlocks audio and plays a short confirmation flap. A preference saved as on waits silently for the first click, tap or key press. Scrolling alone never starts audio (a browser rule).
 - **Weight:** sound files load only once sound is on: Opus in WebM, with AAC in M4A as a fallback. The chosen set is about 19 KB. The master volume is gentle, and nothing plays while the tab is hidden.
 - **The chime:** the owner's recorded two-tone cabin PA chime, as recorded (about 2 s). A synthesised two-tone chime is the fallback.
+
+### The passport (Gate 1, a two-page spread since Phase 5d)
+
+- **The spread:** two `cabin` pages with the faint guilloche, joined by a centre crease (a soft gutter shadow, a slightly brighter band on each page near the fold, faint stitching down the spine). Phones (below 900 px): the pages stack, the data page first, the spine as a thin edge on each page; no sideways scroll at 360 px.
+- **Opening (once per visit, wide screens):** a dark cover lies over the visas page; as the section comes into view it swings open from the spine (rotateY to 90 degrees, ease-in) and the data page comes down on the left (from 90 degrees, ease-out), 700 ms in all; then the stamps land. Reduced motion, phones and a second visit: simply open.
+- **Photo:** the owner's portrait (owner's choice: the original night photo, zoomed out to head and shoulders), greyscale, 35:45, metadata including GPS stripped by `pnpm passport:build`.
+- **Data page:** clearly playful, not an imitation of a real passport (no crest, no number, no date of birth): "Passport · Passeport" and "JB Air", the owner's photo in greyscale at 35:45 with a small, very faint ghost copy, bilingual labels (English / French) in Newsreader Italic with the values in mono capitals (`src/content/passport.ts`), and a two-line machine-readable zone of exactly 44 characters each (check:content). Without a portrait, a simple silhouette.
+- **Visas page:** "VISAS" at the top, the three stamps (unchanged, below) re-laid for one page with a little overlap and alternation; a page number at the foot of each page.
 
 ### Passport stamps (Gate 1, Phase 3b)
 
@@ -309,7 +324,7 @@ All values live at the top of `src/components/scene/WindowScene.module.css`, so 
 
 ### Footer (Phase 4c)
 
-A quiet foot on every page: "© 2026 Joshua Bonham", "Built by me, with Next.js on Cloudflare", the "Gallery by Skiper UI" credit, and "Back to the window ↑", which reloads the home page at the top so the landing replays as on a fresh visit.
+A quiet foot on every page: "© 2026 Joshua Bonham", "Built by me, with Next.js on Cloudflare", the "Components adapted from Skiper UI" credit, and "Back to the window ↑", which reloads the home page at the top so the landing replays as on a fresh visit.
 
 ### Security check: the X-ray scanner (Gate 3, Phase 5c)
 

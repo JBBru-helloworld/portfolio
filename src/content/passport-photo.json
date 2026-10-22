@@ -1,0 +1,10 @@
+{
+  "about": "Written by pnpm passport:build.",
+  "available": true,
+  "widths": [
+    280,
+    560
+  ],
+  "ghostWidth": 120,
+  "ratio": "35:45"
+}

@@ -4,7 +4,7 @@
  * board content uses a character that is not here. Keep it a single double-quoted string literal (the
  * check reads it from this file).
  */
-export const FLAP_SEQUENCE = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:+-/'·";
+export const FLAP_SEQUENCE = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:+-/'·&";
 
 const index = new Map([...FLAP_SEQUENCE].map((c, i) => [c, i]));
 

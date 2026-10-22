@@ -5,6 +5,11 @@ import { pendingRestore } from "@/components/nav/site-state";
 import { PORTRAIT_MEDIA, REDUCED_MOTION, SMALL_SCREEN, isConstrainedNetwork } from "./media";
 import type { SceneData, PlateSet } from "./scene-data";
 import { useScrollSequence } from "./useScrollSequence";
+import { BackToWindow } from "@/components/footer/BackToWindow";
+import { JbLogo } from "@/components/brand/JbLogo";
+import type { FlightDeck as FlightDeckContent } from "@/content";
+import { FlightDeck } from "./FlightDeck";
+import { PassengerNumber } from "./PassengerNumber";
 import styles from "./WindowScene.module.css";
 
 type Phase = "closed" | "lifting" | "open";
@@ -15,6 +20,9 @@ interface Props {
   role: string;
   sceneLabel: string;
   scrollCue: string;
+  /** The flight-deck block and the passenger number (Phase 5d). */
+  flightDeck: FlightDeckContent;
+  passenger: { label: string; srTemplate: string };
 }
 
 const INTRO_CAP_MS = 2500; // never wait longer than this for the plate and video
@@ -85,7 +93,7 @@ function canPlay(video: HTMLVideoElement) {
   });
 }
 
-export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) {
+export function WindowScene({ data, name, role, sceneLabel, scrollCue, flightDeck, passenger }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const cameraRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -420,11 +428,18 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue }: Props) 
 
       {/* Text: fades out and drifts up as the push begins */}
       <div ref={hudRef} className={styles.hud}>
-        <p className={`${styles.wordmark} text-sm font-medium tracking-[0.01em] text-paper-muted`}>{name}</p>
+        {/* The JB monogram: home, replaying the landing (the name stays on the page in the <h1>). */}
+        <BackToWindow className={styles.wordmark} ariaLabel={`${name}, home`}>
+          <JbLogo className={styles.logo} />
+        </BackToWindow>
         <div className={styles.title}>
           <h1 className={`${styles.h1} text-2xl font-medium text-paper`}>{name}</h1>
           <p className={`${styles.role} text-base text-pretty text-paper-muted`}>{role}</p>
         </div>
+        {/* One thing per corner: the logo top left, the flight deck top right, the name bottom left and the
+            passenger number bottom right. */}
+        <PassengerNumber label={passenger.label} srTemplate={passenger.srTemplate} />
+        <FlightDeck content={flightDeck} />
         <div className={styles.cue} aria-hidden="true">
           <span className="font-mono text-xs uppercase tracking-[0.18em] text-graphite-4">{scrollCue}</span>
           <span className={styles.cueTrack}>

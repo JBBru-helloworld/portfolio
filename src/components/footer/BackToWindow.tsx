@@ -7,7 +7,7 @@ import Link from "next/link";
  * "Back to the window": the very top, with the landing replayed as on a fresh visit. A full page load of "/"
  * with the saved section reset, so no restore happens and the shade intro plays (from any page).
  */
-export function BackToWindow({ className, children }: { className?: string; children: ReactNode }) {
+export function BackToWindow({ className, children, ariaLabel }: { className?: string; children: ReactNode; ariaLabel?: string }) {
   const onClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     e.preventDefault();
@@ -20,7 +20,7 @@ export function BackToWindow({ className, children }: { className?: string; chil
     window.location.assign(new URL("/", window.location.origin).href);
   };
   return (
-    <Link href="/" className={className} onClick={onClick}>
+    <Link href="/" className={className} onClick={onClick} aria-label={ariaLabel}>
       {children}
     </Link>
   );

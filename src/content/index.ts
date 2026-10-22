@@ -4,6 +4,7 @@ export { departures } from "./departures";
 export { destinations } from "./destinations";
 export { securityCheck } from "./security-check";
 export { journey, journeyPage } from "./journey";
+export { passport } from "./passport";
 export { experience } from "./experience";
 export { projects, neighbours } from "./projects";
 export { work } from "./work";

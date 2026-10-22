@@ -383,7 +383,29 @@
   top: clamp(1rem, 3vw, 2rem);
   left: clamp(1rem, 4vw, 3rem);
   margin: 0;
+  display: block;
+  border-radius: 2px;
+  color: var(--paper);
+  transition: color var(--duration-base) var(--ease-out);
 }
+
+.wordmark:hover,
+.wordmark:focus-visible {
+  color: var(--amber);
+}
+
+.wordmark:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 4px;
+}
+
+/* The JB monogram: paper, amber on hover and keyboard focus (a gentle transition), the amber ring on focus. */
+.logo {
+  display: block;
+  height: clamp(1.75rem, 1.6rem + 0.3vw, 2rem);
+  width: auto;
+}
+
 
 .title {
   --margin: clamp(1rem, 4vw, 3rem);

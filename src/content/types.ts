@@ -475,5 +475,47 @@ export interface Landing {
   scrollCue: string;
   /** Visually hidden link (shown on focus) that jumps past the landing sequence. */
   skipIntro: string;
+  /** The flight-deck block, bottom left above the name (Phase 5d). */
+  flightDeck: FlightDeck;
+  /** "You are passenger Nº", bottom right (Phase 5d). */
+  passenger: { label: string; srTemplate: string };
+}
 
+export interface Greeting {
+  language: string;
+  morning: string;
+  afternoon: string;
+  evening: string;
+  /** Unverified by the owner (CHECK(owner)); kept until confirmed. */
+  check?: string;
+}
+
+export interface FlightDeck {
+  /** What the server renders (it cannot know the visitor's time), in place of the greeting. */
+  serverGreeting: string;
+  /** After the greeting, always in English. */
+  suffix: string;
+  /** The static line for screen readers: "{greeting} from the flight deck", in English. */
+  srTemplate: string;
+  /** The visitor's clock: morning from this hour, afternoon from this hour, evening from this hour. */
+  hours: { morning: number; afternoon: number; evening: number };
+  /** English first; each holds about 2 s. */
+  greetings: Greeting[];
+  lines: { flight: string; cruising: string; localTime: string };
+  /** The altimeter tape's readout (feet). */
+  altitude: number;
+}
+
+/** The two-page passport in "My journey" (Phase 5d). */
+export interface Passport {
+  /** Small capitals at the top of the data page. */
+  header: string;
+  issuer: string;
+  photoAlt: string;
+  /** English label (the list's text), French label (shown small beside it), value in capitals. */
+  fields: { label: string; labelFr: string; value: string }[];
+  /** The machine-readable zone: two lines of exactly 44 characters. */
+  mrz: [string, string];
+  visasLabel: string;
+  pageNumbers: { data: string; visas: string };
 }
