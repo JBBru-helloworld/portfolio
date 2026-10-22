@@ -313,14 +313,37 @@ for (const file of files) {
     for (const o of scanner.objects) if (!o.raised || !o.lowered) failures.push(`${rel}  object ${o.id} needs both lines`);
     for (const p of scanner.presets) {
       if (!verdicts.includes(p.expected)) failures.push(`${rel}  ${p.id}: unknown verdict ${p.expected}`);
-      if (p.cached?.verdict !== p.expected) failures.push(`${rel}  ${p.id}: cached result ${p.cached?.verdict} differs from its expected ${p.expected} (run pnpm security-check:sync)`);
-      const shares = (p.cached?.objects ?? []).reduce((sum: number, o: { share: number }) => sum + o.share, 0);
-      if (Math.abs(shares - 1) > 1e-6) failures.push(`${rel}  ${p.id}: object shares add up to ${shares}`);
+      if (p.result?.verdict !== p.expected) failures.push(`${rel}  ${p.id}: stored result ${p.result?.verdict} differs from its expected ${p.expected} (run pnpm security-check:sync)`);
+      const shares = (p.result?.objects ?? []).reduce((sum: number, o: { share: number }) => sum + o.share, 0);
+      if (Math.abs(shares - 1) > 0.005) failures.push(`${rel}  ${p.id}: object shares add up to ${shares}`);
     }
     for (const v of verdicts) if (!scanner.presets.some((p: { expected: string }) => p.expected === v)) failures.push(`${rel}  no passenger lands on ${v}`);
     if (!(scanner.bands.screening.score < scanner.bands.stopped.score)) failures.push(`${rel}  band edges out of order`);
+
+    // The precomputed grid: the header matches the scanner, and every chunk it names is published.
+    const gridRel = "src/content/security-check-grid.json";
+    const grid = JSON.parse(readFileSync(join(contentDir, "security-check-grid.json"), "utf8"));
+    if (grid.objects.join() !== ids.join()) failures.push(`${gridRel}  object order ${grid.objects.join(", ")} differs from the scanner's objects`);
+    if (grid.modelVersion !== scanner.modelVersion) failures.push(`${gridRel}  model ${grid.modelVersion} differs from the scanner content's ${scanner.modelVersion}`);
+    if (grid.path !== `/security-check/grid/${grid.modelVersion}/`) failures.push(`${gridRel}  path ${grid.path} is not versioned by the model`);
+    const expectedChunks = grid.amount.length * grid.hour.length;
+    if (grid.chunks.length !== expectedChunks) failures.push(`${gridRel}  ${grid.chunks.length} chunks named (expected ${expectedChunks})`);
+    const publicDir = join(root, "public", ...grid.path.split("/").filter(Boolean));
+    for (const name of grid.chunks) {
+      try {
+        const chunk = JSON.parse(readFileSync(join(publicDir, name), "utf8"));
+        if (chunk.modelVersion !== grid.modelVersion) failures.push(`public${grid.path}${name}  from model ${chunk.modelVersion}`);
+      } catch {
+        failures.push(`public${grid.path}${name}  missing (run pnpm security-check:sync)`);
+      }
+    }
+    // Every packed-bag choice the scanner offers has stored results, and nothing more.
+    for (const c of grid.choices) {
+      const input = scanner.inputs.find((i: { id: string }) => i.id === c.id);
+      if (!input || input.options.join() !== c.values.join()) failures.push(`${gridRel}  ${c.id} values differ from the scanner's inputs`);
+    }
   } catch {
-    failures.push(`${rel}  missing or unreadable (run pnpm security-check:sync with the scanner running)`);
+    failures.push(`${rel} or the grid  missing or unreadable (run pnpm security-check:sync)`);
   }
   // Never a real transaction: no transaction IDs and nothing from the fraud repo's local examples, anywhere in content.
   for (const file of readdirSync(contentDir)) {

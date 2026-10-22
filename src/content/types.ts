@@ -109,16 +109,16 @@ export interface ScannerResultObject {
   line: string;
 }
 
-/** A synthetic passenger, with its real result from the scanner (the fallback when the scanner is offline). */
+/** A synthetic passenger, with its result: the model's real output, scored in advance. */
 export interface ScannerPreset {
   id: string;
   name: string;
   expected: ScannerVerdict;
   inputs: Record<string, string | number>;
-  cached: { verdict: ScannerVerdict; percentile: number; score: number; objects: ScannerResultObject[] };
+  result: { verdict: ScannerVerdict; percentile: number; score: number; objects: ScannerResultObject[] };
 }
 
-/** The scanner's public configuration, copied by `pnpm security-check:sync` (security-check-scanner.json). */
+/** The scanner's public configuration, copied from the fraud repo by `pnpm security-check:sync`. */
 export interface ScannerConfig {
   about: string;
   modelVersion: string;
@@ -140,6 +140,10 @@ export interface SecurityCheck {
   note: string;
   /** What the percentile means, for the report. */
   percentileNote: string;
+  /** The label for the raw score, shown small for technical visitors. */
+  scoreLabel: string;
+  /** The label for results scored in advance. */
+  precomputedLabel: string;
   scanner: ScannerConfig;
 }
 

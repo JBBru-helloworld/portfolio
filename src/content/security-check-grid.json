@@ -1,0 +1,179 @@
+{
+  "format": 1,
+  "about": "Synthetic bags scored in advance by the final model with exact TreeSHAP. No real transaction.",
+  "modelVersion": "1f4cbbc11228",
+  "profile": "typical",
+  "seed": 7,
+  "amount": [
+    5,
+    25,
+    100,
+    250,
+    750,
+    2500
+  ],
+  "hour": [
+    {
+      "from": 0,
+      "to": 3,
+      "hour": 2
+    },
+    {
+      "from": 4,
+      "to": 7,
+      "hour": 6
+    },
+    {
+      "from": 8,
+      "to": 11,
+      "hour": 10
+    },
+    {
+      "from": 12,
+      "to": 15,
+      "hour": 14
+    },
+    {
+      "from": 16,
+      "to": 19,
+      "hour": 18
+    },
+    {
+      "from": 20,
+      "to": 23,
+      "hour": 22
+    }
+  ],
+  "choices": [
+    {
+      "id": "product",
+      "values": [
+        "C",
+        "H",
+        "R",
+        "S",
+        "W"
+      ]
+    },
+    {
+      "id": "network",
+      "values": [
+        "visa",
+        "mastercard",
+        "american express",
+        "discover"
+      ]
+    },
+    {
+      "id": "card_type",
+      "values": [
+        "debit",
+        "credit"
+      ]
+    },
+    {
+      "id": "device",
+      "values": [
+        "desktop",
+        "mobile",
+        "unknown"
+      ]
+    },
+    {
+      "id": "distance",
+      "values": [
+        "short",
+        "long",
+        "unknown"
+      ]
+    },
+    {
+      "id": "email",
+      "values": [
+        "google",
+        "yahoo",
+        "microsoft",
+        "apple",
+        "aol",
+        "anonymous",
+        "other",
+        "none"
+      ]
+    }
+  ],
+  "objects": [
+    "receipt",
+    "clock",
+    "cards",
+    "phone",
+    "compass",
+    "envelope",
+    "other"
+  ],
+  "verdicts": [
+    "CLEARED",
+    "SCREENING",
+    "STOPPED"
+  ],
+  "bands": {
+    "screening": {
+      "score": 0.00002817647271815681,
+      "percentile": 87.7
+    },
+    "stopped": {
+      "score": 0.00006505720324921712,
+      "percentile": 91.1
+    }
+  },
+  "record": [
+    "verdict",
+    "percentile x 10",
+    "score",
+    "receipt share x 1000, signed",
+    "clock share x 1000, signed",
+    "cards share x 1000, signed",
+    "phone share x 1000, signed",
+    "compass share x 1000, signed",
+    "envelope share x 1000, signed",
+    "other share x 1000, signed"
+  ],
+  "chunks": [
+    "a-0-h-0.json",
+    "a-0-h-1.json",
+    "a-0-h-2.json",
+    "a-0-h-3.json",
+    "a-0-h-4.json",
+    "a-0-h-5.json",
+    "a-1-h-0.json",
+    "a-1-h-1.json",
+    "a-1-h-2.json",
+    "a-1-h-3.json",
+    "a-1-h-4.json",
+    "a-1-h-5.json",
+    "a-2-h-0.json",
+    "a-2-h-1.json",
+    "a-2-h-2.json",
+    "a-2-h-3.json",
+    "a-2-h-4.json",
+    "a-2-h-5.json",
+    "a-3-h-0.json",
+    "a-3-h-1.json",
+    "a-3-h-2.json",
+    "a-3-h-3.json",
+    "a-3-h-4.json",
+    "a-3-h-5.json",
+    "a-4-h-0.json",
+    "a-4-h-1.json",
+    "a-4-h-2.json",
+    "a-4-h-3.json",
+    "a-4-h-4.json",
+    "a-4-h-5.json",
+    "a-5-h-0.json",
+    "a-5-h-1.json",
+    "a-5-h-2.json",
+    "a-5-h-3.json",
+    "a-5-h-4.json",
+    "a-5-h-5.json"
+  ],
+  "path": "/security-check/grid/1f4cbbc11228/"
+}

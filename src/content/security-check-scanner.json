@@ -1,5 +1,5 @@
 {
-  "about": "Copied from the scanner API by pnpm security-check:sync. Synthetic passengers only; no real transaction.",
+  "about": "Copied from the fraud repo by pnpm security-check:sync. Synthetic passengers only; no real transaction.",
   "modelVersion": "1f4cbbc11228",
   "bands": {
     "screening": {
@@ -183,50 +183,50 @@
         "distance": "short",
         "email": "google"
       },
-      "cached": {
+      "result": {
         "verdict": "CLEARED",
         "percentile": 58.7,
-        "score": 0.0000012320484743978004,
+        "score": 0.000001232,
         "objects": [
           {
             "id": "compass",
-            "share": 0.34559512931219055,
+            "share": 0.346,
             "direction": "lowered",
             "line": "The location and distance lowered the risk."
           },
           {
             "id": "cards",
-            "share": 0.3179438115165351,
+            "share": 0.318,
             "direction": "raised",
             "line": "The card and its usual spending raised the risk."
           },
           {
             "id": "receipt",
-            "share": 0.16398142306333882,
+            "share": 0.164,
             "direction": "lowered",
             "line": "The amount and product type lowered the risk."
           },
           {
             "id": "envelope",
-            "share": 0.0781882688976567,
+            "share": 0.078,
             "direction": "raised",
             "line": "The email domain raised the risk."
           },
           {
             "id": "clock",
-            "share": 0.07262771826617279,
+            "share": 0.073,
             "direction": "raised",
             "line": "The time of the purchase raised the risk."
           },
           {
             "id": "other",
-            "share": 0.012658848083168674,
+            "share": 0.013,
             "direction": "lowered",
             "line": "Other signals lowered the risk."
           },
           {
             "id": "phone",
-            "share": 0.009004800860937443,
+            "share": 0.009,
             "direction": "raised",
             "line": "The device raised the risk."
           }
@@ -247,50 +247,50 @@
         "distance": "short",
         "email": "yahoo"
       },
-      "cached": {
+      "result": {
         "verdict": "CLEARED",
         "percentile": 45,
-        "score": 4.6169077799983913e-7,
+        "score": 4.617e-7,
         "objects": [
           {
             "id": "compass",
-            "share": 0.3680427717244293,
+            "share": 0.368,
             "direction": "lowered",
             "line": "The location and distance lowered the risk."
           },
           {
             "id": "cards",
-            "share": 0.30504583575316213,
+            "share": 0.305,
             "direction": "lowered",
             "line": "The card and its usual spending lowered the risk."
           },
           {
-            "id": "clock",
-            "share": 0.09325738211390164,
-            "direction": "raised",
-            "line": "The time of the purchase raised the risk."
-          },
-          {
             "id": "receipt",
-            "share": 0.09317907374138325,
+            "share": 0.093,
             "direction": "lowered",
             "line": "The amount and product type lowered the risk."
           },
           {
+            "id": "clock",
+            "share": 0.093,
+            "direction": "raised",
+            "line": "The time of the purchase raised the risk."
+          },
+          {
             "id": "envelope",
-            "share": 0.07683169540264852,
+            "share": 0.077,
             "direction": "lowered",
             "line": "The email domain lowered the risk."
           },
           {
             "id": "phone",
-            "share": 0.033685427828558635,
+            "share": 0.034,
             "direction": "raised",
             "line": "The device raised the risk."
           },
           {
             "id": "other",
-            "share": 0.029957813435916504,
+            "share": 0.03,
             "direction": "raised",
             "line": "Other signals raised the risk."
           }
@@ -311,50 +311,50 @@
         "distance": "long",
         "email": "microsoft"
       },
-      "cached": {
+      "result": {
         "verdict": "CLEARED",
         "percentile": 45.3,
-        "score": 4.71279662423926e-7,
+        "score": 4.713e-7,
         "objects": [
           {
             "id": "compass",
-            "share": 0.24715928349171523,
+            "share": 0.247,
             "direction": "lowered",
             "line": "The location and distance lowered the risk."
           },
           {
             "id": "other",
-            "share": 0.22395159793127625,
+            "share": 0.224,
             "direction": "lowered",
             "line": "Other signals lowered the risk."
           },
           {
             "id": "cards",
-            "share": 0.17568192662746596,
+            "share": 0.176,
             "direction": "raised",
             "line": "The card and its usual spending raised the risk."
           },
           {
             "id": "envelope",
-            "share": 0.16059505925893539,
+            "share": 0.161,
             "direction": "lowered",
             "line": "The email domain lowered the risk."
           },
           {
             "id": "clock",
-            "share": 0.12479403412225873,
+            "share": 0.125,
             "direction": "raised",
             "line": "The time of the purchase raised the risk."
           },
           {
             "id": "receipt",
-            "share": 0.06312081119890918,
+            "share": 0.063,
             "direction": "raised",
             "line": "The amount and product type raised the risk."
           },
           {
             "id": "phone",
-            "share": 0.004697287369439128,
+            "share": 0.005,
             "direction": "raised",
             "line": "The device raised the risk."
           }
@@ -375,50 +375,50 @@
         "distance": "unknown",
         "email": "other"
       },
-      "cached": {
+      "result": {
         "verdict": "SCREENING",
         "percentile": 89.2,
-        "score": 0.00003949354833460613,
+        "score": 0.00003949,
         "objects": [
           {
             "id": "cards",
-            "share": 0.330350304468266,
+            "share": 0.33,
             "direction": "raised",
             "line": "The card and its usual spending raised the risk."
           },
           {
             "id": "receipt",
-            "share": 0.2207020639244449,
+            "share": 0.221,
             "direction": "raised",
             "line": "The amount and product type raised the risk."
           },
           {
             "id": "envelope",
-            "share": 0.17551079713133558,
+            "share": 0.176,
             "direction": "lowered",
             "line": "The email domain lowered the risk."
           },
           {
             "id": "compass",
-            "share": 0.11860144014190664,
+            "share": 0.119,
             "direction": "raised",
             "line": "The location and distance raised the risk."
           },
           {
             "id": "other",
-            "share": 0.10923625893943638,
+            "share": 0.109,
             "direction": "raised",
             "line": "Other signals raised the risk."
           },
           {
             "id": "phone",
-            "share": 0.03637196753528131,
+            "share": 0.036,
             "direction": "lowered",
             "line": "The device lowered the risk."
           },
           {
             "id": "clock",
-            "share": 0.009227167859329184,
+            "share": 0.009,
             "direction": "lowered",
             "line": "The time of the purchase lowered the risk."
           }
@@ -439,50 +439,50 @@
         "distance": "long",
         "email": "anonymous"
       },
-      "cached": {
+      "result": {
         "verdict": "STOPPED",
         "percentile": 96,
-        "score": 0.0008060029107830998,
+        "score": 0.000806,
         "objects": [
           {
             "id": "other",
-            "share": 0.6672266080633799,
+            "share": 0.667,
             "direction": "raised",
             "line": "Other signals raised the risk."
           },
           {
             "id": "envelope",
-            "share": 0.14631416800388727,
+            "share": 0.146,
             "direction": "lowered",
             "line": "The email domain lowered the risk."
           },
           {
             "id": "cards",
-            "share": 0.07162538423664529,
+            "share": 0.072,
             "direction": "raised",
             "line": "The card and its usual spending raised the risk."
           },
           {
             "id": "compass",
-            "share": 0.042344125173674405,
+            "share": 0.042,
             "direction": "raised",
             "line": "The location and distance raised the risk."
           },
           {
             "id": "receipt",
-            "share": 0.03381112455168431,
+            "share": 0.034,
             "direction": "raised",
             "line": "The amount and product type raised the risk."
           },
           {
             "id": "clock",
-            "share": 0.03040086950857737,
+            "share": 0.03,
             "direction": "raised",
             "line": "The time of the purchase raised the risk."
           },
           {
             "id": "phone",
-            "share": 0.008277720462151509,
+            "share": 0.008,
             "direction": "raised",
             "line": "The device raised the risk."
           }
@@ -503,50 +503,50 @@
         "distance": "unknown",
         "email": "anonymous"
       },
-      "cached": {
+      "result": {
         "verdict": "STOPPED",
         "percentile": 97,
-        "score": 0.003428009247941185,
+        "score": 0.003428,
         "objects": [
           {
             "id": "other",
-            "share": 0.6606728092474847,
+            "share": 0.661,
             "direction": "raised",
             "line": "Other signals raised the risk."
           },
           {
             "id": "cards",
-            "share": 0.1539748029537955,
+            "share": 0.154,
             "direction": "raised",
             "line": "The card and its usual spending raised the risk."
           },
           {
             "id": "envelope",
-            "share": 0.05682340315117944,
+            "share": 0.057,
             "direction": "lowered",
             "line": "The email domain lowered the risk."
           },
           {
             "id": "receipt",
-            "share": 0.041648510650277235,
+            "share": 0.042,
             "direction": "lowered",
             "line": "The amount and product type lowered the risk."
           },
           {
             "id": "phone",
-            "share": 0.03746414271846502,
+            "share": 0.037,
             "direction": "lowered",
             "line": "The device lowered the risk."
           },
           {
             "id": "clock",
-            "share": 0.02785584520958101,
+            "share": 0.028,
             "direction": "raised",
             "line": "The time of the purchase raised the risk."
           },
           {
             "id": "compass",
-            "share": 0.021560486069217014,
+            "share": 0.022,
             "direction": "raised",
             "line": "The location and distance raised the risk."
           }
