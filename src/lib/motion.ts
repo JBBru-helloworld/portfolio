@@ -34,7 +34,7 @@ export const spring = {
   momentum: { type: "spring", bounce: 0.2, visualDuration: 0.4 },
 } as const;
 
-/** GSAP ease strings for ScrollTrigger scenes (CSS-equivalent curves need CustomEase). */
+/** GSAP ease strings for ScrollTrigger scenes (CSS-equivalent curves: cubicBezier below). */
 export const gsapEase = {
   out: "power3.out",
   inOut: "power3.inOut",
@@ -49,3 +49,40 @@ export function prefersReducedMotion(): boolean {
   if (typeof window === "undefined" || !window.matchMedia) return false;
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
+
+/**
+ * A CSS cubic-bezier curve as an easing function (progress 0..1 in, eased value out), solved by Newton's
+ * method with a bisection fallback. Lets GSAP use the site's CSS curves without its CustomEase plugin.
+ */
+export function cubicBezier(x1: number, y1: number, x2: number, y2: number): (t: number) => number {
+  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+  const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  const x = (u: number) => ((ax * u + bx) * u + cx) * u;
+  const y = (u: number) => ((ay * u + by) * u + cy) * u;
+  const dx = (u: number) => (3 * ax * u + 2 * bx) * u + cx;
+  return (t: number) => {
+    if (t <= 0) return 0;
+    if (t >= 1) return 1;
+    let u = t;
+    for (let i = 0; i < 8; i++) {
+      const err = x(u) - t;
+      if (Math.abs(err) < 1e-6) return y(u);
+      const d = dx(u);
+      if (Math.abs(d) < 1e-6) break;
+      u -= err / d;
+    }
+    let lo = 0, hi = 1;
+    u = t;
+    for (let i = 0; i < 30; i++) {
+      const v = x(u);
+      if (Math.abs(v - t) < 1e-6) break;
+      if (v < t) lo = u;
+      else hi = u;
+      u = (lo + hi) / 2;
+    }
+    return y(u);
+  };
+}
+
+/** A curve token as a CSS easing string, for WAAPI calls ("cubic-bezier(0.23, 1, 0.32, 1)"). */
+export const cssEase = (curve: CubicBezier) => `cubic-bezier(${curve.join(", ")})`;

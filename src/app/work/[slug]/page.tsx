@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, ExternalLink, FolderGit2, Globe, PenTool, Plane, PlayCircle } from "lucide-react";
 import { departures, destinations, neighbours, profile, projects, stackById, work, type Link as ContentLink, type Project } from "@/content";
-import { SiteNav } from "@/components/nav/SiteNav";
+import { SiteNav } from "@/components/defer/islands";
 import { SmoothScroll } from "@/components/scroll/SmoothScroll";
 import { SiteFooter } from "@/components/footer/SiteFooter";
 import { Emblem } from "@/components/work/Emblem";
@@ -33,7 +33,14 @@ export async function generateMetadata({ params }: PageProps<"/work/[slug]">): P
     title: `${project.name} (${project.flight}) | ${profile.name}`,
     description: project.summary,
     alternates: { canonical: `/work/${project.slug}` },
-    openGraph: { title: project.name, description: project.summary, type: "article", url: `/work/${project.slug}` },
+    openGraph: {
+      title: project.name,
+      description: project.summary,
+      type: "article",
+      url: `/work/${project.slug}`,
+      images: [{ url: `/og/${project.slug}.png`, width: 1200, height: 630, alt: `${project.flight}, ${project.name}` }],
+    },
+    twitter: { card: "summary_large_image", images: [`/og/${project.slug}.png`] },
   };
 }
 

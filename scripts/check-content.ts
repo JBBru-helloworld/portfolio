@@ -25,11 +25,12 @@ const EXCLUDED: { label: string; pattern: RegExp }[] = [
   { label: "internship opportunities", pattern: /internship\s+opportunit/i },
 ];
 
-// The owner allows the Sunway Tech Club to be named for these two credentials only (Phase 2a).
+// The owner allows the Sunway Tech Club to be named for these two credentials only (Phase 2a; the repeated
+// "(2025)" dropped in Phase 6, as the date is shown above each).
 const CLUB = /sunway\s+tech\s+club/i;
 const CLUB_ALLOWED = [
-  "Coordinated a five-week Generative AI Study Jam for 900+ participants with the Sunway Tech Club (2025).",
-  "Co-led a portfolio workshop with the Sunway Tech Club, alongside a speaker from Google (2025).",
+  "Coordinated a five-week Generative AI Study Jam for 900+ participants with the Sunway Tech Club.",
+  "Co-led a portfolio workshop with the Sunway Tech Club, alongside a speaker from Google.",
 ];
 
 // US spellings checked inside string literals only, so code identifiers are not affected.

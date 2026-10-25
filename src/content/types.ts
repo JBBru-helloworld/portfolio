@@ -428,6 +428,8 @@ export interface LogbookCopy {
   /** For a role still running ("Present"). */
   present: string;
   ratingsTitle: string;
+  /** The resume link beside the ratings heading (hidden until a resume is published). */
+  resumeLink: { label: string; ariaLabel: string };
   photos: { group: string; pause: string; play: string; next: string; of: string };
   /** The link from an entry to its project page ("View flight →"). */
   viewFlight: string;
@@ -518,4 +520,28 @@ export interface Passport {
   mrz: [string, string];
   visasLabel: string;
   pageNumbers: { data: string; visas: string };
+}
+
+/** The 404 page (Phase 6). */
+export interface NotFoundCopy {
+  title: string;
+  description: string;
+  /** The split-flap row, in flap characters. */
+  board: string;
+  /** The corner sign on this page. */
+  sign: { code: string; sign: string };
+  line: string;
+  backToWindow: string;
+  allFlights: string;
+}
+
+export interface NoScriptCopy {
+  /** The small mono label above the line. */
+  label: string;
+  line: string;
+  /** List headings. */
+  flights: string;
+  contact: string;
+  /** The label before the written-out address. */
+  email: string;
 }

@@ -320,7 +320,10 @@ if (only.includes("footer")) {
   });
   await page.locator("footer a", { hasText: "Back to the window" }).click();
   await page.waitForURL((u) => u.pathname === "/" && !u.hash);
-  await page.waitForTimeout(3500);
+  // Wait for the shade itself (it opens 4 to 6 s after load in WebKit), not a fixed time: the Phase 4c
+  // flake was this wait being 3.5 s.
+  await page.waitForFunction(() => document.querySelector("section[data-phase]")?.dataset.phase === "open", null, { timeout: 20000 });
+  await page.waitForTimeout(300);
   report.footer = {
     afterBack: await page.evaluate(() => ({ y: scrollY, path: location.pathname + location.hash, phases: window.__phases })),
     texts: await page.evaluate(() => [...document.querySelectorAll("footer p, footer a")].map((e) => e.textContent.trim())),

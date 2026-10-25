@@ -15,4 +15,6 @@ export { landing } from "./landing";
 export { logbook } from "./logbook";
 export { dutyFree } from "./duty-free";
 export { footer } from "./footer";
+export { notFound } from "./not-found";
+export { noScript } from "./no-script";
 export type * from "./types";

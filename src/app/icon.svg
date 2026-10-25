@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="65.52000000000001 67.52000000000001 1800.96 1800.96">
+  <rect x="65.52000000000001" y="67.52000000000001" width="1800.96" height="1800.96" rx="324.1728" fill="#0A0A0A"/>
+  <defs><mask id="cut2" maskUnits="userSpaceOnUse" x="28" y="30" width="1876" height="1876">
+    <rect x="28" y="30" width="1876" height="1876" fill="white"/>
+    <path d="M 1386 433 L 1555 433 L 1326 1525 L 1153 1525 Z" fill="black"/>
+  </mask></defs>
+  <path d="M 113 1715 L 113 1392 C 303 1392 365 1340 460 1225 L 1285 220 L 1818 220 L 1498 1715 Z" fill="#F5F5F2" mask="url(#cut2)"/>
+</svg>

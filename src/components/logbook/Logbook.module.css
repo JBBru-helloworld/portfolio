@@ -370,8 +370,39 @@
   max-width: 52rem;
 }
 
-.ratingsTitle {
+.ratingsHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
   margin: 0 0 1rem;
+}
+
+/* "FULL LOGBOOK · RESUME (PDF) ↓": a small mono link, amber on hover and focus like the board's links. On
+   phones it wraps under the heading. */
+.resumeLink {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  color: var(--paper-muted);
+  text-decoration: none;
+  border-radius: 2px;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.resumeLink:hover,
+.resumeLink:focus-visible {
+  color: var(--amber);
+}
+
+.resumeLink:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+.ratingsTitle {
+  margin: 0;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 500;

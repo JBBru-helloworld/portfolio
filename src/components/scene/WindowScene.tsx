@@ -200,9 +200,13 @@ export function WindowScene({ data, name, role, sceneLabel, scrollCue, flightDec
       if (!lite && video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
         videoActive.current = true;
         if (!videoHeld.current) {
-          await video.play().catch(() => {
-            videoActive.current = false;
-          });
+          // Never let a pending play() hold the shade (Phase 6): the lift goes ahead after 800 ms at most.
+          await Promise.race([
+            video.play().catch(() => {
+              videoActive.current = false;
+            }),
+            wait(800),
+          ]);
         }
       } else if (!lite) {
         video.removeAttribute("src");

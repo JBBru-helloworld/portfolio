@@ -1,0 +1,58 @@
+/* "Flight not found": the board's own flap tiles in one row, a line of text and the way back. */
+
+.page {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1.75rem;
+  min-height: 80svh;
+  padding: 7rem clamp(1rem, 4vw, 3rem) 4rem;
+  text-align: center;
+}
+
+.tiles {
+  --w: min(1.9rem, calc((100vw - 2rem) / 17.6));
+  --g: calc(var(--w) * 0.1);
+  margin: 0;
+}
+
+.line {
+  max-width: 34rem;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--paper-muted);
+  text-wrap: pretty;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.75rem;
+  margin: 0;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--paper);
+  text-decoration: none;
+  border-radius: 2px;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--amber);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}

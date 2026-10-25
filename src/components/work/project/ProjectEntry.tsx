@@ -3,6 +3,7 @@
 import { useLayoutEffect } from "react";
 import { consumeFirstPage, restoreNow } from "@/components/nav/site-state";
 import { leftHome, takeFade } from "../flight-nav";
+import { cssEase, duration, ease } from "@/lib/motion";
 
 /**
  * A project page as it mounts: it takes its turn as the document's page (so a later return home is known
@@ -15,7 +16,7 @@ export function ProjectEntry() {
     leftHome();
     restoreNow();
     if (takeFade()) {
-      document.querySelector("main")?.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: "ease-out" });
+      document.querySelector("main")?.animate([{ opacity: 0 }, { opacity: 1 }], { duration: duration.base * 1000, easing: cssEase(ease.out) });
     }
   }, []);
   return null;

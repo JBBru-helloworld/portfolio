@@ -37,7 +37,7 @@ export function AllFlights({ flights, label }: { flights: ManifestFlight[]; labe
   };
 
   return (
-    <div className={styles.manifest}>
+    <div id="all-flights" className={styles.manifest}>
       <p className={styles.label} id="all-flights-label">
         {label}
       </p>

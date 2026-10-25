@@ -222,6 +222,8 @@ if (only.includes("links")) {
       await page.goto("about:blank");
       await page.goto(`${url}#seat-${id}`, { waitUntil: "load" });
       await restored(page);
+      // The seat map hydrates when the load restores into it (Phase 6): wait for the selection, up to 3 s.
+      await page.waitForFunction((id) => document.getElementById(id)?.getAttribute("aria-pressed") === "true", `seat-${id}`, { timeout: 3000 }).catch(() => undefined);
       await page.waitForTimeout(250);
       const s = await state(page);
       if (s.selected !== `seat-${id}` || !s.card || !s.seatInView || s.covered !== "true") bad.push({ id, ...s });

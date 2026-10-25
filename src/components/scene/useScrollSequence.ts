@@ -7,16 +7,19 @@
  */
 import { useEffect, useLayoutEffect, useRef, type MutableRefObject, type RefObject } from "react";
 import { gsap } from "gsap";
-import { CustomEase } from "gsap/CustomEase";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CINEMATIC_EASE, sceneTimeline as T } from "@/config/scene-timeline";
+import { cubicBezier } from "@/lib/motion";
 import { FlyFrames, drawCover } from "./fly-frames";
 import { PORTRAIT_MEDIA, REDUCED_MOTION, SMALL_SCREEN, TOUCH_ONLY, isConstrainedNetwork } from "./media";
 import { pushTarget, type Point, type PushTarget } from "./push-geometry";
 import { pendingRestore, restoreNow } from "@/components/nav/site-state";
 import type { PlateSet, SceneData } from "./scene-data";
 
-gsap.registerPlugin(ScrollTrigger, CustomEase);
+gsap.registerPlugin(ScrollTrigger);
+
+/** The cinematic curve for GSAP, from the same numbers as the CSS token (no CustomEase plugin needed). */
+const cinematicEase = cubicBezier(...(CINEMATIC_EASE.split(",").map(Number) as [number, number, number, number]));
 
 export interface SequenceRefs {
   section: RefObject<HTMLElement | null>;
@@ -128,7 +131,6 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
     const canvas = refs.canvas.current;
     if (!section || !camera || !canvas) return;
 
-    CustomEase.create("cinematic", CINEMATIC_EASE);
     ScrollTrigger.config({ ignoreMobileResize: true });
     const mm = gsap.matchMedia();
     // A reload on the board or a later section (or a section hash) lands there covered: no intro, and the
@@ -340,7 +342,7 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
       tl.fromTo(
         camera,
         { x: 0, y: 0, scale: 1 },
-        { x: () => m.target.x, y: () => m.target.y, scale: () => m.target.scale, duration: span(T.push), ease: "cinematic" },
+        { x: () => m.target.x, y: () => m.target.y, scale: () => m.target.scale, duration: span(T.push), ease: cinematicEase },
         T.push.start,
       );
       tl.fromTo([refs.light.current, refs.vignette.current], { opacity: 1 }, { opacity: 0, duration: span(T.lightFade) }, T.lightFade.start);

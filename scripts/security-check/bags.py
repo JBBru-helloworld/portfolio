@@ -234,7 +234,9 @@ def encode(rgba: np.ndarray, stem: str, widths: list[int], quality: str) -> dict
         webp = OUT / f"{stem}-{wd}.webp"
         avif = OUT / f"{stem}-{wd}.avif"
         subprocess.run(["cwebp", "-quiet", "-q", "72", "-alpha_q", "75", "-m", "6", "-metadata", "none", str(tmp), "-o", str(webp)], check=True)
-        subprocess.run(["avifenc", "-q", quality, "--qalpha", "55", "-s", "4", "--ignore-exif", "--ignore-xmp", "--ignore-icc", str(tmp), str(avif)],
+        # The 2x width (960) is shown at half size, where artefacts hide: 10 steps lower (Phase 6).
+        q = quality if wd < 960 else str(int(quality) - 10)
+        subprocess.run(["avifenc", "-q", q, "--qalpha", "55", "-s", "4", "--ignore-exif", "--ignore-xmp", "--ignore-icc", str(tmp), str(avif)],
                        check=True, capture_output=True)
         sizes[wd] = {"webp": webp.stat().st_size, "avif": avif.stat().st_size}
     tmp.unlink()

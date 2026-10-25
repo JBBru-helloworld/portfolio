@@ -45,7 +45,12 @@ export function PassengerNumber({ label, srTemplate }: { label: string; srTempla
     }
     const ctrl = new AbortController();
     fetch("/api/passenger", { method: "POST", credentials: "same-origin", signal: ctrl.signal })
-      .then((res) => (res.ok ? (res.json() as Promise<{ passenger?: unknown }>) : null))
+      .then((res) => {
+        if (res.ok) return res.json() as Promise<{ passenger?: unknown }>;
+        // A refusal's body is never read: cancel it, or the request stays open and the page never goes idle.
+        void res.body?.cancel().catch(() => undefined);
+        return null;
+      })
       .then((data) => {
         const p = data?.passenger;
         if (typeof p !== "number" || !Number.isInteger(p) || p < 1) return;

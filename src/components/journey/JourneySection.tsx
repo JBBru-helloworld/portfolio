@@ -22,6 +22,7 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import type { Destination, JourneyPage, JourneyStamp, Passport } from "@/content";
 import photo from "@/content/passport-photo.json";
 import { loadStamp, stamp as thunk } from "@/lib/sound";
+import { cssEase, ease } from "@/lib/motion";
 import styles from "./JourneySection.module.css";
 
 const PRESS_MS = 180;
@@ -153,7 +154,7 @@ export function JourneySection({ destination, page, entries, passport }: Props) 
             { opacity: 0.62, transform: "scale(1)" },
             { opacity: 0.86, transform: "scale(1.008)" },
           ],
-          { duration: TAKE_MS, easing: "cubic-bezier(0.23, 1, 0.32, 1)", fill: "forwards" },
+          { duration: TAKE_MS, easing: cssEase(ease.out), fill: "forwards" },
         );
         anims.push(take);
         take.onfinish = () => {

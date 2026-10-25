@@ -48,6 +48,13 @@ const elements: ElementDraft[] = [
   { symbol: "Tw", name: "Tailwind CSS", zone: "Frontend", usedFor: "OCR Budget Tracker" },
   { symbol: "Sf", name: "ScalaFX", zone: "Frontend", usedFor: "Harvest For All" },
   { symbol: "Fl", name: "Flutter", zone: "Frontend", usedFor: "Mapetite mobile app" },
+  { symbol: "Sn", name: "shadcn/ui", zone: "Frontend", usedFor: "Set-up and component conventions of jbbru.com (JB 207)" },
+  { symbol: "Rx", name: "Radix UI", zone: "Frontend", usedFor: "The corner sign, the group-booking menu and the Security check's menus on jbbru.com (JB 207)" },
+  { symbol: "Mo", name: "Motion", zone: "Frontend", usedFor: "The Featured flights gallery on jbbru.com (JB 207)" },
+  { symbol: "Gs", name: "GSAP", zone: "Frontend", usedFor: "The window scene's scroll sequence on jbbru.com (JB 207)" },
+  { symbol: "Ln", name: "Lenis", zone: "Frontend", usedFor: "Smooth wheel scrolling and section glides on jbbru.com (JB 207)" },
+  { symbol: "Sg", name: "SVG", zone: "Frontend", usedFor: "The seat map, the X-ray objects, the luggage tags and the emblems on jbbru.com (JB 207)" },
+  { symbol: "Wa", name: "Web Audio API", zone: "Frontend", usedFor: "The split-flap clicks, the cabin chime and the stamp thunk on jbbru.com (JB 207)" },
 
   // Zone C: Backend
   { symbol: "Fa", name: "FastAPI", zone: "Backend", usedFor: "Fraud detection service, Inklusif, Budget Tracker" },
@@ -80,6 +87,7 @@ const elements: ElementDraft[] = [
   { symbol: "De", name: "DeepEval", zone: "ML and data", usedFor: "LLM-as-a-judge pipeline at Plandora" },
   { symbol: "El", name: "ElevenLabs", zone: "ML and data", usedFor: "Voice output tested in Plandora's AI clone evaluation" },
   { symbol: "Oc", name: "OCI Generative AI", zone: "ML and data", usedFor: "Oracle Generative AI Professional certification" },
+  { symbol: "Cv", name: "OpenCV", zone: "ML and data", usedFor: "Image pipelines on jbbru.com (JB 207): the window plate, the bag cut-outs and X-rays, the passport photo" },
 
   // Zone E: Cloud and DevOps
   { symbol: "Dk", name: "Docker", zone: "Cloud and DevOps", usedFor: "Fraud detection service, Budget Tracker backend, Recipe Roots, Mapetite" },
@@ -92,7 +100,9 @@ const elements: ElementDraft[] = [
   { symbol: "Rw", name: "Railway", zone: "Cloud and DevOps", usedFor: "Inklusif, before the move to Cloud Run" },
   { symbol: "Ve", name: "Vercel", zone: "Cloud and DevOps", usedFor: "Inklusif, OCR Budget Tracker frontend" },
   { symbol: "Rn", name: "Render", zone: "Cloud and DevOps", usedFor: "OCR Budget Tracker backend" },
-  { symbol: "Cf", name: "Cloudflare", zone: "Cloud and DevOps", usedFor: "Coral Coders website" },
+  { symbol: "Cf", name: "Cloudflare", zone: "Cloud and DevOps", usedFor: "Coral Coders website; jbbru.com (JB 207) on Cloudflare Workers" },
+  { symbol: "Do", name: "Durable Objects", zone: "Cloud and DevOps", usedFor: "The passenger counter on jbbru.com (JB 207)" },
+  { symbol: "On", name: "OpenNext", zone: "Cloud and DevOps", usedFor: "Running Next.js on Cloudflare Workers for jbbru.com (JB 207)" },
 
   // Zone F: Tools and design
   { symbol: "Gt", name: "Git", zone: "Tools and design", usedFor: "Pokémon ASCII" },
@@ -101,6 +111,8 @@ const elements: ElementDraft[] = [
   { symbol: "Fg", name: "Figma", zone: "Tools and design", usedFor: "Grab Buddy, Recipe Roots, Smart Vehicle Performance System" },
   { symbol: "Um", name: "UML", zone: "Tools and design", usedFor: "Smart Vehicle Performance System" },
   { symbol: "Sqs", name: "Squarespace", zone: "Tools and design", usedFor: "Asia Arts Festival Malaysia website" },
+  { symbol: "Pw", name: "Playwright", zone: "Tools and design", usedFor: "The browser checks of jbbru.com (JB 207) in Chrome and WebKit" },
+  { symbol: "Ff", name: "FFmpeg", zone: "Tools and design", usedFor: "The cloud video and the fly-through frames on jbbru.com (JB 207)" },
 ];
 
 export const stack: StackElement[] = elements.map((element) => ({ id: stackId(element.name), ...element }));

@@ -24,14 +24,15 @@ export const newsreader = localFont({
   preload: false,
 });
 
-/** Data, code and the departures board. Variable weight 400 to 500. */
+/** Data, code and the departures board. Variable weight 400 to 500. Preloaded: the landing's flight deck,
+ * passenger number and Scroll cue use it (Phase 6). Newsreader is not needed on the landing. */
 export const jetbrainsMono = localFont({
   src: "../fonts/JetBrainsMono-Latin-wght400-500.woff2",
   weight: "400 500",
   style: "normal",
   display: "swap",
   variable: "--font-jetbrains-mono",
-  preload: false,
+  preload: true,
 });
 
 export const fontVariables = [instrumentSans.variable, newsreader.variable, jetbrainsMono.variable].join(" ");

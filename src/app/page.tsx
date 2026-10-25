@@ -1,8 +1,8 @@
 import { DeparturesBoard } from "@/components/departures/DeparturesBoard";
-import { SiteNav } from "@/components/nav/SiteNav";
+import { NoScriptBrief } from "@/components/noscript/NoScriptBrief";
+import { JourneySection, SiteNav } from "@/components/defer/islands";
 import { WindowScene } from "@/components/scene/WindowScene";
 import { getSceneData } from "@/components/scene/scene-data";
-import { JourneySection } from "@/components/journey/JourneySection";
 import { DestinationSection } from "@/components/sections/DestinationSection";
 import { WorkSection } from "@/components/work/WorkSection";
 import { StackSection } from "@/components/stack/StackSection";
@@ -13,7 +13,8 @@ import { HomeEntry } from "@/components/work/HomeEntry";
 import { SiteFooter } from "@/components/footer/SiteFooter";
 import { SkipIntro } from "@/components/scroll/SkipIntro";
 import { SmoothScroll } from "@/components/scroll/SmoothScroll";
-import { departures, destinations, journey, journeyPage, landing, passport, profile } from "@/content";
+import { departures, destinations, journey, journeyPage, landing, links, passport, profile } from "@/content";
+import { siteUrl } from "@/lib/site";
 
 export default function Home() {
   const scene = getSceneData();
@@ -27,8 +28,18 @@ export default function Home() {
     period,
     stamp,
   }));
+  // Structured data: who the site is about (no email, phone or location).
+  const person = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: profile.name,
+    jobTitle: profile.roleLines.default,
+    url: `${siteUrl}/`,
+    sameAs: [links.github.url, links.linkedin.url, links.instagram.url],
+  };
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person).replace(/</g, "\\u003c") }} />
       <HomeEntry />
       <SkipIntro targetId="departures" label={landing.skipIntro} />
       <SiteNav name={profile.name} board={departures} destinations={destinations} />
@@ -45,6 +56,7 @@ export default function Home() {
         />
 
         <DeparturesBoard board={departures} destinations={destinations} />
+        <NoScriptBrief />
 
         {/* The board's destinations, in page order (placeholders until each section is built). */}
         {destinations.map((destination) =>

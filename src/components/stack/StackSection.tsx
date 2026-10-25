@@ -1,6 +1,7 @@
 import type { Destination } from "@/content";
 import { experience, projects, seatMap, stack, stackId, zones } from "@/content";
-import { SeatMap, type ProjectRef, type SeatData } from "./SeatMap";
+import type { ProjectRef, SeatData } from "./SeatMap";
+import { SeatMap } from "@/components/defer/islands";
 import styles from "./StackSection.module.css";
 
 /**

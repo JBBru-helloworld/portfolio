@@ -70,11 +70,15 @@ const watchPhases = (page) =>
     tick();
   });
 
+// Taps land on the centre of the visible strip (its <li>): a link's box includes its clipped open-state image,
+// so the link's own centre can sit over a later strip.
+const strip = (page, selector) => page.locator(selector).locator("xpath=ancestor::li[1]");
+
 async function activate(page, name, selector) {
   if (touch(name)) {
-    await page.locator(selector).tap();
+    await strip(page, selector).tap();
     await page.waitForTimeout(500);
-    await page.locator(selector).tap();
+    await strip(page, selector).tap();
   } else {
     await page.locator(selector).hover();
     await page.waitForTimeout(450);
@@ -234,7 +238,7 @@ if (only.includes("captures")) {
     await place(page, "#work", 0, 900);
     await shot("gallery-rest");
     if (touch(name)) {
-      await page.locator("#flight-touch-n-go-reporting a").tap();
+      await strip(page, "#flight-touch-n-go-reporting a").tap();
       await page.waitForTimeout(800);
       await place(page, "#flight-fraud-detection", 80, 300);
       await shot("gallery-stack-expanded");
@@ -279,10 +283,10 @@ if (only.includes("record")) {
     const slugs = ["fraud-detection", "inklusif", "touch-n-go-reporting", "pengyou", "mapetite", "coral-coders-website"];
     if (touch(name)) {
       for (const s of slugs.slice(1, 4)) {
-        await page.locator(`#flight-${s} a`).tap();
+        await strip(page, `#flight-${s} a`).tap();
         await page.waitForTimeout(900);
       }
-      await page.locator("#flight-pengyou a").tap();
+      await strip(page, "#flight-pengyou a").tap();
     } else {
       for (const s of slugs) {
         await page.locator(`#flight-${s} a`).hover();
@@ -358,7 +362,7 @@ if (only.includes("reduced")) {
     await page.waitForTimeout(1200);
     await place(page, "#work", 0, 300);
     const sel = "#flight-mapetite";
-    if (touch(name)) await page.locator(`${sel} a`).tap();
+    if (touch(name)) await strip(page, `${sel} a`).tap();
     else await page.locator(`${sel} a`).hover();
     await page.waitForTimeout(60);
     const size = await page.evaluate((sel) => {
@@ -374,7 +378,7 @@ if (only.includes("reduced")) {
       window.__vtSeen = false;
       new MutationObserver(() => (window.__vtSeen = true)).observe(document.documentElement, { attributes: true, attributeFilter: ["data-flight"] });
     });
-    if (touch(name)) await page.locator(`${sel} a`).tap();
+    if (touch(name)) await strip(page, `${sel} a`).tap();
     else await page.locator(`${sel} a`).click();
     await page.waitForURL("**/work/mapetite");
     await page.waitForTimeout(400);

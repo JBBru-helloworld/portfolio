@@ -5,7 +5,7 @@ export const credentials: Credential[] = [
     kind: "degree",
     title: "Bachelor of Software Engineering (Hons)",
     issuer: "Sunway University and Lancaster University",
-    date: "Sep 2023 to Aug 2026",
+    date: "Sep 2023 – Aug 2026",
   },
   {
     kind: "academic",
@@ -17,6 +17,7 @@ export const credentials: Credential[] = [
     title: "Jeffrey Cheah Entrance Scholarship",
     issuer: "Sunway University and Lancaster University",
     date: "2023 – 2026", // confirmed by the owner (2026-10-21)
+    notes: ["CHECK(owner): is the scholarship Sunway University's alone? If so, the issuer becomes Sunway University alone."],
   },
   {
     kind: "certification",
@@ -33,13 +34,13 @@ export const credentials: Credential[] = [
   {
     kind: "community",
     title: "Generative AI Study Jam",
-    detail: "Coordinated a five-week Generative AI Study Jam for 900+ participants with the Sunway Tech Club (2025).",
+    detail: "Coordinated a five-week Generative AI Study Jam for 900+ participants with the Sunway Tech Club.",
     date: "2025",
   },
   {
     kind: "community",
     title: "Portfolio workshop",
-    detail: "Co-led a portfolio workshop with the Sunway Tech Club, alongside a speaker from Google (2025).",
+    detail: "Co-led a portfolio workshop with the Sunway Tech Club, alongside a speaker from Google.",
     date: "Nov 2025",
   },
 ];

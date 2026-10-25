@@ -1,8 +1,7 @@
 import type { Credential, DateRange, Destination, ExperienceItem } from "@/content";
-import { credentials, experience, logbook, projects } from "@/content";
-import { RevealGroup } from "@/components/reveal/RevealGroup";
-import { PhotoStack } from "./PhotoStack";
-import { ViewFlight } from "./ViewFlight";
+import { credentials, experience, links, logbook, projects } from "@/content";
+import resume from "@/content/resume-media.json";
+import { LogbookReveal as RevealGroup, PhotoStack, ViewFlight } from "@/components/defer/islands";
 import { prints } from "./media";
 import styles from "./Logbook.module.css";
 
@@ -122,7 +121,15 @@ export function LogbookSection({ destination }: { destination: Destination }) {
         </div>
 
         <div className={styles.ratings}>
-          <h3 className={styles.ratingsTitle}>{logbook.ratingsTitle}</h3>
+          <div className={styles.ratingsHead}>
+            <h3 className={styles.ratingsTitle}>{logbook.ratingsTitle}</h3>
+            {/* The same file as Duty free's Resume, and like it, absent until a clean resume is built. */}
+            {resume.available ? (
+              <a className={styles.resumeLink} href={links.resume.url} target="_blank" rel="noopener" aria-label={logbook.resumeLink.ariaLabel}>
+                {logbook.resumeLink.label}
+              </a>
+            ) : null}
+          </div>
           <ul className={styles.ratingsList}>
             {ratings.map((r) => (
               <li key={r.title}>

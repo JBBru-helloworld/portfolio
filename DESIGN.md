@@ -324,7 +324,7 @@ All values live at the top of `src/components/scene/WindowScene.module.css`, so 
 
 ### Footer (Phase 4c)
 
-A quiet foot on every page: "© 2026 Joshua Bonham", "Built by me, with Next.js on Cloudflare", the "Components adapted from Skiper UI" credit, and "Back to the window ↑", which reloads the home page at the top so the landing replays as on a fresh visit.
+A quiet foot on every page: "© 2026 Joshua Bonham", "Thank you for flying JB Air. Please take all your personal belongings with you.", the "Components adapted from Skiper UI" credit, and "Back to the window ↑", which reloads the home page at the top so the landing replays as on a fresh visit.
 
 ### Security check: the X-ray scanner (Gate 3, Phase 5c)
 
@@ -365,6 +365,20 @@ Tokens live in `src/lib/motion.ts` (Motion and GSAP) and as CSS variables in `gl
 | `--duration-fast` / `-base` / `-slow` | 150 / 200 / 250ms | UI transitions |
 | `--duration-cinematic` | 1200ms | Landing scene beats |
 | `--duration-reduced` | 150ms | Opacity fades under reduced motion |
+
+### Recorded exceptions to the tokens (Phase 6)
+
+Everything else uses `--ease-out`, `--ease-in-out`, `--ease-cinematic`, the soft spring and the duration tokens (`src/lib/motion.ts`, `globals.css`). These differ on purpose:
+
+| Where | Value | Why |
+| --- | --- | --- |
+| Passport stamps' press, the Security check's tag stamp and the bag's drop | `cubic-bezier(0.55, 0, 1, 0.45)`, 180 to 300 ms | An ease-in impact: the stamp and the bag accelerate into contact, then the ink "takes" or the bag settles on ease-out. |
+| The scanner's X-ray reveal | `cubic-bezier(0.45, 0, 0.55, 1)`, 1100 ms | A sweep at a near-constant speed, as a real scan line moves; the token's ease-in-out is too steep for it. |
+| The scan line's opacity, the belt's ribs, reduced-motion cross-fades | `linear` | A continuous loop (the belt) and plain opacity fades (`reducedTransition`) have no motion to shape. |
+| The passport cover | `cubic-bezier(0.65, 0.05, 0.9, 0.6)` then `cubic-bezier(0.1, 0.4, 0.36, 1)`, 350 + 350 ms | The cinematic curve split at the spine: the cover lifts on its first half, the data page falls on its second. |
+| Board and corner-sign glides, the scanner's glide into view (Lenis) | ease-in-out cubic, 0.45 to 1.6 s by distance | Tuned for long scroll distances in Phase 3a; the `--ease-in-out` token is too steep over a whole page. |
+| The window scene (GSAP) | `power1.out`, `sine.inOut`, `power2.in` and the cinematic curve (now a cubic-bezier function, no CustomEase plugin) | Scroll-scrubbed: each layer's curve was tuned against the scroll in Phase 2c. |
+| The greeting's word fade, the flight deck's tape drift | 300 ms ease-out; 11 s `--ease-in-out` alternate | The drift is ambient, deliberately slow and paused off screen. |
 
 ### Reduced motion
 

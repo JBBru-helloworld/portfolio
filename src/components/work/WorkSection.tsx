@@ -1,7 +1,8 @@
 import type { Destination } from "@/content";
 import { projects, stackById, work } from "@/content";
-import { AllFlights, type ManifestFlight } from "./AllFlights";
-import { FeaturedFlights, type FeaturedFlight } from "./FeaturedFlights";
+import type { ManifestFlight } from "./AllFlights";
+import type { FeaturedFlight } from "./FeaturedFlights";
+import { AllFlights, FeaturedFlights } from "@/components/defer/islands";
 import { mainPicture } from "./media";
 import { yearOf } from "./format";
 import styles from "./WorkSection.module.css";

@@ -2,8 +2,7 @@ import type { ReactNode } from "react";
 import type { Destination } from "@/content";
 import { dutyFree, links } from "@/content";
 import resume from "@/content/resume-media.json";
-import { RevealGroup } from "@/components/reveal/RevealGroup";
-import { EmailProduct } from "./EmailProduct";
+import { DutyFreeReveal as RevealGroup, EmailProduct } from "@/components/defer/islands";
 import { GITHUB_MARK, INSTAGRAM_MARK, LINKEDIN_MARK, MARK_VIEWBOX } from "./marks";
 import styles from "./DutyFree.module.css";
 

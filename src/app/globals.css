@@ -318,3 +318,69 @@ html.js [data-reveal-group]:not([data-reveal-group="done"]) [data-reveal]:not([d
     animation: none;
   }
 }
+
+/* ---------- Print (Phase 6): project pages print as plain, readable text ---------- */
+@media print {
+  :root {
+    --void: #ffffff;
+    --cabin: #ffffff;
+    --graphite-1: #e6e6e6;
+    --graphite-2: #cccccc;
+    --graphite-3: #999999;
+    --graphite-4: #555555;
+    --paper: #111111;
+    --paper-muted: #333333;
+    --amber: #111111;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #111111;
+  }
+
+  /* No fixed header, corner sign, footer extras or skip link on paper. */
+  body > header,
+  body > footer,
+  body > nav,
+  [class*="skip"] {
+    display: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  main {
+    padding-top: 0 !important;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  /* External links show where they go. */
+  main a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+
+  img,
+  picture,
+  svg,
+  figure {
+    break-inside: avoid;
+    max-width: 100% !important;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+}
