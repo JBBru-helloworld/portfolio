@@ -42,6 +42,7 @@ export interface SiteLinks {
   github: Link;
   linkedin: Link;
   instagram: Link;
+  x: Link;
   /** The address in two parts, joined only in the browser (never whole in the server HTML). */
   email: { label: string; user: string; domain: string };
   resume: Link;
@@ -448,7 +449,7 @@ export interface DutyFreeProduct {
 export interface DutyFreeCopy {
   label: string;
   line: string;
-  products: Record<"resume" | "email" | "linkedin" | "github" | "instagram", DutyFreeProduct>;
+  products: Record<"resume" | "email" | "linkedin" | "github" | "instagram" | "x", DutyFreeProduct>;
   copy: { idle: string; done: string; label: string };
   emailFallback: string;
 }

@@ -6,8 +6,8 @@ import styles from "./NoScriptBrief.module.css";
  * The short version of the site, after the departures board, for visitors without JavaScript (Phase 6). The
  * sections below the board hydrate lazily, and React streams the large ones as hidden HTML that only a script
  * reveals, so without JavaScript they never appear. This block lists what matters as plain links: every
- * project page (they render in full without JavaScript), the resume once it is published, LinkedIn, GitHub
- * and the email written out as in Duty free (the address is never whole in the HTML).
+ * project page (they render in full without JavaScript), the resume once it is published, LinkedIn, GitHub,
+ * X and the email written out as in Duty free (the address is never whole in the HTML).
  */
 export function NoScriptBrief() {
   return (
@@ -49,6 +49,11 @@ export function NoScriptBrief() {
                 <li>
                   <a href={links.github.url} className={styles.link} rel="noopener noreferrer">
                     {links.github.label}
+                  </a>
+                </li>
+                <li>
+                  <a href={links.x.url} className={styles.link} rel="noopener noreferrer">
+                    {links.x.label}
                   </a>
                 </li>
                 <li className={styles.email}>

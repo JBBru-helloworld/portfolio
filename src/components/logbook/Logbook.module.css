@@ -382,6 +382,7 @@
 /* "FULL LOGBOOK · RESUME (PDF) ↓": a small mono link, amber on hover and focus like the board's links. On
    phones it wraps under the heading. */
 .resumeLink {
+  position: relative;
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   letter-spacing: 0.18em;
@@ -389,6 +390,13 @@
   text-decoration: none;
   border-radius: 2px;
   transition: color var(--duration-fast) var(--ease-out);
+}
+
+/* The tap area reaches 44 px tall without moving the heading row (the text itself is about 18 px). */
+.resumeLink::after {
+  content: "";
+  position: absolute;
+  inset: -13px -6px;
 }
 
 .resumeLink:hover,

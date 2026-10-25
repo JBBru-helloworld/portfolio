@@ -10,6 +10,7 @@ export const dutyFree: DutyFreeCopy = {
     linkedin: { tag: "LINKEDIN", action: "CONNECT →", name: "LinkedIn" },
     github: { tag: "GITHUB", action: "BROWSE THE CODE →", name: "GitHub" },
     instagram: { tag: "INSTAGRAM", action: "FOLLOW →", name: "Instagram" },
+    x: { tag: "X", action: "FOLLOW →", name: "X" },
   },
   copy: { idle: "COPY", done: "COPIED", label: "Copy the email address" },
   // Shown only without JavaScript (the address itself is assembled in the browser).

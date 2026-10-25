@@ -35,7 +35,7 @@ export default function Home() {
     name: profile.name,
     jobTitle: profile.roleLines.default,
     url: `${siteUrl}/`,
-    sameAs: [links.github.url, links.linkedin.url, links.instagram.url],
+    sameAs: [links.github.url, links.linkedin.url, links.instagram.url, links.x.url],
   };
   return (
     <>

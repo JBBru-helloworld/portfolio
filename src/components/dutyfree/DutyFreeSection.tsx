@@ -3,12 +3,12 @@ import type { Destination } from "@/content";
 import { dutyFree, links } from "@/content";
 import resume from "@/content/resume-media.json";
 import { DutyFreeReveal as RevealGroup, EmailProduct } from "@/components/defer/islands";
-import { GITHUB_MARK, INSTAGRAM_MARK, LINKEDIN_MARK, MARK_VIEWBOX } from "./marks";
+import { GITHUB_MARK, INSTAGRAM_MARK, LINKEDIN_MARK, MARK_VIEWBOX, X_MARK } from "./marks";
 import styles from "./DutyFree.module.css";
 
 /*
  * Gate 6, "Contact", as Duty free: the last stop before the gate. Softly lit shelves in the site's greys, and
- * five products, one per link, drawn as monochrome hairline objects, each with a shelf-edge tag (the name and
+ * a product per link (six with the resume: three a shelf on wide screens, two on phones), drawn as monochrome hairline objects, each with a shelf-edge tag (the name and
  * the action, no prices). The whole product and its tag are one link; on hover or focus the product lifts
  * and the action turns amber. The resume shows only once `pnpm resume:build` has published a clean one.
  * The products settle onto the shelves as the section scrolls in, once per visit.
@@ -68,6 +68,7 @@ export function DutyFreeSection({ destination }: { destination: Destination }) {
     { key: "linkedin", href: links.linkedin.url, name: p.linkedin.name, tag: p.linkedin.tag, action: p.linkedin.action, object: <Box mark={LINKEDIN_MARK} /> },
     { key: "github", href: links.github.url, name: p.github.name, tag: p.github.tag, action: p.github.action, object: <Box mark={GITHUB_MARK} /> },
     { key: "instagram", href: links.instagram.url, name: p.instagram.name, tag: p.instagram.tag, action: p.instagram.action, object: <Box mark={INSTAGRAM_MARK} /> },
+    { key: "x", href: links.x.url, name: p.x.name, tag: p.x.tag, action: p.x.action, object: <Box mark={X_MARK} /> },
   ];
   // The email sits second (after the resume, when there is one).
   const emailAt = resume.available ? 1 : 0;

@@ -5,7 +5,7 @@ Reads the owner's resume PDF from assets/resume/ (any file name; exactly one PDF
 
   1. extracts its text (poppler's pdftotext) and FAILS, naming what it found, if it contains a phone number,
      a street address, availability or notice-period lines, visa or work-permit wording, "Singapore" (or a
-     Singapore company suffix, "Pte. Ltd."), or the Sunway Tech Club outside its entry for the GenAI Study Jam
+     Singapore company suffix, "Pte. Ltd.", except in the exact company names in APPROVED_COMPANIES), or the Sunway Tech Club outside its entry for the GenAI Study Jam
      or the portfolio workshop (the only two items the site may name it for). A failed check also removes any
      previously published resume;
   2. rewrites it with pypdf, keeping the pages and dropping the document information (author, creator and
@@ -34,11 +34,16 @@ SRC = Path(os.environ["RESUME_SRC"]) if os.environ.get("RESUME_SRC") else ROOT /
 OUT = ROOT / "public" / "resume" / "joshua-bonham-resume.pdf"
 MANIFEST = ROOT / "src" / "content" / "resume-media.json"
 
+# Company names the owner approved for the resume, exactly as written (Phase 6: Plandora's legal name). Only the
+# suffix check ignores them; "Singapore" and every other check still apply to the whole text.
+APPROVED_COMPANIES = ["TBA.LABS PTE. LTD."]
+SUFFIX_LABEL = "Singapore company suffix (Pte. Ltd.)"
+
 # Phrases that must never be in the public resume, by kind.
 FORBIDDEN: list[tuple[str, re.Pattern[str]]] = [
     ("Singapore", re.compile(r"\bsingapore\b", re.I)),
     # A Singapore-registered company's suffix points to Singapore just the same.
-    ("Singapore company suffix (Pte. Ltd.)", re.compile(r"\bpte\.?\s*ltd\b", re.I)),
+    (SUFFIX_LABEL, re.compile(r"\bpte\.?\s*ltd\b", re.I)),
     (
         "availability or notice period",
         re.compile(
@@ -104,8 +109,12 @@ def club_problems(text: str) -> list[str]:
 
 def problems(text: str) -> list[str]:
     out = [f"phone number: {p!r}" for p in phones(text)]
+    # The approved names, blanked to spaces of the same length (positions and lines stay the same).
+    unapproved = text
+    for name in APPROVED_COMPANIES:
+        unapproved = unapproved.replace(name, " " * len(name))
     for label, pattern in FORBIDDEN:
-        for m in pattern.finditer(text):
+        for m in pattern.finditer(unapproved if label == SUFFIX_LABEL else text):
             line = text[max(0, text.rfind("\n", 0, m.start()) + 1) : text.find("\n", m.end()) if "\n" in text[m.end():] else len(text)]
             out.append(f"{label}: {m.group(0)!r} in {line.strip()[:90]!r}")
     return out + club_problems(text)
