@@ -429,6 +429,23 @@ for (const file of files) {
   }
 }
 
+// Security headers (Phase 7a): public/_headers must give static files exactly the Worker's headers.
+{
+  const { SECURITY_HEADERS } = (await import(join(process.cwd(), "cloudflare/security-headers.ts"))) as { SECURITY_HEADERS: Record<string, string> };
+  const lines = readFileSync(join(process.cwd(), "public/_headers"), "utf8").split("\n");
+  const start = lines.findIndex((l) => l.trim() === "/*");
+  const block: Record<string, string> = {};
+  for (const l of start < 0 ? [] : lines.slice(start + 1)) {
+    if (!/^\s+\S/.test(l)) break;
+    const i = l.indexOf(":");
+    block[l.slice(0, i).trim()] = l.slice(i + 1).trim();
+  }
+  const want = Object.entries(SECURITY_HEADERS);
+  if (start < 0) failures.push("public/_headers  no /* block with the security headers");
+  for (const [name, value] of want) if (block[name] !== value) failures.push(`public/_headers  ${name} differs from cloudflare/security-headers.ts`);
+  for (const name of Object.keys(block)) if (!(name in SECURITY_HEADERS)) failures.push(`public/_headers  ${name} is not in cloudflare/security-headers.ts`);
+}
+
 if (warnings.length) {
   console.log(`\nOpen owner items (${warnings.length}, warnings until launch):`);
   for (const w of warnings) console.log(`  ! ${w}`);

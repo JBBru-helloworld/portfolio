@@ -74,7 +74,7 @@ export interface Destination {
   name: string;
 }
 
-/** The live security check (fraud demo): the model behind it and its headline result. */
+/** The security check (fraud demo, scored in advance): the model behind it and its headline result. */
 export type ScannerVerdict = "CLEARED" | "SCREENING" | "STOPPED";
 export type ScannerObjectId = "receipt" | "clock" | "cards" | "phone" | "compass" | "envelope" | "other";
 

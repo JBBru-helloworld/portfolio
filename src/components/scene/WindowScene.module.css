@@ -322,9 +322,18 @@
 }
 
 /* Once the departures board has risen over the whole scene, none of it is drawn: its layers leave the
-   tree entirely (the section itself keeps its size, so the pin is unaffected). */
-.scene[data-board-covered="true"] > * {
+   tree entirely (the section itself keeps its size, so the pin is unaffected). The text block stays, hidden,
+   so the page's <h1> is still in the accessibility tree (the timeline has faded the block to 0 by then). */
+.scene[data-board-covered="true"] > *:not(.hud) {
   display: none;
+}
+
+.scene[data-board-covered="true"] > .hud {
+  visibility: hidden;
+}
+
+.scene[data-board-covered="true"] > .hud .h1 {
+  visibility: visible;
 }
 
 /* Once the fly-through canvas fully covers it, the window is not drawn at all. */

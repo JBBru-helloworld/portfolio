@@ -56,7 +56,7 @@ export const projects: Project[] = [
         "Served the model with FastAPI in Docker, covered by 50 tests.",
       ],
       result:
-        "A test PR-AUC of 0.59 on 590,540 transactions from the IEEE-CIS Fraud Detection dataset. The same model powers the live security check on this site.",
+        "A test PR-AUC of 0.59 on 590,540 transactions from the IEEE-CIS Fraud Detection dataset. The same model scored every bag in the security check on this site, in advance.",
     },
     images: [
       { alt: "Title card reading Fraud detection, in white on a red panel", caption: "Title card." },
@@ -291,7 +291,7 @@ export const projects: Project[] = [
       { label: "GitHub", url: "https://github.com/JBBru-helloworld/portfolio", kind: "repo" },
     ],
     metrics: [
-      { value: "203 KB", label: "first-load JavaScript on the home page (gzip)" },
+      { value: "211 KB", label: "first-load JavaScript on the home page (gzip)" },
       { value: "103,680", label: "bags scored in advance for the fraud demo" },
       { value: "72", label: "technologies on the seat map, eleven of them added for this site" },
     ],
@@ -560,7 +560,7 @@ export const projects: Project[] = [
     date: { start: "Jul 2024" },
     context: "Group project",
     role: "Content and data research",
-    summary: "Front-end concept for booking event venues and planners, with simulated sign-in via the Web Crypto API.",
+    summary: "Frontend concept for booking event venues and planners, with simulated sign-in via the Web Crypto API.",
     stack: ["html", "css", "javascript", "figma"],
     links: [{ label: "GitHub", url: "https://github.com/Spimy/eventsphere", kind: "repo" }],
     video: { id: "HNwihPiRfdE", list: "PLzMKtbh9mp9Dry3d248OlkvlP-zvM33WE", index: 4 },

@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
   pageExtensions: dev ? ["dev.tsx", "tsx", "ts", "jsx", "js"] : ["tsx", "ts", "jsx", "js"],
   // Pin the workspace root: a stray lockfile in the home folder otherwise confuses inference.
   outputFileTracingRoot: path.join(__dirname),
+  // No "X-Powered-By: Next.js" header (Phase 7a): it tells nobody anything useful.
+  poweredByHeader: false,
 };
 
 export default nextConfig;

@@ -14,6 +14,7 @@
 // @ts-ignore
 import { default as openNext } from "../.open-next/worker.js";
 import { DurableObject } from "cloudflare:workers";
+import { SECURITY_HEADERS } from "./security-headers";
 
 interface Env {
   ASSETS: { fetch(input: Request | URL | string): Promise<Response> };
@@ -125,14 +126,26 @@ async function serveVideo(request: Request, env: Env): Promise<Response> {
   return new Response(head ? null : body.slice(start, end + 1), { status: 206, headers });
 }
 
+// ---------- Security headers (Phase 7a) ----------
+
+function secured(response: Response): Response {
+  const out = new Response(response.body, response);
+  for (const [name, value] of Object.entries(SECURITY_HEADERS)) out.headers.set(name, value);
+  return out;
+}
+
+async function route(request: Request, env: Env, ctx: unknown): Promise<Response> {
+  const url = new URL(request.url);
+  if (url.pathname === "/api/passenger") return passenger(request, env);
+  if ((request.method === "GET" || request.method === "HEAD") && VIDEO.test(url.pathname)) {
+    return serveVideo(request, env);
+  }
+  return openNext.fetch(request, env, ctx);
+}
+
 const worker = {
   async fetch(request: Request, env: Env, ctx: unknown): Promise<Response> {
-    const url = new URL(request.url);
-    if (url.pathname === "/api/passenger") return passenger(request, env);
-    if ((request.method === "GET" || request.method === "HEAD") && VIDEO.test(url.pathname)) {
-      return serveVideo(request, env);
-    }
-    return openNext.fetch(request, env, ctx);
+    return secured(await route(request, env, ctx));
   },
 };
 
