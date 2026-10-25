@@ -10,6 +10,7 @@ import { Emblem } from "@/components/work/Emblem";
 import { FlightPoster } from "@/components/work/FlightPoster";
 import { formatDates, shown } from "@/components/work/format";
 import { mainPicture, projectPictures, videoPicture } from "@/components/work/media";
+import { projectCard } from "@/lib/site";
 import { HomeLink } from "@/components/work/project/HomeLink";
 import { ProjectEntry } from "@/components/work/project/ProjectEntry";
 import { ProjectHero } from "@/components/work/project/ProjectHero";
@@ -26,21 +27,30 @@ export function generateStaticParams() {
 
 const find = (slug: string) => projects.find((p) => p.slug === slug);
 
+/** The share card's alt text: what the card shows. */
+const cardAlt = (p: Project) => `${p.flight}, ${p.name}: its tail-fin emblem and summary, from ${profile.name}'s portfolio`;
+
 export async function generateMetadata({ params }: PageProps<"/work/[slug]">): Promise<Metadata> {
   const project = find((await params).slug);
   if (!project) return {};
   return {
-    title: `${project.name} (${project.flight}) | ${profile.name}`,
+    title: `${project.name} · ${profile.name}`,
     description: project.summary,
     alternates: { canonical: `/work/${project.slug}` },
     openGraph: {
-      title: project.name,
+      title: `${project.name} · ${profile.name}`,
       description: project.summary,
       type: "article",
       url: `/work/${project.slug}`,
-      images: [{ url: `/og/${project.slug}.png`, width: 1200, height: 630, alt: `${project.flight}, ${project.name}` }],
+      images: [{ url: projectCard(project.slug), width: 1200, height: 630, alt: cardAlt(project) }],
     },
-    twitter: { card: "summary_large_image", images: [`/og/${project.slug}.png`] },
+    twitter: {
+      card: "summary_large_image",
+      creator: profile.xHandle,
+      title: `${project.name} · ${profile.name}`,
+      description: project.summary,
+      images: [{ url: projectCard(project.slug), alt: cardAlt(project) }],
+    },
   };
 }
 

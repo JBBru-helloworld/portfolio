@@ -58,7 +58,7 @@ const elements: ElementDraft[] = [
 
   // Zone C: Backend
   { symbol: "Fa", name: "FastAPI", zone: "Backend", usedFor: "Fraud detection service, Inklusif, Budget Tracker" },
-  { symbol: "Ra", name: "REST APIs", zone: "Backend", usedFor: "Plandora" },
+  { symbol: "Ra", name: "REST APIs", zone: "Backend", usedFor: "FastAPI services for the fraud model, Inklusif and the OCR Budget Tracker; Plandora" },
   { symbol: "Mg", name: "MongoDB", zone: "Backend", usedFor: "OCR Budget Tracker, PengYou" },
   { symbol: "My", name: "MySQL", zone: "Backend", usedFor: "Recipe Roots" },
   { symbol: "Sb", name: "Supabase", zone: "Backend", usedFor: "Inklusif" },
@@ -111,7 +111,7 @@ const elements: ElementDraft[] = [
   { symbol: "Fg", name: "Figma", zone: "Tools and design", usedFor: "Grab Buddy, Recipe Roots, Smart Vehicle Performance System" },
   { symbol: "Um", name: "UML", zone: "Tools and design", usedFor: "Smart Vehicle Performance System" },
   { symbol: "Sqs", name: "Squarespace", zone: "Tools and design", usedFor: "Asia Arts Festival Malaysia website" },
-  { symbol: "Pw", name: "Playwright", zone: "Tools and design", usedFor: "The browser checks of jbbru.com (JB 207) in Chrome and WebKit" },
+  { symbol: "Pw", name: "Playwright", zone: "Tools and design", usedFor: "The browser checks of jbbru.com (JB 207) in Chrome, WebKit and Firefox" },
   { symbol: "Ff", name: "FFmpeg", zone: "Tools and design", usedFor: "The cloud video and the fly-through frames on jbbru.com (JB 207)" },
 ];
 

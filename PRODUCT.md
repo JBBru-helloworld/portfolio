@@ -26,12 +26,12 @@ jbbru.com is the personal portfolio of Joshua Bonham. It must communicate three 
 
 ## Capabilities and Constraints
 
-- Next.js 15.5 (App Router) on Cloudflare Workers via OpenNext. Server routes are available for later features.
+- Next.js 16 (App Router) on Cloudflare Workers via OpenNext. Server routes are available for later features.
 - Feature flags in `src/config/features.ts`: `assistant` (an AI assistant, off), `securityCheck` (the fraud demo, on).
 - **Content exclusions everywhere** (copy, metadata, alt text, structured data, content files): the owner's exclusion list in the local `CLAUDE.md` ground rules is binding. Check it before writing any copy.
 - UK English in all site copy. No em dashes in site copy.
 - Never invent facts, numbers, dates, links or employers. Anything unverified is marked `TODO(owner)`.
-- Undecided: which projects become full case studies, the headline numbers for the departures board, and the details and dates of the South Africa leg of the journey.
+- Decided: every project has its own page with a case study (Problem, What I did, Result; open parts are simply not shown); the departures board is the site map, not a board of headline numbers; the journey's South Africa leg is "Until 2019" (born and schooled there).
 
 ## Brand Commitments
 

@@ -35,13 +35,12 @@ export function QueueView({ activeKey, packing, actions }: { activeKey: string |
             <button
               type="button"
               className={styles.queueTag}
-              aria-label={`${ui.passengerPrefix}${p.name}`}
+              aria-label={`${p.name}, ${dollars(Number(p.inputs.amount))}, ${ui.passengerSuffix}`}
               aria-pressed={activeKey === p.id}
               onClick={actions ? () => actions.preset(p.id) : undefined}
             >
-              <span className={styles.queueLine} aria-hidden="true">
-                JB AIR
-              </span>
+              {/* The airline line is drawn by CSS: decoration, not part of the tag's name. */}
+              <span className={styles.queueLine} aria-hidden="true" data-line="JB AIR" />
               <span className={styles.queueName}>{p.name}</span>
               <span className={styles.queueValue} aria-hidden="true">
                 {dollars(Number(p.inputs.amount))}

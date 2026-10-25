@@ -8,7 +8,7 @@ import type { Passport } from "./types";
 export const passport: Passport = {
   header: "Passport · Passeport",
   issuer: "JB Air",
-  photoAlt: "Joshua Bonham",
+  photoAlt: "Passport photo of Joshua Bonham",
   fields: [
     { label: "Surname", labelFr: "Nom", value: "BONHAM" },
     { label: "Given names", labelFr: "Prénoms", value: "JOSHUA" },

@@ -133,7 +133,6 @@ export function FeaturedFlights({
                 <a
                   href={`/work/${f.slug}`}
                   className={styles.link}
-                  aria-label={`${f.flight}: ${f.name}`}
                   aria-describedby={`flight-${f.slug}-summary`}
                   onPointerEnter={(e) => e.pointerType === "mouse" && setActive(i)}
                   onPointerDown={(e) => onPointerDown(e, i)}
@@ -165,13 +164,14 @@ export function FeaturedFlights({
                   </p>
                   <div className={styles.details}>
                     <Emblem emblem={f.emblem} size={44} className={styles.emblem} />
-                    <p className={styles.code} aria-hidden="true">
+                    {/* The link's name is what it shows: the code and the name (Phase 7a fixes); the summary is
+                        its description, read once. */}
+                    <p className={styles.code}>
                       {f.flight}
+                      <span className="sr-only">,</span>
                     </p>
-                    <p className={styles.name} aria-hidden="true">
-                      {f.name}
-                    </p>
-                    <p id={`flight-${f.slug}-summary`} className={styles.summary}>
+                    <p className={styles.name}>{f.name}</p>
+                    <p id={`flight-${f.slug}-summary`} className={styles.summary} aria-hidden="true">
                       {f.summary}
                     </p>
                     <span className={styles.view} aria-hidden="true">

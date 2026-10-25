@@ -22,10 +22,11 @@ export const securityCheck: SecurityCheck = {
   precomputedLabel: "Precomputed",
   scanner: scanner as ScannerConfig,
   ui: {
-    eyebrow: "SECURITY CHECK",
+    eyebrow: "Security check",
     lead: "Pick a passenger and watch my fraud model screen their bag.",
     queueLabel: "Passengers",
-    passengerPrefix: "Passenger: ",
+    // A passenger tag's name: its visible words first ("Business trip, $620, passenger").
+    passengerSuffix: "passenger",
     pack: "PACK YOUR OWN BAG",
     random: "RANDOM PASSENGER",
     ready: "READY",

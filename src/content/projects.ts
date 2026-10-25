@@ -32,6 +32,7 @@ export const projects: Project[] = [
       "pyarrow",
       "matplotlib",
       "fastapi",
+      "rest-apis",
       "docker",
       "pytest",
     ],
@@ -88,7 +89,7 @@ export const projects: Project[] = [
     role: "Built it end to end",
     summary:
       "Employment platform with Gemini resume parsing and job matching, Guardian AI that flags ableist language, and real-time text, voice and video messaging.",
-    stack: ["next-js", "fastapi", "google-gemini", "supabase", "livekit", "brevo", "vercel", "google-cloud-run", "railway", "ci-cd"],
+    stack: ["next-js", "fastapi", "rest-apis", "google-gemini", "supabase", "livekit", "brevo", "vercel", "google-cloud-run", "railway", "ci-cd"],
     links: [
       { label: "Live site", url: "https://inklusif.org", kind: "live" },
       { label: "GitHub", url: "https://github.com/JBBru-helloworld/inklusif", kind: "repo" },
@@ -126,7 +127,7 @@ export const projects: Project[] = [
     context: "Data Scientist Intern, Touch 'n Go Digital",
     role: "Data Scientist Intern",
     summary:
-      "AI workflows automating commercial newsletters and weekly TPV and revenue snapshots for 30+ stakeholders, saving 7+ hours a week.",
+      "AI workflows automating commercial newsletters and weekly total payment value (TPV) and revenue snapshots for 30+ stakeholders, saving 7+ hours a week.",
     stack: ["maxcompute", "sql", "chatgpt"],
     links: [],
     metrics: [
@@ -196,7 +197,7 @@ export const projects: Project[] = [
     video: { id: "rTA-m0tBtz0", list: "PLzMKtbh9mp9Dry3d248OlkvlP-zvM33WE", index: 16 },
     metrics: [],
     caseStudy: {
-      problem: "The brief: build a smart-city website.",
+      problem: "The brief: build a smart-city mobile app.",
       did: [
         "Led the mobile app's design.",
         "Worked as the team's integration engineer, on a Flutter and Riverpod app over PostgreSQL with PostGIS and pgvector.",
@@ -235,7 +236,7 @@ export const projects: Project[] = [
     metrics: [],
     caseStudy: {
       problem:
-        "Coral Coders, my online one-to-one coding lessons for children and adults, where I'm the founder and lead tutor, needed a website.",
+        "Coral Coders, my online coding lessons for children and adults, needed a website.",
       did: [
         "Built the site with Next.js on Cloudflare.",
         "Made it SEO-focused and accessible.",
@@ -259,11 +260,11 @@ export const projects: Project[] = [
     slug: "jbbru-com",
     flight: "JB 207",
     featured: false,
-    name: "jbbru.com",
-    sign: "JBBRU.COM",
-    title: "jbbru.com: this portfolio, a flight from the window seat to the gate",
+    name: "JB Air: my portfolio",
+    sign: "JB AIR",
+    title: "JB Air: my portfolio, jbbru.com as a flight from the window seat to the gate",
     date: { start: "Oct 2026" },
-    context: "This site",
+    context: "Personal portfolio · jbbru.com",
     role: "Design and build, solo",
     summary: "This portfolio as a flight: from a window seat through the clouds, past the departures board, to the gate.",
     stack: [
@@ -309,7 +310,7 @@ export const projects: Project[] = [
     },
     images: [],
     emblem: { letters: "JB", livery: "band" },
-    notes: ["CHECK(owner): JB 207 was drafted from the Phase log; confirm its lines, numbers and the Problem and Result wording."],
+    notes: ["Copy approved by the owner (Phase 7a fixes)."],
   },
   {
     slug: "plandora-llm-judge",
@@ -354,6 +355,7 @@ export const projects: Project[] = [
     stack: [
       "react",
       "fastapi",
+      "rest-apis",
       "google-gemini",
       "python",
       "mongodb",
@@ -467,8 +469,8 @@ export const projects: Project[] = [
     metrics: [],
     caseStudy: {
       problem: "Grab's UMHackathon 2025 challenge: giving merchants business insights in plain language.",
-      did: ["Designed the interface in Figma, as the team's UI designer."],
-      result: "Designed the full UI and a working prototype with an AI chatbot, which we pitched to the judges as a team.",
+      did: ["Was the team's UI designer, working in Figma."],
+      result: "A full UI and a working prototype with an AI chatbot, which we pitched to the judges as a team.",
     },
     images: [
       {

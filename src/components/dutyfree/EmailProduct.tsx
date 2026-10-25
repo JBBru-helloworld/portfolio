@@ -78,7 +78,7 @@ export function EmailProduct({ user, domain, copy, object }: Props) {
           {object}
         </span>
         <span className={styles.tag}>
-          <span className={styles.tagName}>{product.tag}</span>
+          <span className={styles.tagName}>{product.tag}</span>{" "}
           <span className={styles.tagAction}>{product.action}</span>
         </span>
       </a>
@@ -91,7 +91,7 @@ export function EmailProduct({ user, domain, copy, object }: Props) {
             <span key={i} className={`${tileStyles.tile} ${styles.copyTile}`} data-target={c}>
               {(["top", "bottom", "flap-top", "flap-bottom"] as const).map((part) => (
                 <span key={part} className={tileStyles.half} data-part={part}>
-                  <span className={tileStyles.glyph}>{c}</span>
+                  <span className={tileStyles.glyph} data-glyph={c} />
                 </span>
               ))}
             </span>

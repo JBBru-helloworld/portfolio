@@ -6,7 +6,7 @@
  * there; sections already visited read DEPARTED the next time the board is on screen.
  *
  * The flap tiles are decorative and aria-hidden: the boarding line has sr-only text, and each row link has
- * its own name ("Gate 1: My journey") and description (flight and remark). Server-rendered tiles already
+ * its own name, its visible words first ("JB 101 My journey, Gate 1, on time"; the remark is live). Server-rendered tiles already
  * show the final text, so the board reads correctly without JavaScript and under reduced motion; otherwise
  * it flips into place once, when it is about 60% into view.
  */
@@ -70,7 +70,7 @@ const Tiles = memo(function Tiles({
         <span key={i} className={styles.tile} data-target={c}>
           {(["top", "bottom", "flap-top", "flap-bottom"] as const).map((part) => (
             <span key={part} className={styles.half} data-part={part}>
-              <span className={styles.glyph}>{c}</span>
+              <span className={styles.glyph} data-glyph={c} />
             </span>
           ))}
         </span>
@@ -278,8 +278,7 @@ export function DeparturesBoard({ board, destinations }: { board: Departures; de
                   <a
                     href={`#${d.id}`}
                     className={`${styles.row} ${styles.link}`}
-                    aria-label={`Gate ${d.gate}: ${d.name}`}
-                    aria-describedby={`departure-${d.id}`}
+                    aria-label={`${d.flight} ${d.name}, Gate ${d.gate}, ${sentence(remarkOf(d, nav)).toLowerCase()}`}
                     onClick={(e) => choose(e, d)}
                   >
                     <Tiles className={styles.colFlight} text={d.flight} length={COLUMNS.flight} row={BOARD_ROWS + i} />
@@ -294,9 +293,6 @@ export function DeparturesBoard({ board, destinations }: { board: Departures; de
                       remark={d.id}
                     />
                   </a>
-                  <span id={`departure-${d.id}`} hidden>
-                    {`${d.flight}, ${sentence(remarkOf(d, nav))}`}
-                  </span>
                 </li>
               ))}
             </ol>

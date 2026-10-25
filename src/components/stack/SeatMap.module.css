@@ -396,6 +396,10 @@
   letter-spacing: -0.02em;
 }
 
+.zoneLetter::before {
+  content: attr(data-letter);
+}
+
 .zoneLetter {
   position: absolute;
   top: 9%;

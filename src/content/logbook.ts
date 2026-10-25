@@ -5,9 +5,9 @@ export const logbook: LogbookCopy = {
   label: "LOGBOOK",
   columns: { date: "Date", aircraft: "Aircraft", duty: "Duty", route: "Route", remarks: "Remarks" },
   present: "Present",
-  ratingsTitle: "RATINGS AND ENDORSEMENTS",
+  ratingsTitle: "Ratings and endorsements",
   // Beside the ratings heading, only once `pnpm resume:build` has published a resume (Phase 6).
-  resumeLink: { label: "FULL LOGBOOK · RESUME (PDF) ↓", ariaLabel: "Full logbook: my resume (PDF, opens in a new tab)" },
+  resumeLink: { label: "FULL LOGBOOK · RESUME (PDF) ↓", ariaLabel: "Full logbook · resume (PDF), opens in a new tab" },
   photos: {
     group: "Photos",
     pause: "Pause photos",

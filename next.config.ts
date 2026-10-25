@@ -12,6 +12,34 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname),
   // No "X-Powered-By: Next.js" header (Phase 7a): it tells nobody anything useful.
   poweredByHeader: false,
+  // The old site's URLs (Phase 7a fixes; the table in docs/LAUNCH.md), permanent (308). Sections land through
+  // the home page's anchors, which the scroll restore lands on exactly.
+  async redirects() {
+    const oldProjects = [
+      "budget-tracker",
+      "harvest-for-all",
+      "aws-receipt-processing",
+      "grab-buddy",
+      "smart-vehicle-performance-system",
+      "recipe-roots",
+      "asia-arts-festival",
+      "eventsphere",
+      "pokemon-ascii",
+      "pengyou",
+      "english-portfolio",
+    ];
+    return [
+      { source: "/index.html", destination: "/", permanent: true },
+      { source: "/about", destination: "/#journey", permanent: true },
+      { source: "/work", destination: "/#work", permanent: true },
+      { source: "/contact", destination: "/#contact", permanent: true },
+      { source: "/thank-you", destination: "/#contact", permanent: true },
+      // The old site's project pages were numbered 1 to 11 (legacy/src/models/data.js).
+      ...oldProjects.map((slug, i) => ({ source: `/work/${i + 1}`, destination: `/work/${slug}`, permanent: true })),
+      { source: "/assets/resume/:file*", destination: "/resume/joshua-bonham-resume.pdf", permanent: true },
+      { source: "/site.webmanifest", destination: "/manifest.webmanifest", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

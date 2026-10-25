@@ -23,6 +23,7 @@
 }
 
 .eyebrow {
+  text-transform: uppercase; /* typed in normal case so screen readers read words, not letters */
   margin: 0 0 0.75rem;
   font-family: var(--font-mono);
   font-size: 0.6875rem;
@@ -265,6 +266,10 @@
 .queueTag:focus-visible {
   outline: 2px solid var(--amber);
   outline-offset: 3px;
+}
+
+.queueLine::before {
+  content: attr(data-line);
 }
 
 .queueLine {

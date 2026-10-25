@@ -14,6 +14,8 @@ export const seatMap: SeatMapCopy = {
   viewFlight: "View flight",
   views: { map: "Seat map", list: "List" },
   legend: { title: "Zones", selected: "Selected", empty: "Empty" },
+  // The accessible name of the side panel (the legend and the seat card).
+  asideLabel: "Zones and seat details",
   card: { seat: "Seat", zone: "Zone", usedIn: "Used in", alsoAt: "Also at", close: "Close", none: "Not in a project on this site yet." },
   projectCount: { one: "project", many: "projects" },
 };

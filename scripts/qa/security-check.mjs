@@ -14,7 +14,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { gzipSync } from "node:zlib";
 import { join, resolve } from "node:path";
-import { chromium, webkit } from "playwright";
+import { chromium, firefox, webkit } from "playwright";
 
 const url = (process.argv[2] ?? "http://localhost:8787/").replace(/\/?$/, "/");
 const outDir = process.argv[3] ?? "docs/qa/phase-5c";
@@ -42,7 +42,13 @@ const chunk = async (name) => {
 };
 
 await mkdir(outDir, { recursive: true });
-const browser = engine === "chrome" ? await chromium.launch({ channel: "chrome" }) : await webkit.launch();
+const browser = engine === "firefox" ? await firefox.launch() : engine === "chrome" ? await chromium.launch({ channel: "chrome" }) : await webkit.launch();
+
+// Firefox (Phase 7a fixes): no isMobile, and no clipboard permissions (Firefox supports neither).
+if (engine === "firefox") {
+  const nc = browser.newContext.bind(browser);
+  browser.newContext = (o = {}) => nc({ ...o, isMobile: undefined, permissions: (o.permissions ?? []).filter((x) => !x.startsWith("clipboard")) });
+}
 const report = { engine, url };
 const save = () => writeFile(`${outDir}/${engine}-report.json`, JSON.stringify(report, null, 2));
 
@@ -79,7 +85,11 @@ async function finished(page) {
 
 /** Sends a passenger (by its button) and waits for the sequence to finish. */
 async function send(page, name, label) {
-  await press(page, name, page.getByRole("button", { name: label, exact: true }));
+  // A passenger's tag is named "<name>, $<amount>, passenger" (Phase 7a fixes): found by the start of its name.
+  const role = label.startsWith("Passenger: ")
+    ? { name: new RegExp(`^${label.slice(11).replace(/[.$^*+?()[\]{}|\\/]/g, "\\$&")}, \\$`) }
+    : { name: label, exact: true };
+  await press(page, name, page.getByRole("button", role));
   await finished(page);
 }
 
@@ -300,7 +310,7 @@ if (only.includes("captures")) {
       await page.screenshot({ path: `${outDir}/${engine}-${name}-${what}.png`, fullPage: true, clip: box });
     };
     await shot("rest");
-    await press(page, name, page.getByRole("button", { name: "Passenger: Weekly shop", exact: true }));
+    await press(page, name, page.getByRole("button", { name: /^Weekly shop, \$/ }));
     // On desktop the stage glides fully into view: queue to belt and tag on one screen, under the header.
     await page.waitForTimeout(1100);
     const fit = await page.evaluate(() => {
@@ -357,7 +367,7 @@ if (only.includes("captures")) {
 if (only.includes("fullscan")) {
   const name = "1440x900";
   const { context, page } = await open(name);
-  await page.getByRole("button", { name: "Passenger: Card testing: small amounts", exact: true }).click();
+  await page.getByRole("button", { name: /^Card testing: small amounts, \$/ }).click();
   const t0 = Date.now();
   for (const [label, at] of [["1-drop", 150], ["2-ride", 1000], ["3-scan", 1900], ["4-objects", 2850], ["5-verdict", 3450], ["6-exit", 3800]]) {
     await page.waitForTimeout(Math.max(0, at - (Date.now() - t0)));
@@ -417,7 +427,7 @@ if (only.includes("a11y")) {
       await page.keyboard.press(TAB);
       const f = await page.evaluate(() => document.activeElement?.getAttribute("aria-label") ?? document.activeElement?.textContent?.trim());
       steps.push(f);
-      if (f?.startsWith("Passenger: ")) break;
+      if (f?.endsWith(", passenger")) break;
     }
     await page.keyboard.press("Enter");
     await nextButton(page).waitFor({ timeout: 12000 });
@@ -436,7 +446,7 @@ if (only.includes("a11y")) {
   {
     const { context, page } = await open(name, { reducedMotion: "reduce" });
     const t0 = Date.now();
-    await page.getByRole("button", { name: "Passenger: Card testing: small amounts" }).click();
+    await page.getByRole("button", { name: /^Card testing: small amounts, \$/ }).click();
     await page.getByRole("region", { name: "Screening report" }).waitFor({ timeout: 5000 });
     const ms = Date.now() - t0;
     const bag = await page.evaluate(() => {

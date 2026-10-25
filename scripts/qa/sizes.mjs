@@ -120,7 +120,7 @@ for (const [name, s] of Object.entries(SIZES)) {
     await page.screenshot({ path: `${outDir}/${engine}-zoom200-corner-sign.png` });
     await page.keyboard.press("Escape");
     await goTo(page, "security-check");
-    await page.getByRole("button", { name: "Passenger: Weekly shop", exact: true }).click();
+    await page.getByRole("button", { name: /^Weekly shop, \$/ }).click();
     await page.waitForFunction(() => document.querySelector('#security-check section[aria-label="Screening report"] [data-verdict]'), null, { timeout: 20000 }).catch(() => undefined);
     await page.waitForTimeout(1200);
     f.scannerVerdict = await page.evaluate(() => document.querySelector('#security-check section[aria-label="Screening report"] [data-verdict]')?.dataset.verdict ?? null);

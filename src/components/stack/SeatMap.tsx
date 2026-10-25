@@ -375,7 +375,7 @@ export function SeatMap({ seats, zones, projects, copy }: Props) {
                   data-booked={booked.has(s.id) || undefined}
                   tabIndex={s.id === focusId ? 0 : -1}
                   aria-pressed={isSelected}
-                  aria-label={`Seat ${s.code}: ${s.name}, ${s.zone.name}`}
+                  aria-label={`${s.symbol}: ${s.name}, seat ${s.code}, ${s.zone.name}`}
                   onKeyDown={(e) => onSeatKey(e, s)}
                   onFocus={() => setFocusId(s.id)}
                   onClick={() => onSeatClick(s)}
@@ -392,16 +392,15 @@ export function SeatMap({ seats, zones, projects, copy }: Props) {
                   <span className={styles.symbol} aria-hidden="true">
                     {s.symbol}
                   </span>
-                  <span className={styles.zoneLetter} aria-hidden="true">
-                    {s.zone.letter}
-                  </span>
+                  {/* Drawn by CSS from the attribute, so the name starts with the visible symbol. */}
+                  <span className={styles.zoneLetter} aria-hidden="true" data-letter={s.zone.letter} />
                 </button>
               );
             })}
           </div>
         </div>
 
-        <aside className={styles.aside}>
+        <aside className={styles.aside} aria-label={copy.asideLabel}>
           <div className={styles.legend}>
             <p className={styles.controlLabel}>{copy.legend.title}</p>
             <ul className={styles.legendList}>

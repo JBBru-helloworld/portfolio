@@ -88,7 +88,7 @@ for (const [name, s] of Object.entries(SIZES)) {
       await page.waitForTimeout(30);
     }
     await page.waitForTimeout(2500);
-    r.board = { ...(await scene(page)), rows: await page.locator("#departures a[aria-describedby^='departure-']").count() };
+    r.board = { ...(await scene(page)), rows: await page.locator("#departures ol a").count() };
     await page.screenshot({ path: `${outDir}/${name}-3-board.png` });
     // A board row: glide to Selected work.
     const t0 = Date.now();
@@ -180,7 +180,7 @@ for (const [name, s] of Object.entries(SIZES)) {
     // The scanner.
     await page.evaluate(() => document.getElementById("security-check").scrollIntoView());
     await page.waitForTimeout(1500);
-    await page.getByRole("button", { name: "Passenger: Card testing: small amounts", exact: true }).click();
+    await page.getByRole("button", { name: /^Card testing: small amounts, \$/ }).click();
     await page.waitForFunction(() => document.querySelector('#security-check section[aria-label="Screening report"] [data-verdict]'), null, { timeout: 20000 }).catch(() => undefined);
     await page.waitForTimeout(1500);
     r.scanner = await page.evaluate(() => { const rep = document.querySelector('#security-check section[aria-label="Screening report"]'); return rep ? { verdict: rep.querySelector("[data-verdict]")?.dataset.verdict, percentile: rep.dataset.percentile } : null; });

@@ -187,7 +187,7 @@ if (only.includes("board")) {
       const tiles = [...document.querySelectorAll("[data-flap-row]")].map((e) => e.getBoundingClientRect());
       const text = [...document.querySelectorAll("[data-target]")].every((t) => {
         const g = t.querySelector("[data-part='bottom'] span");
-        return g.textContent === t.dataset.target;
+        return g.dataset.glyph === t.dataset.target;
       });
       return {
         viewportWidth: W,
@@ -227,18 +227,18 @@ if (only.includes("sound")) {
   await waitOpen(page);
   const { d, rise } = await geometry(page);
   await scrollTo(page, d + rise + 40, 3500);
-  const before = await page.evaluate(() => ({ ...window.__audio, pressed: document.querySelector("[aria-label='Board sound']").getAttribute("aria-pressed") }));
-  await page.click("[aria-label='Board sound']");
+  const before = await page.evaluate(() => ({ ...window.__audio, pressed: document.querySelector("[aria-label='Sound']").getAttribute("aria-pressed") }));
+  await page.click("[aria-label='Sound']");
   const afterToggle = await page.evaluate(() => ({
     ...window.__audio,
-    pressed: document.querySelector("[aria-label='Board sound']").getAttribute("aria-pressed"),
+    pressed: document.querySelector("[aria-label='Sound']").getAttribute("aria-pressed"),
     stored: localStorage.getItem("jbbru:board-sound"),
   }));
   await page.reload({ waitUntil: "load" });
   await page.waitForTimeout(1500);
   const afterReload = await page.evaluate(() => ({
     ...window.__audio,
-    pressed: document.querySelector("[aria-label='Board sound']").getAttribute("aria-pressed"),
+    pressed: document.querySelector("[aria-label='Sound']").getAttribute("aria-pressed"),
   }));
   report.sound = { beforeToggle: before, afterToggle, afterReloadNoGesture: afterReload, errors: page.errors };
   await context.close();
@@ -254,7 +254,7 @@ if (only.includes("reduced")) {
     const tiles = [...document.querySelectorAll("[data-target]")];
     return {
       settledAttribute: document.querySelector("[class*='board']")?.getAttribute("data-settled"),
-      allOnTarget: tiles.every((t) => t.querySelector("[data-part='bottom'] span").textContent === t.dataset.target),
+      allOnTarget: tiles.every((t) => t.querySelector("[data-part='bottom'] span").dataset.glyph === t.dataset.target),
       anyFlapMoved: tiles.some((t) => t.querySelector("[data-part='flap-top']").style.transform !== ""),
       pinned: !!document.querySelector(".pin-spacer"),
     };

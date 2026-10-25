@@ -1,26 +1,32 @@
 import type { Metadata, Viewport } from "next";
 import { profile } from "@/content";
 import { fontVariables } from "@/lib/fonts";
-import { siteUrl } from "@/lib/site";
+import { HOME_CARD, siteUrl } from "@/lib/site";
 import { IslandPreloader } from "@/components/defer/islands";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: profile.name,
-  description: `${profile.name}: ${profile.roleLines.default}.`,
+  title: `${profile.name} · ${profile.roleLines.default}`,
+  description: profile.description,
   alternates: { canonical: "/" },
-  // The share card is the landing itself (`pnpm og:build`, 1200 x 630).
+  // The share card is the landing itself with the name and role large (`pnpm og:build`, 1200 x 630).
   openGraph: {
     type: "website",
     url: "/",
     siteName: profile.name,
-    title: profile.name,
-    description: `${profile.name}: ${profile.roleLines.default}.`,
-    images: [{ url: "/og/home.png", width: 1200, height: 630, alt: `${profile.name}, ${profile.roleLines.default}: the view from an aircraft window` }],
+    title: `${profile.name} · ${profile.roleLines.default}`,
+    description: profile.description,
+    images: [{ url: HOME_CARD, width: 1200, height: 630, alt: profile.shareAlt }],
   },
-  twitter: { card: "summary_large_image", images: ["/og/home.png"] },
+  twitter: {
+    card: "summary_large_image",
+    creator: profile.xHandle,
+    title: `${profile.name} · ${profile.roleLines.default}`,
+    description: profile.description,
+    images: [{ url: HOME_CARD, alt: profile.shareAlt }],
+  },
 };
 
 export const viewport: Viewport = {

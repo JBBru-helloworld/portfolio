@@ -3,7 +3,7 @@
 // Usage: node scripts/qa/logbook-dutyfree.mjs [url] [outDir] [--engine=webkit|chrome]
 //          [--only=captures,record,stacks,contact,footer,a11y,perf]   (perf needs Chrome)
 import { mkdir, writeFile } from "node:fs/promises";
-import { chromium, webkit } from "playwright";
+import { chromium, firefox, webkit } from "playwright";
 
 const url = (process.argv[2] ?? "http://localhost:8787/").replace(/\/?$/, "/");
 const outDir = process.argv[3] ?? "docs/qa/phase-4c";
@@ -21,7 +21,13 @@ const touch = (name) => !!SIZES[name].hasTouch;
 const sizeArg = process.argv.find((a) => a.startsWith("--sizes="));
 const captureSizes = sizeArg ? sizeArg.slice(8).split(",") : Object.keys(SIZES);
 await mkdir(outDir, { recursive: true });
-const browser = engine === "chrome" ? await chromium.launch({ channel: "chrome" }) : await webkit.launch();
+const browser = engine === "firefox" ? await firefox.launch() : engine === "chrome" ? await chromium.launch({ channel: "chrome" }) : await webkit.launch();
+
+// Firefox (Phase 7a fixes): no isMobile, and no clipboard permissions (Firefox supports neither).
+if (engine === "firefox") {
+  const nc = browser.newContext.bind(browser);
+  browser.newContext = (o = {}) => nc({ ...o, isMobile: undefined, permissions: (o.permissions ?? []).filter((x) => !x.startsWith("clipboard")) });
+}
 const report = { engine, url };
 const save = () => writeFile(`${outDir}/${engine}-report.json`, JSON.stringify(report, null, 2));
 

@@ -46,7 +46,7 @@ export const experience: ExperienceItem[] = [
     dates: { start: "Jan 2026", end: "Apr 2026" },
     location: "Kuala Lumpur", // from the owner's resume
     summary:
-      "Built ChatGPT workflows that automate commercial newsletters and weekly TPV and revenue snapshots for 30+ stakeholders, and answered data requests with SQL.",
+      "Built ChatGPT workflows that automate commercial newsletters and weekly total payment value (TPV) and revenue snapshots for 30+ stakeholders, and answered data requests with SQL.",
     highlights: [
       "Built two ChatGPT workflows, the commercial newsletter and the weekly TPV and revenue performance snapshot, for 30+ stakeholders including the CEO, CFO and CCO: created the templates, cleaned up the data and engineered the prompts.",
       "Saved 7+ hours of manual reporting a week.",

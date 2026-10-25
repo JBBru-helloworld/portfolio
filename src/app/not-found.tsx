@@ -10,7 +10,8 @@ import styles from "./not-found.module.css";
 export const metadata: Metadata = {
   title: `${notFound.title} · ${profile.name}`,
   description: notFound.description,
-  robots: { index: false },
+  // Next marks a not-found page noindex itself; and it is not the home page, so no canonical link to it.
+  alternates: { canonical: null },
 };
 
 /** "Flight not found": a split-flap row, one line, and the way back (Phase 6). Static: no JavaScript needed. */
@@ -25,7 +26,7 @@ export default function NotFound() {
             <span key={i} className={`${tileStyles.tile} ${styles.tile}`} data-target={c}>
               {(["top", "bottom", "flap-top", "flap-bottom"] as const).map((part) => (
                 <span key={part} className={tileStyles.half} data-part={part}>
-                  <span className={tileStyles.glyph}>{c}</span>
+                  <span className={tileStyles.glyph} data-glyph={c} />
                 </span>
               ))}
             </span>

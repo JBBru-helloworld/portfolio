@@ -48,7 +48,7 @@ function SignTiles({ text }: { text: string }) {
         <span key={i} className={`${tileStyles.tile} ${styles.tile}`} data-target={c}>
           {(["top", "bottom", "flap-top", "flap-bottom"] as const).map((part) => (
             <span key={part} className={tileStyles.half} data-part={part}>
-              <span className={tileStyles.glyph}>{c}</span>
+              <span className={tileStyles.glyph} data-glyph={c} />
             </span>
           ))}
         </span>

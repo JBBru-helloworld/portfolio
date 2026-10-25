@@ -47,27 +47,27 @@ export function AllFlights({ flights, label }: { flights: ManifestFlight[]; labe
             <a
               href={`/work/${f.slug}`}
               className={styles.row}
-              aria-label={`${f.flight}: ${f.name}, ${f.year}`}
               aria-describedby={`flight-${f.slug}-line`}
               onClick={onClick}
             >
-              <span className={styles.code} aria-hidden="true">
+              {/* The row's name is what it shows: code, name and year (Phase 7a fixes); the summary describes it. */}
+              <span className={styles.code}>
                 {f.flight}
+                <span className="sr-only">, </span>
               </span>
               <span className={styles.marks} aria-hidden="true">
                 <Emblem emblem={f.emblem} size={30} />
                 <Plane className={styles.plane} size={14} strokeWidth={1.5} />
               </span>
-              <span className={styles.name} aria-hidden="true">
+              <span className={styles.name}>
                 {f.name}
+                <span className="sr-only">, </span>
               </span>
-              <span className={styles.year} aria-hidden="true">
-                {f.year}
-              </span>
+              <span className={styles.year}>{f.year}</span>
               <span className={styles.stack} aria-hidden="true">
                 {f.stack.join(" · ")}
               </span>
-              <span id={`flight-${f.slug}-line`} className={styles.summary}>
+              <span id={`flight-${f.slug}-line`} className={styles.summary} aria-hidden="true">
                 {f.summary}
               </span>
               <ArrowRight className={styles.arrow} size={18} strokeWidth={1.5} aria-hidden="true" />

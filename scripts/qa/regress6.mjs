@@ -1,10 +1,10 @@
 // Phase 6 regression probe (owner's report): logo first paint, scroll after a landing refresh, the dusk
 // before the board, and the covered scene behind My journey. Usage: node scripts/qa/regress6.mjs [url] [engine] [runs]
-import { chromium, webkit } from "playwright";
+import { chromium, firefox, webkit } from "playwright";
 const url = (process.argv[2] ?? "http://localhost:8787").replace(/\/$/, "");
 const engine = process.argv[3] ?? "chrome";
 const runs = Number(process.argv[4] ?? 4);
-const b = engine === "webkit" ? await webkit.launch() : await chromium.launch({ channel: "chrome" });
+const b = engine === "webkit" ? await webkit.launch() : engine === "firefox" ? await firefox.launch() : await chromium.launch({ channel: "chrome" });
 const out = { engine, logo: [], scroll: [], dusk: [], covered: [] };
 for (let i = 0; i < runs; i++) {
   const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });

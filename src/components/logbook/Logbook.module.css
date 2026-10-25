@@ -410,6 +410,7 @@
 }
 
 .ratingsTitle {
+  text-transform: uppercase; /* typed in normal case so screen readers read words, not letters */
   margin: 0;
   font-family: var(--font-mono);
   font-size: 0.75rem;

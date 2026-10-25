@@ -87,7 +87,7 @@ export function DutyFreeSection({ destination }: { destination: Destination }) {
           {x.object}
         </span>
         <span className={styles.tag} aria-hidden="true">
-          <span className={styles.tagName}>{x.tag}</span>
+          <span className={styles.tagName}>{x.tag}</span>{" "}
           <span className={styles.tagAction}>{x.action}</span>
         </span>
       </a>
@@ -96,7 +96,7 @@ export function DutyFreeSection({ destination }: { destination: Destination }) {
   bays.splice(
     emailAt,
     0,
-    <li key="email" className={`${styles.bay} ${styles.emailBay}`} data-reveal="">
+    <li key="email" className={styles.bay} data-reveal="">
       <EmailProduct user={links.email.user} domain={links.email.domain} copy={dutyFree} object={<Envelope />} />
     </li>,
   );

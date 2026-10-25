@@ -23,7 +23,6 @@ export const landing: Landing = {
         morning: "Bonzour",
         afternoon: "Bonzour",
         evening: "Bonswar",
-        check: "CHECK(owner): confirm the Mauritian Creole greetings.",
       },
       { language: "Malay", morning: "Selamat pagi", afternoon: "Selamat petang", evening: "Selamat malam" },
       { language: "Mandarin", morning: "早上好", afternoon: "下午好", evening: "晚上好" },
@@ -32,7 +31,6 @@ export const landing: Landing = {
         morning: "Sawubona",
         afternoon: "Sawubona",
         evening: "Sawubona",
-        check: "CHECK(owner): confirm Sawubona for every time of day.",
       },
       // Then four more (Phase 5d): Spanish "Buenas noches" is the greeting from dusk as well as the
       // goodnight; Korean 안녕하세요 serves all day.

@@ -3,7 +3,7 @@ import type { WorkCopy } from "./types";
 /** Labels for Selected work (Gate 2) and the project pages. */
 export const work: WorkCopy = {
   featuredLabel: "Featured flights",
-  allFlights: "ALL FLIGHTS",
+  allFlights: "All flights",
   viewFlight: "View flight",
   backToAll: "Back to all flights",
   previous: "Previous flight",

@@ -196,10 +196,11 @@
   }
 }
 
-/* Short landscape screens and small phones: a step smaller. */
+/* Short landscape screens and small phones: 10 px (Phase 7a fixes; was 9 px), with tighter tracking so the
+   block still clears the logo at 360 px and the window on landscape phones (11 px cannot). */
 @media (max-height: 500px) and (min-aspect-ratio: 1/1), (max-width: 420px) {
   .deck {
-    --size: 0.5625rem;
+    --size: 0.625rem;
     --lh: 1.6;
     gap: 0.6rem;
   }
@@ -210,7 +211,7 @@
   }
 
   .lines {
-    --track: 0.12em;
+    --track: 0.04em;
   }
 }
 

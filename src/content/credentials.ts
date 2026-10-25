@@ -15,9 +15,8 @@ export const credentials: Credential[] = [
   {
     kind: "scholarship",
     title: "Jeffrey Cheah Entrance Scholarship",
-    issuer: "Sunway University and Lancaster University",
+    issuer: "Sunway University", // Sunway University's alone (the owner, Phase 7a fixes)
     date: "2023 – 2026", // confirmed by the owner (2026-10-21)
-    notes: ["CHECK(owner): is the scholarship Sunway University's alone? If so, the issuer becomes Sunway University alone."],
   },
   {
     kind: "certification",

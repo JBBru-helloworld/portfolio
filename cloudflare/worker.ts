@@ -19,14 +19,16 @@ import { SECURITY_HEADERS } from "./security-headers";
 interface Env {
   ASSETS: { fetch(input: Request | URL | string): Promise<Response> };
   PASSENGER_COUNTER: DurableObjectNamespace<PassengerCounter>;
-  PASSENGER_LIMIT: { limit(options: { key: string }): Promise<{ success: boolean }> };
+  /** The per-client rate limit. Optional: if the account cannot have it, the counter's global cap applies. */
+  PASSENGER_LIMIT?: { limit(options: { key: string }): Promise<{ success: boolean }> };
 }
 
 // ---------- The passenger counter ----------
 
 /**
  * One number: how many browsers have asked for a passenger number. SQLite storage (the backend the Workers
- * Free plan offers), one table with one row; no IP addresses, user agents or anything personal.
+ * Free plan offers): the count, and the current minute's start and count for the fallback cap; no IP
+ * addresses, user agents or anything personal.
  */
 export class PassengerCounter extends DurableObject<Env> {
   constructor(ctx: DurableObjectState, env: Env) {
@@ -34,14 +36,30 @@ export class PassengerCounter extends DurableObject<Env> {
     void ctx.blockConcurrencyWhile(async () => {
       ctx.storage.sql.exec("CREATE TABLE IF NOT EXISTS counter (id INTEGER PRIMARY KEY CHECK (id = 1), value INTEGER NOT NULL)");
       ctx.storage.sql.exec("INSERT OR IGNORE INTO counter (id, value) VALUES (1, 0)");
+      ctx.storage.sql.exec("CREATE TABLE IF NOT EXISTS minute (id INTEGER PRIMARY KEY CHECK (id = 1), start INTEGER NOT NULL, count INTEGER NOT NULL)");
+      ctx.storage.sql.exec("INSERT OR IGNORE INTO minute (id, start, count) VALUES (1, 0, 0)");
     });
   }
 
-  /** Counts one more passenger and returns their number. */
-  async next(): Promise<number> {
+  /**
+   * Counts one more passenger and returns their number. With `cap` (the fallback when the per-client rate
+   * limit is unavailable), at most `cap` new passengers a minute in total: past it, null. The object handles
+   * one request at a time, so the check and the count cannot race.
+   */
+  async next(cap?: number): Promise<number | null> {
+    if (cap !== undefined) {
+      const now = Date.now();
+      const m = this.ctx.storage.sql.exec<{ start: number; count: number }>("SELECT start, count FROM minute WHERE id = 1").one();
+      const fresh = now - m.start >= 60_000;
+      if (!fresh && m.count >= cap) return null;
+      this.ctx.storage.sql.exec("UPDATE minute SET start = ?, count = ? WHERE id = 1", fresh ? now : m.start, fresh ? 1 : m.count + 1);
+    }
     return this.ctx.storage.sql.exec<{ value: number }>("UPDATE counter SET value = value + 1 WHERE id = 1 RETURNING value").one().value;
   }
 }
+
+/** New passengers a minute, in total, when the per-client rate limit is unavailable (Phase 7a fixes). */
+const GLOBAL_CAP = 30;
 
 const BOT = /bot|crawl|spider|slurp|headless|lighthouse|preview|curl|wget|python|httpclient|axios|node-fetch|undici|go-http|java\/|libwww|scrapy|facebookexternalhit|embedly/i;
 
@@ -69,10 +87,21 @@ async function passenger(request: Request, env: Env): Promise<Response> {
   if ((length !== null && length !== "0") || request.headers.has("Transfer-Encoding")) return json({ error: "no_body_expected" }, 400);
   const ua = request.headers.get("User-Agent") ?? "";
   if (!ua || BOT.test(ua)) return json({ error: "forbidden" }, 403);
-  const { success } = await env.PASSENGER_LIMIT.limit({ key: await clientKey(request) });
-  if (!success) return json({ error: "rate_limited" }, 429);
+  // The per-client limit when the account has it; otherwise (missing or failing) the global cap.
+  let cap: number | undefined = GLOBAL_CAP;
+  if (env.PASSENGER_LIMIT) {
+    try {
+      const { success } = await env.PASSENGER_LIMIT.limit({ key: await clientKey(request) });
+      if (!success) return json({ error: "rate_limited" }, 429);
+      cap = undefined;
+    } catch {
+      // The binding is there but unavailable: fall back to the global cap.
+    }
+  }
   const counter = env.PASSENGER_COUNTER.get(env.PASSENGER_COUNTER.idFromName("passengers"));
-  return json({ passenger: await counter.next() }, 200);
+  const n = await counter.next(cap);
+  if (n === null) return json({ error: "rate_limited" }, 429);
+  return json({ passenger: n }, 200);
 }
 
 const VIDEO = /^\/scene\/clouds-v2\/[^/]+\.(?:mp4|webm)$/;

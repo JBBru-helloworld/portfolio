@@ -4,7 +4,7 @@
  * and only through transforms (plus swapping a glyph's text when a flip begins or ends); nothing measures
  * layout while flipping.
  *
- * Tile DOM (rendered by DeparturesBoard): four halves, each holding one glyph.
+ * Tile DOM (rendered by DeparturesBoard): four halves, each holding one glyph (in `data-glyph`, drawn by CSS).
  *   top        static, upper half of the NEXT character during a flip
  *   bottom     static, lower half of the CURRENT character
  *   flapTop    upper half of the CURRENT character, folds down about the hinge, 0 -> 90deg (ease-in)
@@ -68,8 +68,10 @@ function glyphsOf(tile: HTMLElement) {
   return { top, bottom, flapTop, flapBottom, glyphs: [g(top), g(bottom), g(flapTop), g(flapBottom)] as Tile["glyphs"] };
 }
 
+// The glyph is an attribute drawn by CSS (`.glyph::before`), not text: assistive tech and audits never read
+// a tile's four halves as four letters (the tiles are aria-hidden; each row has its own name).
 const set = (el: HTMLElement, c: string) => {
-  if (el.textContent !== c) el.textContent = c;
+  if (el.dataset.glyph !== c) el.dataset.glyph = c;
 };
 
 export class FlapBoard {
@@ -130,7 +132,7 @@ export class FlapBoard {
       const c = text[i] ?? " ";
       el.dataset.target = c;
       const parts = glyphsOf(el);
-      const from = parts.glyphs[1].textContent || " ";
+      const from = parts.glyphs[1].dataset.glyph || " ";
       const target = flapIndex(c);
       const steps = from === c ? 0 : lo + Math.floor(random() * (hi - lo + 1));
       if (!steps) return;

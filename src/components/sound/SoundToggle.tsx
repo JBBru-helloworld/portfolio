@@ -2,7 +2,7 @@
 
 /*
  * The sound toggle: a small flap label reading SOUND OFF or SOUND ON, flipped with the board's own
- * mechanics when it changes. A <button aria-pressed> named "Board sound". Used in the board's header and
+ * mechanics when it changes. A <button aria-pressed> named "Sound" (the visible words come first; on or off is its pressed state). Used in the board's header and
  * at the foot of the corner sign's panel; both share the one preference (src/lib/sound.ts).
  */
 import { useEffect, useRef } from "react";
@@ -54,7 +54,7 @@ export function SoundToggle({ ariaLabel, onWord, offWord, className }: Props) {
           <span key={i} className={`${tileStyles.tile} ${styles.tile}`} data-target={c}>
             {(["top", "bottom", "flap-top", "flap-bottom"] as const).map((part) => (
               <span key={part} className={tileStyles.half} data-part={part}>
-                <span className={tileStyles.glyph}>{c}</span>
+                <span className={tileStyles.glyph} data-glyph={c} />
               </span>
             ))}
           </span>

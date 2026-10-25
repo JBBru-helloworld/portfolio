@@ -1,12 +1,18 @@
 // Duty free with six products (the resume and X), the logbook's resume link and the no-JavaScript short version,
 // at 360x800, 390x844 and 1440x900. Usage: node scripts/qa/contact-x.mjs [url] [outDir] [--engine=chrome|webkit]
 import { mkdir } from "node:fs/promises";
-import { chromium, webkit } from "playwright";
+import { chromium, firefox, webkit } from "playwright";
 const url = (process.argv[2] ?? "http://localhost:8787/").replace(/\/?$/, "/");
 const outDir = process.argv[3] ?? "docs/qa/phase-6/contact-x";
 const engine = process.argv.find((a) => a.startsWith("--engine="))?.slice(9) ?? "chrome";
 await mkdir(outDir, { recursive: true });
-const browser = engine === "webkit" ? await webkit.launch() : await chromium.launch({ channel: "chrome" });
+const browser = engine === "firefox" ? await firefox.launch() : engine === "webkit" ? await webkit.launch() : await chromium.launch({ channel: "chrome" });
+
+// Firefox (Phase 7a fixes): no isMobile, and no clipboard permissions (Firefox supports neither).
+if (engine === "firefox") {
+  const nc = browser.newContext.bind(browser);
+  browser.newContext = (o = {}) => nc({ ...o, isMobile: undefined, permissions: (o.permissions ?? []).filter((x) => !x.startsWith("clipboard")) });
+}
 const SIZES = { "360x800": { width: 360, height: 800, touch: true }, "390x844": { width: 390, height: 844, touch: true }, "1440x900": { width: 1440, height: 900 } };
 const report = { engine, sizes: {} };
 const pdf = async (href) => { const r = await fetch(new URL(href, url)); return { status: r.status, type: r.headers.get("content-type"), bytes: (await r.arrayBuffer()).byteLength }; };

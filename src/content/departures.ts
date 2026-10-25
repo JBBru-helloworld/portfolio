@@ -7,9 +7,9 @@ import type { Departures } from "./types";
  * security check).
  */
 export const departures: Departures = {
-  title: "DEPARTURES",
+  title: "Departures", // shown in capitals by CSS
   columns: { flight: "FLIGHT", destination: "DESTINATION", gate: "GATE", remarks: "REMARKS" },
-  sound: { ariaLabel: "Board sound", onWord: "SOUND ON", offWord: "SOUND OFF", hint: "Turn on for the board sound" },
+  sound: { ariaLabel: "Sound", onWord: "SOUND ON", offWord: "SOUND OFF", hint: "Turn on for the board sound" },
   nav: { ariaLabel: "Site sections", gate: "GATE", board: "DEPARTURES" },
   header: {
     label: "NOW BOARDING",

@@ -78,7 +78,7 @@ const toBoard = async (page) => {
 const settled = (page) =>
   page.waitForFunction(() => document.querySelector("[data-settled]")?.dataset.settled === "true", null, { timeout: 10000 });
 const stats = (page) => page.evaluate(() => ({ ...window.__audio, ...(window.__soundStats?.() ?? {}) }));
-const boardToggle = "#departures button[aria-label='Board sound']";
+const boardToggle = "#departures button[aria-label='Sound']";
 
 // ---------- Sound: off by default, toggle, saved preference, chime, voice cap ----------
 if (only.includes("sound")) {
@@ -187,7 +187,7 @@ if (only.includes("toggle")) {
     await page.waitForTimeout(500);
     await page.screenshot({ path: `${outDir}/toggle-${name}-panel.png` });
     const panel = await page.evaluate(() => ({
-      pressed: document.querySelector("header nav [aria-label='Board sound']")?.getAttribute("aria-pressed"),
+      pressed: document.querySelector("header nav [aria-label='Sound']")?.getAttribute("aria-pressed"),
       hScroll: document.documentElement.scrollWidth > document.documentElement.clientWidth,
     }));
     report.toggle[name] = { hintOpacityAtSettle: hint, hintOpacityAfter4_6s: hintAfter, panel, errors: page.errors };
@@ -338,7 +338,7 @@ if (only.includes("a11y")) {
   report.a11y = {
     journey: await page.locator("#journey").ariaSnapshot(),
     boardToggle: await page.locator(boardToggle).ariaSnapshot(),
-    panelToggle: await page.locator("header nav [aria-label='Board sound']").ariaSnapshot(),
+    panelToggle: await page.locator("header nav [aria-label='Sound']").ariaSnapshot(),
     headings: await page.evaluate(() => [...document.querySelectorAll("h1,h2,h3,h4")].map((h) => `${h.tagName} ${h.textContent.trim()}`)),
     contrast: await page.evaluate(() => {
       const panel = getComputedStyle(document.querySelector("#journey [class*='page']")).backgroundColor;

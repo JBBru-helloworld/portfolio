@@ -91,7 +91,7 @@ export function PassengerNumber({ label, srTemplate }: { label: string; srTempla
           <span key={i} className={`${tileStyles.tile} ${styles.tile}`} data-target=" ">
             {(["top", "bottom", "flap-top", "flap-bottom"] as const).map((part) => (
               <span key={part} className={tileStyles.half} data-part={part}>
-                <span className={tileStyles.glyph}> </span>
+                <span className={tileStyles.glyph} data-glyph=" " />
               </span>
             ))}
           </span>

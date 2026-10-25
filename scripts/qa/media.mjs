@@ -107,7 +107,7 @@ const pages = ["/", "/no-such-page", ...slugs.map((s) => `/work/${s}`)];
   // Sound on (the board toggle), a full scroll, a seat, a scan, Copy email, a project and back.
   await page.evaluate(() => document.getElementById("departures").scrollIntoView());
   await page.waitForTimeout(1500);
-  await page.locator("#departures button[aria-label='Board sound']").first().click().catch(() => undefined);
+  await page.locator("#departures button[aria-label='Sound']").first().click().catch(() => undefined);
   await page.waitForTimeout(800);
   const h = await page.evaluate(() => document.documentElement.scrollHeight);
   for (let y = 0; y < h; y += 500) { await page.evaluate((y) => window.scrollTo(0, y), y); await page.waitForTimeout(150); }
@@ -115,7 +115,7 @@ const pages = ["/", "/no-such-page", ...slugs.map((s) => `/work/${s}`)];
   await page.waitForTimeout(500);
   await page.evaluate(() => document.getElementById("security-check").scrollIntoView());
   await page.waitForTimeout(800);
-  await page.getByRole("button", { name: "Passenger: Weekly shop", exact: true }).click().catch(() => undefined);
+  await page.getByRole("button", { name: /^Weekly shop, \$/ }).click().catch(() => undefined);
   await page.waitForTimeout(4000);
   await page.locator("#contact button[aria-label='Copy the email address']").click().catch(() => undefined);
   await page.waitForTimeout(500);

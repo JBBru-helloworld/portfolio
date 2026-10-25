@@ -7,7 +7,7 @@
 // - the route rejects other methods, cross-origin calls, a body and bots, and rate-limits (5 a minute);
 // - screen readers get one line: "You are passenger number N".
 import { mkdir, writeFile } from "node:fs/promises";
-import { chromium, webkit } from "playwright";
+import { chromium, firefox, webkit } from "playwright";
 
 const url = (process.argv[2] ?? "http://localhost:8787/").replace(/\/?$/, "/");
 const outDir = process.argv[3] ?? "docs/qa/phase-5d";
@@ -18,7 +18,13 @@ const UA =
     ? "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Safari/605.1.15"
     : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36";
 await mkdir(outDir, { recursive: true });
-const browser = engine === "chrome" ? await chromium.launch({ channel: "chrome" }) : await webkit.launch();
+const browser = engine === "firefox" ? await firefox.launch() : engine === "chrome" ? await chromium.launch({ channel: "chrome" }) : await webkit.launch();
+
+// Firefox (Phase 7a fixes): no isMobile, and no clipboard permissions (Firefox supports neither).
+if (engine === "firefox") {
+  const nc = browser.newContext.bind(browser);
+  browser.newContext = (o = {}) => nc({ ...o, isMobile: undefined, permissions: (o.permissions ?? []).filter((x) => !x.startsWith("clipboard")) });
+}
 const report = { engine, url };
 
 async function visit(context, label) {

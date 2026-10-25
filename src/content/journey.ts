@@ -18,7 +18,7 @@ export const journey: JourneyStamp[] = [
     years: { start: "2019", end: "2023" },
     label: "MAURITIUS · 2019",
     line: "Moved to Mauritius for high school, from Grade 10 onwards.",
-    period: "2019 to 2023",
+    period: "2019 – 2023",
     stamp: { port: "MRU", word: "ADMITTED", year: "2019", rotate: 5 },
     notes: ["Years confirmed by the owner (2026-10-21): 2019 to 2023."],
   },
@@ -28,7 +28,7 @@ export const journey: JourneyStamp[] = [
     years: { start: "2023", end: "2026" },
     label: "MALAYSIA · 2023",
     line: "University in Malaysia: a Bachelor of Software Engineering (Hons) at Sunway University and Lancaster University, with a 3.95 CGPA and six Dean's List awards.",
-    period: "2023 to 2026",
+    period: "2023 – 2026",
     stamp: { port: "KUL", word: "ENTRY", year: "2023", rotate: -2.5 },
   },
 ];

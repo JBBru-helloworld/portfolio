@@ -47,6 +47,7 @@
 }
 
 .title {
+  text-transform: uppercase; /* typed in normal case so screen readers read words, not letters */
   display: flex;
   align-items: center;
   gap: 0.625rem;
@@ -205,6 +206,12 @@
   height: 200%;
   line-height: calc(var(--tw) * 1.45);
   text-align: center;
+}
+
+/* The character itself (Phase 7a fixes): an attribute, so the four halves are not four letters of text. */
+.glyph::before {
+  content: attr(data-glyph);
+  white-space: pre;
 }
 
 .half[data-part="bottom"] .glyph,

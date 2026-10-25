@@ -195,7 +195,7 @@ if (only.includes("reduced")) {
     seatsEntered: document.querySelector("#stack [data-entered]")?.dataset.entered ?? null,
     logbook: document.querySelector("#experience [data-reveal-group]")?.dataset.revealGroup,
     dutyFree: document.querySelector("#contact [data-reveal-group]")?.dataset.revealGroup,
-    boardSettled: [...document.querySelectorAll("#departures [data-target]")].slice(0, 40).every((t) => t.textContent.trim() === t.dataset.target.trim() || t.dataset.target.trim() === ""),
+    boardSettled: [...document.querySelectorAll("#departures [data-target]")].slice(0, 40).every((t) => t.querySelector("[data-part='bottom'] span").dataset.glyph === t.dataset.target),
   }));
   // Photo stacks never advance on their own.
   await page.evaluate(() => document.getElementById("experience").scrollIntoView());
@@ -207,7 +207,7 @@ if (only.includes("reduced")) {
   // The scanner: the verdict appears with nothing moving.
   await page.evaluate(() => document.getElementById("security-check").scrollIntoView());
   await page.waitForTimeout(800);
-  await page.getByRole("button", { name: "Passenger: Weekly shop", exact: true }).click();
+  await page.getByRole("button", { name: /^Weekly shop, \$/ }).click();
   await page.waitForTimeout(400);
   r.scanner = await page.evaluate(() => ({
     verdictWithin400ms: document.querySelector('#security-check section[aria-label="Screening report"] [data-verdict]')?.dataset.verdict ?? null,

@@ -82,7 +82,7 @@ const state = (page) =>
     const remarks = Object.fromEntries(
       [...document.querySelectorAll("[data-remark]")]
         .filter((e) => e.matches("[data-flap-row]"))
-        .map((e) => [e.dataset.remark, [...e.querySelectorAll("[data-part='bottom'] span")].map((g) => g.textContent).join("").trimEnd()]),
+        .map((e) => [e.dataset.remark, [...e.querySelectorAll("[data-part='bottom'] span")].map((g) => g.dataset.glyph).join("").trimEnd()]),
     );
     const fly = performance.getEntriesByType("resource").filter((r) => r.name.includes("/scene/fly/")).length;
     return {

@@ -34,6 +34,12 @@ export interface Profile {
     board: string;
   };
   bio: string;
+  /** The home page's meta description: one sentence, under about 155 characters, naming the owner. */
+  description: string;
+  /** Alt text of the home page's share card. */
+  shareAlt: string;
+  /** The X handle, for twitter:creator. */
+  xHandle: string;
   languages: { name: string; level?: string }[];
   notes?: OwnerNotes;
 }
@@ -155,7 +161,7 @@ export interface SecurityCheckUi {
   lead: string;
   queueLabel: string;
   /** Before a passenger's name in the queue buttons' names ("Passenger: Routine top-up"). */
-  passengerPrefix: string;
+  passengerSuffix: string;
   pack: string;
   random: string;
   ready: string;
@@ -201,7 +207,7 @@ export interface JourneyStamp {
   label: string;
   /** One sentence about this chapter. */
   line: string;
-  /** The years as shown beside the stamp, for example "2019 to 2023". */
+  /** The years as shown beside the stamp, for example "2019 – 2023". */
   period: string;
   /** The passport stamp: the airport code, its word and its year (arrival, or departure when no arrival year is known). */
   stamp: {
@@ -418,6 +424,7 @@ export interface SeatMapCopy {
   viewFlight: string;
   views: { map: string; list: string };
   legend: { title: string; selected: string; empty: string };
+  asideLabel: string;
   card: { seat: string; zone: string; usedIn: string; alsoAt: string; close: string; none: string };
   projectCount: { one: string; many: string };
 }

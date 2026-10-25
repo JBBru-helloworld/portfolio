@@ -1,8 +1,8 @@
 import type { DateRange } from "@/content";
 
-/** "Oct 2025 to Jan 2026", or "Oct 2026" for a single month. */
+/** "Oct 2025 – Jan 2026" (the site's one date style, Phase 7a fixes), or "Oct 2026" for a single month. */
 export function formatDates(d: DateRange): string {
-  return d.end && d.end !== d.start ? `${d.start} to ${d.end}` : d.start;
+  return d.end && d.end !== d.start ? `${d.start} – ${d.end}` : d.start;
 }
 
 /** The year a project ended (or its only year), for the manifest. */
