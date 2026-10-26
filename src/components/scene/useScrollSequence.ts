@@ -92,7 +92,7 @@ function viewClip(m: Measured, camera: HTMLDivElement): string {
 
 export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Options) {
   const frames = useRef<FlyFrames | null>(null);
-  const plateUpgrade = useRef<{ ready: boolean; applied: boolean; sizes: string } | null>(null);
+  const plateUpgrade = useRef<{ ready: boolean; applied: boolean; img: HTMLImageElement } | null>(null);
   const { openNow, videoActive, videoHeld, wakeVideo } = opts;
   const openRef = useRef(opts.open);
   // Kept in step after each render (before the effects below read it), never written during render.
@@ -117,7 +117,7 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
       const url = img.currentSrc.endsWith(".avif") ? plate.largest.avif : plate.largest.webp;
       const pre = new Image();
       pre.src = url;
-      plateUpgrade.current = { ready: false, applied: false, sizes: `${Math.ceil(plate.largest.width / dpr)}px` };
+      plateUpgrade.current = { ready: false, applied: false, img: pre };
       pre.decode().then(
         () => plateUpgrade.current && (plateUpgrade.current.ready = true),
         () => undefined,
@@ -260,9 +260,21 @@ export function useScrollSequence(refs: SequenceRefs, data: SceneData, opts: Opt
         const up = plateUpgrade.current;
         if (up && up.ready && !up.applied && p > T.sharpPlateAt) {
           up.applied = true;
+          // The sharp plate goes in as the image that was already decoded, on top of the original, which is
+          // hidden only once the new one has painted. (Raising the visible plate's `sizes` made that element
+          // re-select and decode the large file itself, and with decoding="async" it painted blank for about
+          // four frames at the start of the push: the first-scroll flash, Phase 7b follow-up.)
           const img = refs.plate.current;
-          img?.parentElement?.querySelectorAll("source").forEach((s) => s.setAttribute("sizes", up.sizes));
-          img?.setAttribute("sizes", up.sizes);
+          const picture = img?.parentElement;
+          if (img && picture) {
+            const sharp = up.img;
+            sharp.className = img.className;
+            sharp.alt = "";
+            sharp.draggable = false;
+            sharp.setAttribute("aria-hidden", "true");
+            picture.parentNode?.insertBefore(sharp, picture.nextSibling);
+            requestAnimationFrame(() => requestAnimationFrame(() => (picture.style.visibility = "hidden")));
+          }
         }
         const nowPushing = p > T.push.start;
         if (nowPushing !== pushing) {
