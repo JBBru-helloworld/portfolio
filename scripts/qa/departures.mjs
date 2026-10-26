@@ -2,6 +2,7 @@
 // Usage: node scripts/qa/departures.mjs [url] [outDir] [--only=transition,record,board,sound,reduced]
 import { mkdir, readdir, rename, rm } from "node:fs/promises";
 import { webkit } from "playwright";
+import { noCounter } from "./no-counter.mjs";
 
 const url = process.argv[2] ?? "http://localhost:8787/";
 const outDir = process.argv[3] ?? "docs/qa/phase-3a";
@@ -17,6 +18,7 @@ const SIZES = {
 };
 await mkdir(outDir, { recursive: true });
 const browser = await webkit.launch();
+noCounter(browser);
 const report = {};
 
 async function open(name, extra = {}) {

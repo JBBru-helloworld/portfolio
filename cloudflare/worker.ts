@@ -58,6 +58,12 @@ export class PassengerCounter extends DurableObject<Env> {
   }
 }
 
+/**
+ * The counter's one Durable Object instance (Phase 7b). A new name is a new, empty counter: launch day starts
+ * at passenger 1. Nothing seeds or resets it; change the name only to start a new count on purpose.
+ */
+const COUNTER_INSTANCE = "passengers-jbbru-com-2026";
+
 /** New passengers a minute, in total, when the per-client rate limit is unavailable (Phase 7a fixes). */
 const GLOBAL_CAP = 30;
 
@@ -98,7 +104,7 @@ async function passenger(request: Request, env: Env): Promise<Response> {
       // The binding is there but unavailable: fall back to the global cap.
     }
   }
-  const counter = env.PASSENGER_COUNTER.get(env.PASSENGER_COUNTER.idFromName("passengers"));
+  const counter = env.PASSENGER_COUNTER.get(env.PASSENGER_COUNTER.idFromName(COUNTER_INSTANCE));
   const n = await counter.next(cap);
   if (n === null) return json({ error: "rate_limited" }, 429);
   return json({ passenger: n }, 200);
@@ -172,8 +178,15 @@ async function route(request: Request, env: Env, ctx: unknown): Promise<Response
   return openNext.fetch(request, env, ctx);
 }
 
+/** www.jbbru.com answers with a permanent redirect to the same path on https://jbbru.com (Phase 7b). */
+const WWW = "www.jbbru.com";
+const APEX = "https://jbbru.com";
+
 const worker = {
   async fetch(request: Request, env: Env, ctx: unknown): Promise<Response> {
+    const url = new URL(request.url);
+    const host = (request.headers.get("Host") ?? url.host).toLowerCase();
+    if (host === WWW) return secured(new Response(null, { status: 308, headers: { Location: `${APEX}${url.pathname}${url.search}` } }));
     return secured(await route(request, env, ctx));
   },
 };

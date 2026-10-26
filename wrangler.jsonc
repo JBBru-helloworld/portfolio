@@ -4,6 +4,15 @@
 	"name": "jbbru",
 	"compatibility_date": "2026-10-19",
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	// The site's domains (Phase 7b): Cloudflare creates their DNS records and certificates on deploy.
+	// www answers with a 308 to https://jbbru.com (cloudflare/worker.ts).
+	// workers.dev stays on (a fallback address for testing and rollback); no per-version preview URLs.
+	"workers_dev": true,
+	"preview_urls": false,
+	"routes": [
+		{ "pattern": "jbbru.com", "custom_domain": true },
+		{ "pattern": "www.jbbru.com", "custom_domain": true }
+	],
 	"assets": {
 		"directory": ".open-next/assets",
 		"binding": "ASSETS",

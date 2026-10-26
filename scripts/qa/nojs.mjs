@@ -2,6 +2,7 @@
 // page in full. Usage: node scripts/qa/nojs.mjs [url] [outDir] [--engine=chrome|webkit]
 import { mkdir } from "node:fs/promises";
 import { chromium, firefox, webkit } from "playwright";
+import { noCounter } from "./no-counter.mjs";
 const url = (process.argv[2] ?? "http://localhost:8787/").replace(/\/?$/, "/");
 const outDir = process.argv[3] ?? "docs/qa/phase-6/nojs";
 const engine = process.argv.find((a) => a.startsWith("--engine="))?.slice(9) ?? "chrome";
@@ -13,6 +14,7 @@ if (engine === "firefox") {
   const nc = browser.newContext.bind(browser);
   browser.newContext = (o = {}) => nc({ ...o, isMobile: undefined, permissions: (o.permissions ?? []).filter((x) => !x.startsWith("clipboard")) });
 }
+noCounter(browser);
 const report = { engine, home: {}, projects: [] };
 for (const vp of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
   const ctx = await browser.newContext({ viewport: vp, javaScriptEnabled: false });

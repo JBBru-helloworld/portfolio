@@ -2,11 +2,13 @@
 // flash check. Usage: node scripts/qa/load-flash.mjs [url] [outDir]
 import { mkdir, readdir, rename, rm } from "node:fs/promises";
 import { webkit } from "playwright";
+import { noCounter } from "./no-counter.mjs";
 
 const url = process.argv[2] ?? "http://localhost:8787/";
 const outDir = process.argv[3] ?? "docs/qa/phase-3a/load";
 await mkdir(outDir, { recursive: true });
 const browser = await webkit.launch();
+noCounter(browser);
 
 async function record(name, { reducedMotion = "no-preference", warm = false } = {}) {
   const dir = `${outDir}/_rec-${name}`;

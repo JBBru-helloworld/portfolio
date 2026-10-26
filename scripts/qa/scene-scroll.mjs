@@ -2,6 +2,7 @@
 // Usage: node scripts/qa/scene-scroll.mjs [url] [outDir] [--only=captures,exact,record,network,fallbacks]
 import { mkdir, rename, readdir, rm } from "node:fs/promises";
 import { webkit } from "playwright";
+import { noCounter } from "./no-counter.mjs";
 
 const url = process.argv[2] ?? "http://localhost:8787/";
 const outDir = process.argv[3] ?? "docs/qa/scene-2c";
@@ -25,6 +26,7 @@ const PROGRESS = progressArg
 
 await mkdir(outDir, { recursive: true });
 const browser = await webkit.launch();
+noCounter(browser);
 const report = {};
 
 async function open(size, extra = {}) {

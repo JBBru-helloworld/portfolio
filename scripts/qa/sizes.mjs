@@ -5,6 +5,7 @@
 // Usage: node scripts/qa/sizes.mjs [url] [outDir] [--engine=chrome|webkit|firefox] [--sizes=a,b]
 import { mkdir, writeFile } from "node:fs/promises";
 import { chromium, firefox, webkit } from "playwright";
+import { noCounter } from "./no-counter.mjs";
 
 const url = (process.argv[2] ?? "http://localhost:8787/").replace(/\/?$/, "/");
 const outDir = process.argv[3] ?? "docs/qa/phase-7a/sizes";
@@ -12,6 +13,7 @@ const engine = process.argv.find((a) => a.startsWith("--engine="))?.slice(9) ?? 
 const only = process.argv.find((a) => a.startsWith("--sizes="))?.slice(8).split(",");
 await mkdir(outDir, { recursive: true });
 const browser = engine === "webkit" ? await webkit.launch() : engine === "firefox" ? await firefox.launch() : await chromium.launch({ channel: "chrome" });
+noCounter(browser);
 const ALL = {
   "360x800": { width: 360, height: 800, touch: true },
   "390x844": { width: 390, height: 844, touch: true },

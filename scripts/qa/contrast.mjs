@@ -5,10 +5,12 @@
 // Usage: node scripts/qa/contrast.mjs [url] [outFile]
 import { writeFile } from "node:fs/promises";
 import { chromium } from "playwright";
+import { noCounter } from "./no-counter.mjs";
 
 const url = (process.argv[2] ?? "http://localhost:8787/").replace(/\/?$/, "/");
 const outFile = process.argv[3] ?? "docs/qa/phase-7a/a11y/contrast.json";
 const browser = await chromium.launch({ channel: "chrome" });
+noCounter(browser);
 const report = {};
 for (const path of ["", "work/fraud-detection", "work/touch-n-go-reporting", "no-such-page"]) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });

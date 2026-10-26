@@ -4,11 +4,13 @@
 // Usage: node scripts/qa/work-perf.mjs [url] [outDir]
 import { mkdir, writeFile } from "node:fs/promises";
 import { chromium } from "playwright";
+import { noCounter } from "./no-counter.mjs";
 
 const url = (process.argv[2] ?? "http://localhost:8787/").replace(/\/?$/, "/");
 const outDir = process.argv[3] ?? "docs/qa/phase-4a";
 await mkdir(outDir, { recursive: true });
 const browser = await chromium.launch({ channel: "chrome" });
+noCounter(browser);
 const report = {};
 
 // Lighthouse-style Slow 4G: 150 ms RTT, 1.6 Mbps down, 750 Kbps up.

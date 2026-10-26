@@ -10,12 +10,14 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { chromium } from "playwright";
 import { AxeBuilder } from "@axe-core/playwright";
+import { noCounter } from "./no-counter.mjs";
 
 const url = (process.argv[2] ?? "http://localhost:8787/").replace(/\/?$/, "/");
 const outDir = process.argv[3] ?? "docs/qa/phase-7a/a11y";
 const only = process.argv.find((a) => a.startsWith("--only="))?.slice(7).split(",") ?? ["axe", "outline", "tree", "keyboard", "reduced"];
 await mkdir(outDir, { recursive: true });
 const browser = await chromium.launch({ channel: "chrome" });
+noCounter(browser);
 const report = {};
 
 async function open(extra = {}) {

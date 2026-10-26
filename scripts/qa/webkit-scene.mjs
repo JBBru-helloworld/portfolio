@@ -2,6 +2,7 @@
 // Usage: node scripts/qa/webkit-scene.mjs [url] [outDir]
 import { mkdir } from "node:fs/promises";
 import { webkit } from "playwright";
+import { noCounter } from "./no-counter.mjs";
 
 const url = process.argv[2] ?? "http://localhost:8787/";
 const outDir = process.argv[3] ?? "docs/qa/scene-2b-v2";
@@ -12,6 +13,7 @@ const sizes = [
 
 await mkdir(outDir, { recursive: true });
 const browser = await webkit.launch();
+noCounter(browser);
 const results = [];
 
 for (const s of sizes) {

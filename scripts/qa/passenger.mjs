@@ -10,6 +10,11 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { chromium, firefox, webkit } from "playwright";
 
 const url = (process.argv[2] ?? "http://localhost:8787/").replace(/\/?$/, "/");
+// This suite counts passengers on purpose: never against a deployed site (Phase 7b).
+if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//.test(url)) {
+  console.error(`passenger.mjs adds passengers, so it runs only against localhost (not ${url}).`);
+  process.exit(2);
+}
 const outDir = process.argv[3] ?? "docs/qa/phase-5d";
 const engine = (process.argv.find((a) => a.startsWith("--engine=")) ?? "--engine=chrome").slice(9);
 // Headless browsers say "HeadlessChrome", which the counter rightly treats as a bot.

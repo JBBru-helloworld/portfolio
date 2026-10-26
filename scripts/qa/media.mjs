@@ -8,12 +8,14 @@
 // Usage: node scripts/qa/media.mjs [url] [outDir] [--engine=chrome|webkit|firefox]
 import { mkdir, writeFile } from "node:fs/promises";
 import { chromium, firefox, webkit } from "playwright";
+import { noCounter } from "./no-counter.mjs";
 
 const url = (process.argv[2] ?? "http://localhost:8787/").replace(/\/?$/, "/");
 const outDir = process.argv[3] ?? "docs/qa/phase-7a/media";
 const engine = process.argv.find((a) => a.startsWith("--engine="))?.slice(9) ?? "chrome";
 await mkdir(outDir, { recursive: true });
 const browser = engine === "webkit" ? await webkit.launch() : engine === "firefox" ? await firefox.launch() : await chromium.launch({ channel: "chrome" });
+noCounter(browser);
 const origin = new URL(url).origin;
 const report = { engine };
 

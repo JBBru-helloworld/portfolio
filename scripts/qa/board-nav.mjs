@@ -2,6 +2,7 @@
 // Usage: node scripts/qa/board-nav.mjs [url] [outDir] [--only=board,nav,reload,corner,phone]
 import { mkdir } from "node:fs/promises";
 import { webkit } from "playwright";
+import { noCounter } from "./no-counter.mjs";
 
 const url = (process.argv[2] ?? "http://localhost:8787/").replace(/\/?$/, "/");
 const outDir = process.argv[3] ?? "docs/qa/phase-3a-tweak";
@@ -13,6 +14,7 @@ const SIZES = {
 };
 await mkdir(outDir, { recursive: true });
 const browser = await webkit.launch();
+noCounter(browser);
 const report = {};
 
 async function open(name, extra = {}) {

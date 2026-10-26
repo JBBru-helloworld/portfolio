@@ -6,11 +6,13 @@
 // Usage: node scripts/qa/firefox.mjs [url] [outDir]
 import { mkdir, writeFile } from "node:fs/promises";
 import { firefox } from "playwright";
+import { noCounter } from "./no-counter.mjs";
 
 const url = (process.argv[2] ?? "http://localhost:8787/").replace(/\/?$/, "/");
 const outDir = process.argv[3] ?? "docs/qa/phase-7a/firefox";
 await mkdir(outDir, { recursive: true });
 const browser = await firefox.launch();
+noCounter(browser);
 const SIZES = { "390x844": { width: 390, height: 844, touch: true }, "1440x900": { width: 1440, height: 900 } };
 const report = { browser: `firefox ${browser.version()}`, sizes: {} };
 

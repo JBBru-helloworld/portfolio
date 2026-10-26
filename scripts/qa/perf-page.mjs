@@ -4,11 +4,13 @@
 // Usage: node scripts/qa/perf-page.mjs [url] [outFile]
 import { writeFile } from "node:fs/promises";
 import { chromium } from "playwright";
+import { noCounter } from "./no-counter.mjs";
 
 const base = (process.argv[2] ?? "http://localhost:8787").replace(/\/$/, "");
 const outFile = process.argv[3];
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36";
 const browser = await chromium.launch({ channel: "chrome" });
+noCounter(browser);
 const PROFILES = {
   desktop: { viewport: { width: 1440, height: 900 } },
   phone: { viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true, throttle: true },

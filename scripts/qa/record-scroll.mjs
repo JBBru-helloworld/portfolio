@@ -5,6 +5,7 @@
 import { mkdir, rename, rm } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { chromium, webkit } from "playwright";
+import { noCounter } from "./no-counter.mjs";
 
 const url = (process.argv[2] ?? "http://localhost:8787/").replace(/\/?$/, "/");
 const outFile = process.argv[3] ?? "docs/qa/phase-6/full-scroll-1440.webm";
@@ -14,6 +15,7 @@ await rm(dir, { recursive: true, force: true });
 await mkdir(dir, { recursive: true });
 
 const browser = engine === "webkit" ? await webkit.launch() : await chromium.launch({ channel: "chrome" });
+noCounter(browser);
 const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, recordVideo: { dir, size: { width: 1440, height: 900 } } });
 const page = await context.newPage();
 const errors = [];
