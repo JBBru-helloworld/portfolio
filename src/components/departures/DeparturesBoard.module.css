@@ -1,0 +1,406 @@
+/*
+ * Departures board. Tiles size from the board's width (container query units), so the four-column board
+ * fits any desktop, and on phones each row folds onto two lines (flight and remarks, then destination and
+ * gate) that still fit at 360 px.
+ * The curtain-rise overlap (negative top margin and the feather height) is set from the scroll sequence
+ * (useScrollSequence.ts) only when that sequence runs; without it the section simply follows the landing.
+ */
+
+.section {
+  position: relative;
+  z-index: 2; /* above the pinned scene it rises over */
+  --feather: 0px;
+}
+
+/* The soft top edge: transparent to the solid background, so the last of the cloud shows above the board. */
+.feather {
+  height: var(--feather);
+  background: linear-gradient(
+    to bottom,
+    rgb(10 10 10 / 0) 0%,
+    rgb(10 10 10 / 0.35) 35%,
+    rgb(10 10 10 / 0.8) 70%,
+    var(--void) 100%
+  );
+}
+
+.solid {
+  background: var(--void);
+  min-height: 100svh;
+  padding: clamp(3rem, 10svh, 7rem) clamp(1rem, 4vw, 3rem) clamp(4rem, 12svh, 8rem);
+  outline: none;
+}
+
+.inner {
+  max-width: 76rem;
+  margin: 0 auto;
+  container-type: inline-size;
+}
+
+/* ---------- Header ---------- */
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.title {
+  text-transform: uppercase; /* typed in normal case so screen readers read words, not letters */
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--paper-muted);
+}
+
+.icon {
+  width: 0.95rem;
+  height: 0.95rem;
+  color: var(--graphite-4);
+}
+
+/* The sound toggle, right-aligned in the header; the one-time hint sits just below it. */
+.soundSlot {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hint {
+  position: absolute;
+  top: calc(100% + 0.625rem);
+  right: 0;
+  margin: 0;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  color: var(--graphite-4);
+  opacity: 0;
+  transform: translateY(-2px);
+  pointer-events: none;
+  transition:
+    opacity 600ms var(--ease-out),
+    transform 600ms var(--ease-out);
+}
+
+.hint[data-shown="true"] {
+  opacity: 1;
+  transform: none;
+  transition-duration: 400ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hint {
+    transform: none;
+    transition: none;
+  }
+}
+
+.rule {
+  height: 1px;
+  margin: 0.75rem 0 clamp(1.5rem, 4svh, 2.5rem);
+  background: var(--graphite-2);
+}
+
+/* ---------- Board geometry ---------- */
+
+.board {
+  /* One compositor layer for the whole board, so flipping tiles repaint inside it instead of being
+     split into layers over the pinned scene beneath. */
+  will-change: transform;
+  /* --w: tile width. A row: 6 + 16 + 3 (the gate column, wide enough for its label) + 8 = 33 tiles,
+     29 gaps (0.1w) and 3 column gaps (1.2w) = 39.5w. */
+  --w: min(1.875rem, calc(100cqi / 39.5)); /* rows as wide as the boarding line on a wide screen */
+  --g: calc(var(--w) * 0.1);
+  --colgap: calc(var(--w) * 1.2);
+  /* Boarding line: larger flaps. NOW BOARDING and the name share a line: 25 tiles + gaps = 28.4 tiles. */
+  --lg: min(calc(var(--w) * 1.35), calc(100cqi / 28.6));
+}
+
+@container (max-width: 639px) {
+  .board {
+    /* Phones: the widest line is the 16-tile destination, a column gap and the gate: 19.5w. */
+    --w: calc(100cqi / 19.5);
+    --colgap: var(--w);
+    /* NOW BOARDING and the name each have their own line (13 tiles at most). */
+    --lg: min(var(--w), calc(100cqi / 14.5));
+  }
+}
+
+/* ---------- Tiles ---------- */
+
+.tiles {
+  display: inline-flex;
+  gap: var(--g);
+  --tw: var(--w);
+}
+
+.tile {
+  position: relative;
+  display: block;
+  flex: none;
+  width: var(--tw);
+  height: calc(var(--tw) * 1.45);
+  border-radius: calc(var(--tw) * 0.1);
+  font-family: var(--font-mono);
+  font-size: calc(var(--tw) * 1.12);
+  font-weight: 500;
+  color: var(--paper);
+  /* the faint highlight along the top edge */
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05);
+  /* Fixed-size tiles: a glyph change re-lays out and repaints only its own tile. */
+  contain: strict;
+}
+
+[data-tone="muted"] .tile {
+  color: var(--paper-muted);
+}
+
+/* The section's one amber highlight. */
+[data-tone="amber"] .tile {
+  color: var(--amber);
+}
+
+.half {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  overflow: hidden;
+}
+
+/* Charcoal, between --cabin and --graphite-1, with a very slight top-to-bottom gradient. */
+.half[data-part="top"],
+.half[data-part="flap-top"] {
+  top: 0;
+  border-radius: calc(var(--tw) * 0.1) calc(var(--tw) * 0.1) 0 0;
+  background: linear-gradient(to bottom, var(--tile-top, #1b1b1b), var(--tile-top-end, #181818));
+  transform-origin: 50% 100%;
+}
+
+.half[data-part="bottom"],
+.half[data-part="flap-bottom"] {
+  top: 50%;
+  border-radius: 0 0 calc(var(--tw) * 0.1) calc(var(--tw) * 0.1);
+  background: linear-gradient(to bottom, var(--tile-bottom, #161616), var(--tile-bottom-end, #131313));
+  transform-origin: 50% 0%;
+}
+
+.half[data-part="flap-top"],
+.half[data-part="flap-bottom"] {
+  z-index: 1;
+}
+
+/* Idle, the falling flap is folded flat against the hinge (it only opens during a flip). */
+.half[data-part="flap-bottom"] {
+  transform: scaleY(0);
+}
+
+.glyph {
+  display: block;
+  height: 200%;
+  line-height: calc(var(--tw) * 1.45);
+  text-align: center;
+}
+
+/* The character itself (Phase 7a fixes): an attribute, so the four halves are not four letters of text. */
+.glyph::before {
+  content: attr(data-glyph);
+  white-space: pre;
+}
+
+.half[data-part="bottom"] .glyph,
+.half[data-part="flap-bottom"] .glyph {
+  transform: translateY(-50%);
+}
+
+/* The hinge: a hairline across the middle of every tile. */
+.tile::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% - 0.5px);
+  height: 1px;
+  z-index: 2;
+  background: rgb(0 0 0 / 0.65);
+}
+
+/* ---------- Boarding line ---------- */
+
+.boarding {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--lg) * 0.45);
+  margin: 0 0 clamp(1.75rem, 5svh, 3rem);
+}
+
+.boarding .tiles {
+  --tw: var(--lg);
+  gap: calc(var(--tw) * 0.1);
+}
+
+/* The role line (31 characters) always fits on one line. */
+.boarding .role {
+  --tw: min(var(--lg), calc(100cqi / 34.2));
+}
+
+.boardingLine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--lg) * 0.45) calc(var(--lg) * 1.1);
+}
+
+@container (max-width: 639px) {
+  /* Phones: NOW BOARDING, the name and the role each on their own line. */
+  .boardingLine {
+    flex-direction: column;
+  }
+}
+
+/* ---------- Rows ---------- */
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns:
+    calc(6 * var(--w) + 5 * var(--g))
+    calc(16 * var(--w) + 15 * var(--g))
+    calc(3 * var(--w) + 2 * var(--g))
+    calc(8 * var(--w) + 7 * var(--g));
+  grid-template-areas: "flight dest gate remarks";
+  column-gap: var(--colgap);
+  padding: calc(var(--w) * 0.3) 0;
+}
+
+.labels {
+  padding-bottom: calc(var(--w) * 0.5);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.18em;
+  color: var(--graphite-4);
+}
+
+.colFlight {
+  grid-area: flight;
+}
+
+.colDest {
+  grid-area: dest;
+}
+
+.colGate {
+  grid-area: gate;
+}
+
+.colRemarks {
+  grid-area: remarks;
+}
+
+/* Each row is one link. */
+.link {
+  position: relative;
+  width: fit-content;
+  color: inherit;
+  text-decoration: none;
+  border-radius: calc(var(--w) * 0.2);
+  outline: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* A faint panel behind the row on hover, reaching just past the tiles. */
+.link::before {
+  content: "";
+  position: absolute;
+  inset: 0 calc(var(--w) * -0.4);
+  border-radius: inherit;
+  background: var(--graphite-1);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+  pointer-events: none;
+}
+
+.link > .tiles {
+  position: relative; /* above the hover panel */
+}
+
+@media (hover: hover) {
+  .link:hover::before {
+    opacity: 0.7;
+  }
+
+  /* Hover brightens the row's tiles. */
+  .link:hover {
+    --tile-top: #262626;
+    --tile-top-end: #222222;
+    --tile-bottom: #1f1f1f;
+    --tile-bottom-end: #1b1b1b;
+  }
+
+  .link:hover [data-tone="muted"] .tile {
+    color: var(--paper);
+  }
+}
+
+.link:active::before {
+  opacity: 1;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: calc(var(--w) * 0.25);
+}
+
+@container (max-width: 639px) {
+  /* Phones: flight and remarks on the first line, destination and gate below. The first line's two
+     items span the whole row (start and end), so the remarks never widen the destination's column:
+     the widest line is the destination, a gap and the gate (19.5 tiles). */
+  .row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: none;
+    row-gap: calc(var(--w) * 0.3);
+    padding: calc(var(--w) * 0.45) 0;
+  }
+
+  .colFlight {
+    grid-area: 1 / 1 / 2 / -1;
+    justify-self: start;
+  }
+
+  .colRemarks {
+    grid-area: 1 / 1 / 2 / -1;
+    justify-self: end;
+  }
+
+  .colDest {
+    grid-area: 2 / 1;
+  }
+
+  .colGate {
+    grid-area: 2 / 2;
+    justify-self: end;
+  }
+
+  .link {
+    width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link::before {
+    transition: none;
+  }
+}

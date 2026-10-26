@@ -1,0 +1,45 @@
+import type { Credential } from "./types";
+
+export const credentials: Credential[] = [
+  {
+    kind: "degree",
+    title: "Bachelor of Software Engineering (Hons)",
+    issuer: "Sunway University and Lancaster University",
+    date: "Sep 2023 – Aug 2026",
+  },
+  {
+    kind: "academic",
+    title: "CGPA 3.95, six-time Dean's List",
+    issuer: "Sunway University",
+  },
+  {
+    kind: "scholarship",
+    title: "Jeffrey Cheah Entrance Scholarship",
+    issuer: "Sunway University", // Sunway University's alone (the owner, Phase 7a fixes)
+    date: "2023 – 2026", // confirmed by the owner (2026-10-21)
+  },
+  {
+    kind: "certification",
+    title: "Oracle Cloud Infrastructure 2025 Certified Generative AI Professional",
+    issuer: "Oracle",
+    date: "Aug 2025",
+  },
+  {
+    kind: "award",
+    title: "1st Runner-Up and Best Pitch, ImagineHack 2024",
+    detail: "For PengYou, a budgeting web app with a virtual-pet reward system. I was the lead presenter.",
+    date: "Jun 2024",
+  },
+  {
+    kind: "community",
+    title: "Generative AI Study Jam",
+    detail: "Coordinated a five-week Generative AI Study Jam for 900+ participants with the Sunway Tech Club.",
+    date: "2025",
+  },
+  {
+    kind: "community",
+    title: "Portfolio workshop",
+    detail: "Co-led a portfolio workshop with the Sunway Tech Club, alongside a speaker from Google.",
+    date: "Nov 2025",
+  },
+];

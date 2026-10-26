@@ -1,0 +1,74 @@
+/*
+ * "You are passenger Nº": bottom right, mirroring the name bottom left, clear of the window and the Scroll
+ * cue. It appears with the cue once the shade is open and fades with the landing text during the push.
+ */
+
+.passenger {
+  --margin: clamp(1rem, 4vw, 3rem);
+  position: absolute;
+  right: var(--margin);
+  bottom: clamp(1.25rem, 5svh, 3.5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 500ms var(--ease-out);
+}
+
+:global(section[data-phase="open"]) .passenger {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .passenger {
+    opacity: 1;
+    transition: none;
+  }
+}
+
+.label {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(0.625rem, 0.58rem + 0.12vw, 0.6875rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--paper-muted);
+  white-space: nowrap;
+}
+
+/* Small split-flap tiles: the board's own, at a smaller size. */
+.tiles {
+  --w: clamp(1.05rem, 0.95rem + 0.35vw, 1.35rem);
+  --g: calc(var(--w) * 0.12);
+}
+
+/* Portrait phones: level with the name, right of it, above the Scroll cue. */
+@media (max-aspect-ratio: 3/4) {
+  .passenger {
+    bottom: calc(clamp(0.75rem, 2.2svh, 1.5rem) + 5rem);
+  }
+}
+
+/* Short landscape screens: closer to the edge. */
+@media (max-height: 500px) and (min-aspect-ratio: 1/1) {
+  .passenger {
+    bottom: 1rem;
+  }
+}
+
+/* Phones and short landscape screens: a step smaller. */
+@media (max-aspect-ratio: 3/4), (max-height: 500px) and (min-aspect-ratio: 1/1) {
+  .passenger {
+    gap: 0.35rem;
+  }
+
+  .label {
+    font-size: 0.5625rem;
+    letter-spacing: 0.12em;
+  }
+
+  .tiles {
+    --w: 0.95rem;
+  }
+}

@@ -1,0 +1,1893 @@
+/*
+ * Gate 3, the Security check: a dark airport scanner in the site's greys. The only colour: the bag photos
+ * (faded, full colour inside the scanner), the luggage tags' aged card, amber for the objects that raised
+ * the risk, and the verdict stamps and lamps (CLEARED --ink-za, SCREENING --amber, STOPPED --error).
+ *
+ * Everything that moves is a transform or opacity, driven by [data-phase] on .scanner.
+ */
+
+.section {
+  padding: clamp(5rem, 14svh, 9rem) clamp(1rem, 4vw, 3rem) clamp(4rem, 12svh, 8rem);
+  border-top: 1px solid var(--graphite-2);
+  outline: none;
+  --card: oklch(80% 0.026 84);
+  --card-edge: oklch(70% 0.03 78);
+  --card-ink: oklch(30% 0.015 60);
+  --card-label: oklch(42% 0.02 62);
+  --card-rule: oklch(62% 0.025 76);
+}
+
+.inner {
+  max-width: 76rem;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  text-transform: uppercase; /* typed in normal case so screen readers read words, not letters */
+  margin: 0 0 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  color: var(--graphite-4);
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--text-3xl, 1.875rem);
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.lead {
+  margin: 0.5rem 0 clamp(1.75rem, 4svh, 2.75rem);
+  max-width: 40rem;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--paper-muted);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.loader {
+  min-height: 20rem;
+}
+
+/* With JavaScript, the scanner at rest stands in until its code loads; without it, the text summary. */
+:global(html:not(.js)) .shell {
+  display: none;
+}
+
+:global(html.js) .noJsSummary {
+  display: none;
+}
+
+/* ---------- The static summary (before the scanner loads, without JavaScript, or with the feature off) ---------- */
+
+.summary {
+  max-width: 40rem;
+  padding: 1.5rem;
+  border: 1px solid var(--graphite-2);
+  border-radius: 6px;
+  background: var(--cabin);
+}
+
+.summaryLead {
+  margin: 0 0 1rem;
+  color: var(--paper);
+}
+
+.summaryList {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.summaryList li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--graphite-1);
+  font-size: 0.9375rem;
+  color: var(--paper-muted);
+}
+
+.summaryList .mono {
+  font-size: 0.8125rem;
+  color: var(--graphite-4);
+}
+
+.summaryNote {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--graphite-4);
+}
+
+/* ---------- Layout ---------- */
+
+.scanner {
+  position: relative;
+}
+
+.layout {
+  display: grid;
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+  margin-top: 0.75rem;
+}
+
+.stageCol {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.reportCol {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.6fr) minmax(18rem, 1fr);
+    align-items: start;
+  }
+}
+
+/* Phones and tablets: the belt and scanner first, then the monitor, then the tag and report. */
+@media (max-width: 1023px) {
+  .stage {
+    order: 1;
+  }
+  .monitor {
+    order: 2;
+  }
+  .nextRow {
+    order: 3;
+  }
+}
+
+/* ---------- The queue ---------- */
+
+.queueWrap {
+  position: relative;
+  margin: 0 calc(-1 * clamp(1rem, 4vw, 3rem));
+  padding: 0 clamp(1rem, 4vw, 3rem);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.queueWrap::-webkit-scrollbar {
+  display: none;
+}
+
+/* The rail the tags hang from. */
+.queue {
+  position: relative;
+  display: flex;
+  gap: 0.75rem;
+  width: max-content;
+  margin: 0;
+  padding: 1.1rem 0 0.5rem;
+  list-style: none;
+}
+
+.queue::before {
+  content: "";
+  position: absolute;
+  top: 0.35rem;
+  left: -1rem;
+  right: -1rem;
+  height: 2px;
+  border-radius: 1px;
+  background: linear-gradient(to bottom, var(--graphite-3), var(--graphite-2));
+}
+
+.queueTag {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  width: 8.75rem;
+  min-height: 5.5rem;
+  padding: 1.6rem 0.8rem 0.7rem;
+  border: 0;
+  color: var(--card-ink);
+  text-align: left;
+  background: var(--card);
+  clip-path: polygon(14% 0, 86% 0, 100% 12%, 100% 100%, 0 100%, 0 12%);
+  transform-origin: 50% -0.75rem;
+  cursor: pointer;
+  filter: saturate(0.85);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    filter var(--duration-base) var(--ease-out);
+}
+
+/* The eyelet and its string up to the rail. */
+.queueTag::before {
+  content: "";
+  position: absolute;
+  top: 0.55rem;
+  left: 50%;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-left: -0.35rem;
+  border-radius: 50%;
+  background: var(--void);
+  box-shadow: 0 0 0 2px var(--card-edge);
+}
+
+.queue li {
+  position: relative;
+}
+
+.queue li::before {
+  content: "";
+  position: absolute;
+  top: -0.75rem;
+  left: 50%;
+  width: 1px;
+  height: 1.7rem;
+  background: var(--graphite-4);
+  opacity: 0.7;
+}
+
+@media (hover: hover) {
+  .queueTag:hover {
+    transform: rotate(-2deg);
+  }
+}
+
+.queueTag:active {
+  transform: scale(0.97);
+  transition-duration: var(--duration-press);
+}
+
+.queueTag[aria-pressed="true"] {
+  filter: none;
+  box-shadow: inset 0 -3px 0 var(--amber);
+}
+
+.queueTag:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+.queueLine::before {
+  content: attr(data-line);
+}
+
+.queueLine {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.24em;
+  color: var(--card-label);
+}
+
+.queueName {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.queueValue {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--card-label);
+}
+
+.queueAction {
+  background: var(--graphite-1);
+  color: var(--paper);
+  justify-content: center;
+}
+
+.queueAction::before {
+  box-shadow: 0 0 0 2px var(--graphite-3);
+}
+
+.queueAction .queueName {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+}
+
+/* ---------- The monitor ---------- */
+
+.monitor {
+  width: 100%;
+  max-width: 24rem;
+  align-self: center;
+  padding: 0.5rem;
+  border-radius: 10px;
+  background: linear-gradient(to bottom, var(--graphite-2), var(--graphite-1));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    0 12px 30px -18px rgb(0 0 0 / 0.8);
+}
+
+.screen {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 5px;
+  background: radial-gradient(120% 100% at 50% 45%, oklch(20% 0.004 220), oklch(13% 0.003 220));
+  isolation: isolate;
+}
+
+/* Scan lines over everything on the screen. */
+.screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.025) 0 1px, transparent 1px 3px);
+  pointer-events: none;
+}
+
+.ready,
+.screenError {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.32em;
+  text-align: center;
+  color: var(--graphite-4);
+}
+
+.screenError {
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+  color: var(--paper-muted);
+}
+
+.xrayBox {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* The reveal: a moving clip (an outer box sliding in, its contents sliding back), with the scan line on its
+   leading edge. Transforms only. */
+.reveal {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform: translateX(-100%);
+}
+
+.revealInner {
+  position: absolute;
+  inset: 0;
+  transform: translateX(100%);
+}
+
+.xrayImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 400ms var(--ease-out);
+}
+
+/* The objects read over a quieter X-ray. */
+.scanner:is([data-phase="objects"], [data-phase="verdict"], [data-phase="exit"], [data-phase="done"]) .xrayImg {
+  opacity: 0.5;
+}
+
+.scanLine {
+  position: absolute;
+  top: -6%;
+  bottom: -6%;
+  right: 0;
+  width: 2px;
+  background: rgb(240 244 245 / 0.9);
+  box-shadow: 0 0 10px 2px rgb(240 244 245 / 0.35);
+  opacity: 0;
+}
+
+.scanLine::before {
+  content: "";
+  position: absolute;
+  inset: 0 2px 0 auto;
+  width: 3.5rem;
+  background: linear-gradient(to left, rgb(240 244 245 / 0.12), transparent);
+}
+
+.scanner[data-phase="scan"] .reveal {
+  animation: reveal 1100ms cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+.scanner[data-phase="scan"] .revealInner {
+  animation: revealInner 1100ms cubic-bezier(0.45, 0, 0.55, 1) both;
+}
+
+.scanner[data-phase="scan"] .scanLine {
+  animation: scanLine 1100ms linear both;
+}
+
+.scanner:is([data-phase="objects"], [data-phase="verdict"], [data-phase="exit"], [data-phase="done"]) :is(.reveal, .revealInner) {
+  transform: none;
+}
+
+@keyframes reveal {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes revealInner {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes scanLine {
+  0% {
+    opacity: 0;
+  }
+  8%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---------- Objects ---------- */
+
+.object {
+  position: absolute;
+  z-index: 2;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  color: oklch(84% 0.004 220 / 0.82);
+  opacity: 0;
+  filter: drop-shadow(0 0 3px rgb(235 240 242 / 0.28));
+}
+
+.object[data-direction="raised"] {
+  color: color-mix(in oklch, var(--amber) calc(var(--strength) * 100%), oklch(60% 0.03 72));
+}
+
+.scanner:is([data-phase="objects"], [data-phase="verdict"], [data-phase="exit"], [data-phase="done"]) .object {
+  animation: objectIn 320ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 80ms);
+}
+
+@keyframes objectIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.86);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* A touch target of at least 44 px around every object, whatever its drawn size. */
+.object::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
+.objectSvg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.objectSvg :global(.fine) {
+  stroke-width: 1.3;
+  opacity: 0.75;
+}
+
+.object:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+.object[data-open] {
+  outline: 1px solid rgb(255 255 255 / 0.35);
+  outline-offset: 3px;
+}
+
+.objectLabel {
+  position: absolute;
+  z-index: 6;
+  width: max-content;
+  max-width: min(17rem, 70vw);
+  margin: 0;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--graphite-3);
+  border-radius: 4px;
+  background: var(--void);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--paper);
+  transform: translate(-50%, calc(-100% - 0.4rem));
+  pointer-events: none;
+}
+
+.objectLabel[data-side="start"] {
+  transform: translate(-20%, calc(-100% - 0.4rem));
+}
+
+.objectLabel[data-side="end"] {
+  transform: translate(-80%, calc(-100% - 0.4rem));
+}
+
+.objectShare {
+  font-family: var(--font-mono);
+  color: var(--paper-muted);
+}
+
+/* ---------- The verdict on the screen ---------- */
+
+.screenVerdict {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4%;
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 0.9rem;
+  font-family: var(--font-mono);
+  animation: fadeIn 200ms var(--ease-out) both;
+}
+
+.screenWord {
+  font-size: clamp(0.875rem, 1.6vw, 1.125rem);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+}
+
+.screenRisk {
+  font-size: clamp(0.6875rem, 1.1vw, 0.8125rem);
+  letter-spacing: 0.14em;
+  color: var(--paper-muted);
+}
+
+.scanner[data-verdict="CLEARED"] .screenWord {
+  color: oklch(72% 0.06 148);
+}
+
+.scanner[data-verdict="SCREENING"] .screenWord {
+  color: var(--amber);
+}
+
+.scanner[data-verdict="STOPPED"] .screenWord {
+  color: var(--error);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- The stage: belt, bag and scanner ---------- */
+
+.stage {
+  position: relative;
+  aspect-ratio: 16 / 7;
+  overflow: hidden;
+  --bw: 0.25; /* the bag's width, as a share of the stage */
+  --x-entry: 0.02;
+  --x-centre: 0.375;
+  --x-exit: 0.73;
+  --belt-top: 82%;
+}
+
+@media (max-width: 639px) {
+  .stage {
+    aspect-ratio: 16 / 11;
+    --bw: 0.3;
+    --x-entry: 0;
+    --x-centre: 0.35;
+    --x-exit: 0.7;
+  }
+}
+
+.belt {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--belt-top);
+  height: 11%;
+  border-radius: 4px;
+  overflow: hidden;
+  background: oklch(17% 0 0);
+  box-shadow:
+    0 -2px 0 oklch(62% 0.004 220),
+    0 -3px 0 oklch(40% 0.004 220),
+    0 3px 0 oklch(30% 0.004 220);
+}
+
+/* The rubber's ribs: a wide strip translated in a loop while the belt runs. */
+.beltSurface {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  background: repeating-linear-gradient(to right, oklch(21% 0 0) 0 6px, oklch(15% 0 0) 6px 12px);
+  opacity: 0.9;
+  animation: belt 3.2s linear infinite;
+  animation-play-state: paused;
+}
+
+.scanner:is([data-phase="ride"], [data-phase="exit"]) .beltSurface {
+  animation-play-state: running;
+}
+
+@keyframes belt {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.rollers {
+  position: absolute;
+  inset: auto 0 0;
+  height: 30%;
+  background: radial-gradient(circle at 50% 0, oklch(46% 0.004 220) 0 2px, transparent 3px) 0 0 / 28px 100% repeat-x;
+  opacity: 0.6;
+}
+
+/* The bag: positioned along the belt by --x (a share of the stage), its bottom on the belt. */
+.bag {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% - var(--belt-top) + 1%);
+  z-index: 1;
+  width: calc(var(--bw) * 100%);
+  --x: var(--x-entry);
+  transform: translateX(calc(var(--x) / var(--bw) * 100%));
+}
+
+.scanner:is([data-phase="ride"], [data-phase="scan"], [data-phase="objects"], [data-phase="verdict"]) .bag {
+  --x: var(--x-centre);
+  transition: transform 1100ms var(--ease-in-out);
+}
+
+.scanner:is([data-phase="exit"], [data-phase="done"]) .bag {
+  --x: var(--x-exit);
+  transition: transform 700ms var(--ease-in-out);
+}
+
+.bagDrop {
+  position: relative;
+  animation: drop 300ms cubic-bezier(0.55, 0, 1, 0.45) both;
+}
+
+@keyframes drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-28%);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(2%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.bagShadow {
+  position: absolute;
+  left: -4%;
+  width: 108%;
+  top: calc(var(--shadow-top) * 100%);
+  height: auto;
+  opacity: 0.9;
+}
+
+.bagFaded,
+.bagImg {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Faded, like the logbook prints; full colour while it is in the scanner. */
+.bagFaded {
+  filter: saturate(0.4) contrast(0.88) brightness(1.06);
+}
+
+.bagColour {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out);
+}
+
+.scanner:is([data-phase="ride"], [data-phase="scan"], [data-phase="objects"], [data-phase="verdict"]) .bagColour {
+  opacity: 1;
+  transition-delay: 500ms;
+}
+
+/* The bag's own small tag, which takes a small stamp too. */
+.miniTag {
+  position: absolute;
+  top: 18%;
+  left: 6%;
+  width: 16%;
+  aspect-ratio: 3 / 5;
+  background: var(--card);
+  clip-path: polygon(20% 0, 80% 0, 100% 14%, 100% 100%, 0 100%, 0 14%);
+  transform: rotate(-8deg);
+  box-shadow: inset 0 0 0 1px var(--card-edge);
+}
+
+.miniStamp {
+  position: absolute;
+  inset: 30% -20% auto;
+  aspect-ratio: 360 / 132;
+  transform: rotate(-24deg);
+  -webkit-mask: none center / contain no-repeat;
+  mask: none center / contain no-repeat;
+  opacity: 0.85;
+}
+
+.miniStamp[data-verdict="CLEARED"] {
+  background: var(--ink-za);
+  -webkit-mask-image: url(/security-check/stamp-cleared.webp);
+  mask-image: url(/security-check/stamp-cleared.webp);
+}
+
+.miniStamp[data-verdict="SCREENING"] {
+  background: var(--amber);
+  -webkit-mask-image: url(/security-check/stamp-screening.webp);
+  mask-image: url(/security-check/stamp-screening.webp);
+}
+
+.miniStamp[data-verdict="STOPPED"] {
+  background: var(--error);
+  -webkit-mask-image: url(/security-check/stamp-stopped.webp);
+  mask-image: url(/security-check/stamp-stopped.webp);
+}
+
+/* The scanner housing: wide enough to hide the bag entirely. */
+.housing {
+  position: absolute;
+  container-type: inline-size;
+  left: 31%;
+  width: 38%;
+  top: 4%;
+  bottom: calc(100% - var(--belt-top) - 2%);
+  z-index: 2;
+}
+
+@media (max-width: 639px) {
+  .housing {
+    left: 28%;
+    width: 44%;
+  }
+}
+
+/* The housing's body: one casing with a rounded top, a bevel and a vent line. */
+.tunnel {
+  position: absolute;
+  inset: 13% 0 0;
+  z-index: 0;
+  border-radius: 16px 16px 3px 3px;
+  background: linear-gradient(to bottom, oklch(33% 0.004 220), oklch(25% 0.004 220) 45%, oklch(20% 0.004 220));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    inset 0 -20px 30px -18px rgb(0 0 0 / 0.65),
+    0 18px 30px -20px rgb(0 0 0 / 0.9);
+}
+
+/* The vent lights: they come on one by one as the bag passes through, then all take the verdict's colour. */
+.vents {
+  position: absolute;
+  top: 19%;
+  left: 22%;
+  right: 22%;
+  z-index: 1;
+  display: flex;
+  gap: 2.2cqi;
+  height: 2.2cqi;
+  min-height: 3px;
+}
+
+.vent {
+  position: relative;
+  flex: 1;
+  border-radius: 1px;
+  background: rgb(0 0 0 / 0.5);
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.5);
+}
+
+.vent::before,
+.vent::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+}
+
+/* On: a pale light, while the bag is inside. */
+.vent::before {
+  background: oklch(86% 0.01 220);
+}
+
+/* The verdict's colour. */
+.vent::after {
+  transition: opacity 300ms var(--ease-out);
+}
+
+.scanner:is([data-phase="ride"], [data-phase="scan"], [data-phase="objects"]) .vent::before {
+  animation: ventOn 220ms var(--ease-out) both;
+  animation-delay: calc(650ms + var(--v) * 115ms);
+}
+
+.scanner:is([data-phase="verdict"], [data-phase="exit"], [data-phase="done"]) .vent::before {
+  opacity: 0.85;
+}
+
+.scanner[data-verdict] .vent::after {
+  opacity: 1;
+}
+
+.scanner[data-verdict="CLEARED"] .vent::after {
+  background: oklch(62% 0.07 148);
+}
+
+.scanner[data-verdict="SCREENING"] .vent::after {
+  background: var(--amber);
+}
+
+.scanner[data-verdict="STOPPED"] .vent::after {
+  background: var(--error);
+}
+
+@keyframes ventOn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.85;
+  }
+}
+
+/* The mouths, with their rubber curtain strips. */
+.mouth {
+  position: absolute;
+  top: 36%;
+  bottom: 0;
+  width: 17%;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 3px;
+  border-radius: 10px 10px 0 0;
+  background: oklch(10% 0 0);
+  box-shadow:
+    inset 0 6px 10px rgb(0 0 0 / 0.7),
+    0 0 0 2px oklch(29% 0.004 220);
+  overflow: hidden;
+}
+
+.mouthIn {
+  left: 5%;
+}
+
+.mouthOut {
+  right: 5%;
+}
+
+.strip {
+  flex: 1;
+  margin: 0 0.5px;
+  background: linear-gradient(to right, oklch(20% 0 0), oklch(25% 0 0) 50%, oklch(19% 0 0));
+  transform-origin: 50% 0;
+  opacity: 0.92;
+}
+
+.scanner[data-phase="ride"] .mouthIn .strip {
+  animation: sway 900ms var(--ease-out) both;
+  animation-delay: calc(560ms + var(--s) * 30ms);
+}
+
+.scanner[data-phase="exit"] .mouthOut .strip {
+  animation: sway 900ms var(--ease-out) both;
+  animation-delay: calc(80ms + var(--s) * 30ms);
+}
+
+@keyframes sway {
+  0% {
+    transform: rotate(0) scaleY(1);
+  }
+  25% {
+    transform: rotate(-16deg) scaleY(0.94);
+  }
+  55% {
+    transform: rotate(7deg);
+  }
+  80% {
+    transform: rotate(-3deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
+}
+
+/* The status panel on the housing: three lamps, unlit at rest. */
+.panel {
+  position: absolute;
+  top: 0;
+  left: 9%;
+  right: 9%;
+  height: 14%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border-radius: 5px 5px 0 0;
+  background: oklch(24% 0.004 220);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.07);
+  padding: 0 3cqi;
+  font-family: var(--font-mono);
+  font-size: 3.3cqi;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  color: var(--graphite-4);
+}
+
+.lamp {
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+}
+
+.lamp i {
+  flex: none;
+  width: 0.9em;
+  height: 0.9em;
+  border-radius: 50%;
+  background: oklch(30% 0 0);
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.6);
+}
+
+.lamp[data-lit] {
+  color: var(--paper);
+}
+
+.lamp[data-lit][data-lamp="CLEARED"] i {
+  background: oklch(62% 0.07 148);
+}
+
+.lamp[data-lit][data-lamp="SCREENING"] i {
+  background: var(--amber);
+}
+
+.lamp[data-lit][data-lamp="STOPPED"] i {
+  background: var(--error);
+}
+
+/* Phones: the lamps alone (the report says the verdict). */
+@media (max-width: 639px) {
+  .lamp {
+    font-size: 0;
+  }
+
+  .lamp i {
+    width: 7px;
+    height: 7px;
+  }
+}
+
+.nextRow {
+  display: flex;
+  justify-content: flex-end;
+  min-height: 2.75rem;
+}
+
+.next {
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  border: 1px solid var(--graphite-3);
+  border-radius: 4px;
+  background: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--paper);
+  cursor: pointer;
+  animation: fadeIn 200ms var(--ease-out) both;
+}
+
+.next:hover {
+  border-color: var(--paper-muted);
+}
+
+.next:focus-visible,
+.send:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+/* ---------- The luggage tag ---------- */
+
+.tagWrap {
+  position: relative;
+  width: 100%;
+  max-width: 22rem;
+  margin: 2.25rem auto 0;
+  filter: drop-shadow(0 10px 18px rgb(0 0 0 / 0.35));
+}
+
+@media (min-width: 1024px) {
+  .tagWrap {
+    margin-left: 0;
+  }
+}
+
+.tag {
+  position: relative;
+  padding: 2.4rem 1.2rem 0;
+  color: var(--card-ink);
+  background:
+    radial-gradient(140% 90% at 30% 20%, rgb(255 255 255 / 0.1), transparent 60%),
+    radial-gradient(120% 80% at 90% 100%, rgb(90 60 20 / 0.12), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.22 0 0 0 0 0.1 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"),
+    var(--card);
+  clip-path: polygon(16% 0, 84% 0, 100% 7%, 100% 100%, 0 100%, 0 7%);
+}
+
+/* Soft wear on the corners. */
+.tag::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 0 100%, rgb(70 50 20 / 0.18), transparent 2.5rem),
+    radial-gradient(circle at 100% 100%, rgb(70 50 20 / 0.14), transparent 2.5rem);
+  pointer-events: none;
+}
+
+.eyelet {
+  position: absolute;
+  top: 0.8rem;
+  left: 50%;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-left: -0.575rem;
+  border-radius: 50%;
+  background: var(--void);
+  box-shadow:
+    0 0 0 3px oklch(68% 0.035 78),
+    0 0 0 4px oklch(58% 0.03 74);
+}
+
+.tagString {
+  position: absolute;
+  z-index: 1;
+  top: -2.1rem;
+  left: 50%;
+  width: 1.4rem;
+  height: 3rem;
+  margin-left: -0.7rem;
+  fill: none;
+  stroke: oklch(70% 0.02 80);
+  stroke-width: 2;
+}
+
+.tagLine {
+  margin: 0.4rem 0 0.2rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.tagCaption {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.9375rem;
+  text-align: center;
+  color: var(--card-label);
+}
+
+.tagFields {
+  margin: 0.6rem 0 0;
+  border-top: 2px solid var(--card-ink);
+}
+
+.tagField {
+  display: grid;
+  grid-template-columns: 6.25rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.5rem;
+  min-height: 2.15rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--card-rule);
+}
+
+.tagField dt,
+.tagField > span:first-child {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.8125rem;
+  color: var(--card-label);
+}
+
+.tagField dd,
+.typed,
+.typedSelect,
+.typedOut {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  color: var(--card-ink);
+  overflow-wrap: anywhere;
+}
+
+.tagNo {
+  position: absolute;
+  top: 3.4rem;
+  right: 0.45rem;
+  margin: 0;
+  writing-mode: vertical-rl;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  color: var(--card-label);
+}
+
+.tearOff {
+  margin: 1rem -1.2rem 0;
+  padding: 0.7rem 1.2rem 0.9rem;
+  border-top: 2px dotted var(--card-rule);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.24em;
+  color: var(--card-label);
+}
+
+/* The verdict stamp: the passport stamps' worn ink, diagonal across the tag. */
+.tagStamp {
+  position: absolute;
+  top: 34%;
+  left: 50%;
+  z-index: 2;
+  width: 86%;
+  aspect-ratio: 360 / 132;
+  transform: translate(-50%, -50%) rotate(-14deg);
+  pointer-events: none;
+}
+
+.tagStampInk {
+  position: absolute;
+  inset: 0;
+  opacity: 0.86;
+  -webkit-mask: none center / contain no-repeat;
+  mask: none center / contain no-repeat;
+}
+
+.tagStamp[data-verdict="CLEARED"] .tagStampInk {
+  background: var(--ink-za);
+  -webkit-mask-image: url(/security-check/stamp-cleared.webp);
+  mask-image: url(/security-check/stamp-cleared.webp);
+}
+
+.tagStamp[data-verdict="SCREENING"] .tagStampInk {
+  background: oklch(62% 0.1 66);
+  -webkit-mask-image: url(/security-check/stamp-screening.webp);
+  mask-image: url(/security-check/stamp-screening.webp);
+}
+
+.tagStamp[data-verdict="STOPPED"] .tagStampInk {
+  background: oklch(55% 0.14 27);
+  -webkit-mask-image: url(/security-check/stamp-stopped.webp);
+  mask-image: url(/security-check/stamp-stopped.webp);
+}
+
+.tagStamp[data-landing] {
+  animation: stampPress 180ms cubic-bezier(0.55, 0, 1, 0.45) both;
+}
+
+.tagStamp[data-landing] .tagStampInk {
+  animation: stampTake 250ms var(--ease-out) 180ms both;
+}
+
+@keyframes stampPress {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% - 10px)) rotate(-14deg) scale(1.06);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(-14deg) scale(1);
+  }
+}
+
+@keyframes stampTake {
+  from {
+    opacity: 0.62;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.86;
+    transform: scale(1.008);
+  }
+}
+
+/* ---------- Pack your own bag ---------- */
+
+.packForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tagEditable .tagField {
+  min-height: 2.75rem;
+  align-items: center;
+}
+
+.typed,
+.typedSelect {
+  width: 100%;
+  min-height: 2.25rem;
+  padding: 0 0.35rem;
+  border: 0;
+  border-bottom: 1px dashed var(--card-rule);
+  border-radius: 0;
+  background: rgb(255 255 255 / 0.12);
+  text-transform: uppercase;
+  appearance: none;
+}
+
+.typedSelect {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.typedSelect[data-state="open"] {
+  background: rgb(255 255 255 / 0.22);
+}
+
+.selectIcon {
+  font-size: 0.75rem;
+  color: var(--card-label);
+}
+
+/* The menu: the same aged card, typed values, an ink tick (it renders outside the section, so it carries
+   its own colours). */
+.menu {
+  --card: oklch(80% 0.026 84);
+  --card-edge: oklch(70% 0.03 78);
+  --card-ink: oklch(30% 0.015 60);
+  --card-label: oklch(42% 0.02 62);
+  z-index: 60;
+  min-width: var(--radix-select-trigger-width);
+  max-height: min(22rem, var(--radix-select-content-available-height));
+  overflow: hidden;
+  border: 1px solid var(--card-edge);
+  border-radius: 3px;
+  background:
+    radial-gradient(140% 90% at 30% 20%, rgb(255 255 255 / 0.12), transparent 60%),
+    var(--card);
+  box-shadow: 0 14px 30px -12px rgb(0 0 0 / 0.6);
+  transform-origin: var(--radix-select-content-transform-origin);
+  animation: menuIn 150ms var(--ease-out);
+}
+
+@keyframes menuIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+.menuViewport {
+  padding: 0.25rem 0;
+}
+
+.menuItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0 2rem 0 0.75rem;
+  border-bottom: 1px solid rgb(90 70 40 / 0.18);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  color: var(--card-ink);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+}
+
+.menuItem:last-child {
+  border-bottom: 0;
+}
+
+.menuItem[data-highlighted] {
+  background: rgb(60 40 15 / 0.1);
+}
+
+.menuItem[data-state="checked"] {
+  font-weight: 600;
+}
+
+.menuTick {
+  position: absolute;
+  right: 0.75rem;
+  color: var(--card-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu {
+    animation-duration: 100ms;
+  }
+}
+
+.typed:focus-visible,
+.typedSelect:focus-visible,
+.slider input:focus-visible,
+.bagThumb input:focus-visible + picture {
+  outline: 2px solid oklch(45% 0.08 66);
+  outline-offset: 1px;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 0.4rem;
+}
+
+.slider {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* The sliders: an inked line with a round ink thumb and a tick at each grid step. */
+.slider input {
+  width: 100%;
+  min-height: 2.25rem;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+
+.slider input::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background:
+    radial-gradient(circle, var(--card-label) 0 1.5px, transparent 2px) 0 50% / calc((100% - 6px) / 5) 6px repeat-x,
+    linear-gradient(var(--card-rule), var(--card-rule)) 0 50% / 100% 2px no-repeat;
+}
+
+.slider input::-moz-range-track {
+  height: 2px;
+  background: var(--card-rule);
+}
+
+.slider input::-webkit-slider-thumb {
+  width: 16px;
+  height: 16px;
+  margin-top: -5px;
+  border: 2px solid var(--card);
+  border-radius: 50%;
+  background: var(--card-ink);
+  box-shadow: 0 0 0 1px var(--card-ink);
+  appearance: none;
+}
+
+.slider input::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--card);
+  border-radius: 50%;
+  background: var(--card-ink);
+  box-shadow: 0 0 0 1px var(--card-ink);
+}
+
+/* Touch: every control on the tag at least 44 px tall. */
+@media (pointer: coarse) {
+  .typed,
+  .typedSelect,
+  .slider input {
+    min-height: 2.75rem;
+  }
+}
+
+.typedOut {
+  min-width: 5.5rem;
+  text-align: right;
+}
+
+.bagChoice {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.bagChoice legend {
+  margin-bottom: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.24em;
+  color: var(--graphite-4);
+}
+
+.bagThumb {
+  position: relative;
+  display: block;
+  width: 5.5rem;
+  min-height: 2.75rem;
+  padding: 0.4rem;
+  border: 1px solid var(--graphite-2);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.bagThumb input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bagThumb img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: saturate(0.4) contrast(0.88) brightness(1.06);
+}
+
+.bagThumb:has(input:checked) {
+  border-color: var(--amber);
+}
+
+.bagThumb:has(input:checked) img {
+  filter: none;
+}
+
+.packNote {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--graphite-4);
+}
+
+.send {
+  align-self: flex-start;
+  min-height: 2.75rem;
+  padding: 0 1.4rem;
+  border: 0;
+  border-radius: 4px;
+  background: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--void);
+  cursor: pointer;
+  transition: transform var(--duration-press) var(--ease-out);
+}
+
+.send:active {
+  transform: scale(0.97);
+}
+
+/* ---------- The screening report ---------- */
+
+.report {
+  padding-top: 1rem;
+  border-top: 1px solid var(--graphite-2);
+  animation: fadeIn 250ms var(--ease-out) both;
+}
+
+.reportHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.reportVerdict {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--paper);
+}
+
+.precomputed {
+  margin: 0;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--graphite-3);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--graphite-4);
+}
+
+.reportRisk {
+  margin: 0.35rem 0 0.9rem;
+  font-size: 1rem;
+  color: var(--paper);
+}
+
+.bar {
+  margin-bottom: 0.9rem;
+}
+
+.barTrack {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--graphite-1);
+}
+
+.barBand {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.barBand[data-band="CLEARED"] {
+  background: var(--graphite-2);
+  border-radius: 3px 0 0 3px;
+}
+
+.barBand[data-band="SCREENING"] {
+  background: color-mix(in oklch, var(--amber) 55%, var(--graphite-2));
+}
+
+.barBand[data-band="STOPPED"] {
+  background: color-mix(in oklch, var(--error) 55%, var(--graphite-2));
+  border-radius: 0 3px 3px 0;
+}
+
+.barMark {
+  position: absolute;
+  top: -5px;
+  width: 2px;
+  height: 16px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--paper);
+}
+
+.barBreak {
+  position: absolute;
+  top: -3px;
+  width: 7px;
+  height: 12px;
+  margin-left: -3.5px;
+  background: linear-gradient(105deg, transparent 30%, var(--void) 30% 70%, transparent 70%);
+}
+
+.barBreak::before,
+.barBreak::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--graphite-4);
+  transform: skewX(-15deg);
+}
+
+.barBreak::before {
+  left: 1px;
+}
+
+.barBreak::after {
+  right: 1px;
+}
+
+/* Ticks and names: each centred on its position, the outer ones held inside the bar's ends. */
+.barTicks,
+.barNames {
+  position: relative;
+  height: 1.05rem;
+  font-family: var(--font-mono);
+  color: var(--graphite-4);
+}
+
+.barTicks {
+  margin-top: 0.35rem;
+  font-size: 0.625rem;
+}
+
+.barNames {
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+}
+
+.barTicks span,
+.barNames span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.barTicks span[data-align="start"],
+.barNames span[data-align="start"] {
+  transform: none;
+}
+
+.barTicks span[data-align="end"],
+.barNames span[data-align="end"] {
+  transform: translateX(-100%);
+}
+
+.reportNote {
+  margin: 0.6rem 0 0;
+  font-size: 0.75rem;
+  color: var(--graphite-4);
+}
+
+.reportScore {
+  margin: 0 0 0.9rem;
+  font-size: 0.75rem;
+  color: var(--graphite-4);
+}
+
+.reportScore sup {
+  font-size: 0.7em;
+}
+
+.reasons {
+  display: grid;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reason {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--graphite-1);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--paper-muted);
+}
+
+.reasonIcon {
+  width: 1.75rem;
+  height: 1.75rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--graphite-4);
+}
+
+.reasonIcon :global(.fine) {
+  stroke-width: 1.4;
+  opacity: 0.75;
+}
+
+.reason[data-direction="raised"] .reasonIcon {
+  color: var(--amber);
+}
+
+.reasonShare {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  color: var(--graphite-4);
+  white-space: nowrap;
+}
+
+.note {
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--graphite-4);
+}
+
+.note p {
+  margin: 0 0 0.5rem;
+}
+
+.noteLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 0;
+}
+
+.noteLinks a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--paper);
+  text-decoration: underline;
+  text-decoration-color: var(--graphite-3);
+  text-underline-offset: 3px;
+}
+
+.noteLinks a:hover {
+  text-decoration-color: var(--amber);
+}
+
+/* ---------- Reduced motion: nothing moves; the X-ray cross-fades in, everything else appears at once ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .bag,
+  .scanner .bag {
+    --x: var(--x-entry) !important;
+    transition: none !important;
+  }
+
+  .bagDrop,
+  .beltSurface,
+  .strip,
+  .tagStamp,
+  .tagStampInk,
+  .object {
+    animation: none !important;
+  }
+
+  .object {
+    opacity: 1;
+  }
+
+  .bagColour {
+    display: none;
+  }
+
+  .scanner[data-phase="scan"] .reveal,
+  .scanner[data-phase="scan"] .revealInner {
+    animation: none;
+  }
+
+  .reveal,
+  .revealInner {
+    transform: none;
+  }
+
+  .scanLine {
+    display: none;
+  }
+
+  .xrayBox {
+    animation: fadeIn 150ms linear both;
+  }
+
+  .scanner .vent::before {
+    animation: none !important;
+  }
+
+  .scanner:is([data-phase="scan"], [data-phase="objects"]) .vent::before {
+    opacity: 0.85;
+  }
+
+  .report,
+  .screenVerdict,
+  .next {
+    animation-duration: 150ms;
+  }
+
+  .scanner .object {
+    opacity: 1;
+  }
+}
+
+/* ---------- Desktop: the stage on one screen (1280x800 and up) ---------- */
+
+@media (min-width: 1024px) {
+  /* A shorter stage, the Next button in its free top-right corner, a smaller tag. */
+  .stage {
+    aspect-ratio: 16 / 6;
+  }
+
+  .nextRow {
+    position: absolute;
+    right: 0;
+    bottom: calc(100cqi * 6 / 16 - 3rem);
+    min-height: 0;
+    z-index: 3;
+  }
+
+  .tagWrap {
+    max-width: 19rem;
+    margin-top: 1.9rem;
+  }
+
+  .tag {
+    padding-top: 2rem;
+  }
+
+  .tagField {
+    min-height: 1.85rem;
+    padding: 0.25rem 0;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+  }
+
+  .tagField dd,
+  .tagField dt {
+    font-size: 0.75rem;
+  }
+
+  .tearOff {
+    margin-top: 0.6rem;
+    padding: 0.5rem 1.2rem 0.6rem;
+  }
+}

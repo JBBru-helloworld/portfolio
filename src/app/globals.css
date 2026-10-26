@@ -1,0 +1,386 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Never scan the old site, owner originals or licensed references for classes. */
+@source not "../../legacy";
+@source not "../../assets";
+@source not "../../references";
+
+/*
+ * Design tokens. Dark is the default and only theme. See DESIGN.md for the rules.
+ * Contrast ratios are WCAG 2 against --void unless stated.
+ */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --void: oklch(14.5% 0 0); /* #0A0A0A  page background */
+  --cabin: oklch(19.1% 0 0); /* #141414  raised surfaces, 1.07:1 */
+
+  /* Graphite steps */
+  --graphite-1: oklch(23.5% 0 0); /* #1E1E1E  hairlines on cabin, hover fills (1.19:1) */
+  --graphite-2: oklch(32% 0 0); /* #333333  dividers, decorative borders (1.57:1) */
+  --graphite-3: oklch(50% 0 0); /* #636363  meaningful borders, inputs; non-text only (3.30:1) */
+  --graphite-4: oklch(63.3% 0 0); /* #8A8A8A  muted text, table categories (5.73:1) */
+
+  /* Text */
+  --paper: oklch(96.9% 0.004 106.5); /* #F5F5F2  primary text (18.13:1) */
+  --paper-muted: oklch(80% 0.004 106.5); /* #BEBEBB  secondary text (10.63:1) */
+
+  /* The single accent: focus rings, one highlight per section, the fraud demo's top driver */
+  --amber: oklch(75% 0.088 72); /* #D1A56F  (8.79:1) */
+
+  /* Semantic error colour for form validation only (6.49:1) */
+  --error: oklch(68% 0.12 27); /* #D8796F */
+
+  /* Passport stamp inks: section-scoped to the passport stamp section only. Non-text 3:1+. */
+  --ink-za: oklch(52% 0.042 148); /* #59705B  South Africa, faded bottle green (3.67:1) */
+  --ink-mu: oklch(52% 0.085 27); /* #94554E  Mauritius, soft worn red (3.46:1) */
+  --ink-my: oklch(52% 0.045 262); /* #5B6983  Malaysia, faded navy (3.58:1) */
+
+  /* Motion durations (mirrors src/lib/motion.ts; easing curves live in @theme below) */
+  --duration-press: 120ms;
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 250ms;
+  --duration-spring: 400ms;
+  --duration-cinematic: 1200ms;
+  --duration-reduced: 150ms;
+
+  /* Layout */
+  --measure: 68ch;
+  --radius: 0.375rem;
+
+  /* shadcn/ui semantic mapping */
+  --background: var(--void);
+  --foreground: var(--paper);
+  --card: var(--cabin);
+  --card-foreground: var(--paper);
+  --popover: var(--cabin);
+  --popover-foreground: var(--paper);
+  --primary: var(--paper);
+  --primary-foreground: var(--void);
+  --secondary: var(--graphite-1);
+  --secondary-foreground: var(--paper);
+  --muted: var(--graphite-1);
+  --muted-foreground: var(--paper-muted);
+  --accent: var(--graphite-1); /* shadcn "accent" is a hover fill, not the amber accent */
+  --accent-foreground: var(--paper);
+  --destructive: var(--error);
+  --border: var(--graphite-2);
+  --input: var(--graphite-3);
+  --ring: var(--amber);
+  --chart-1: var(--paper);
+  --chart-2: var(--paper-muted);
+  --chart-3: var(--graphite-4);
+  --chart-4: var(--graphite-3);
+  --chart-5: var(--graphite-2);
+  --sidebar: var(--cabin);
+  --sidebar-foreground: var(--paper);
+  --sidebar-primary: var(--paper);
+  --sidebar-primary-foreground: var(--void);
+  --sidebar-accent: var(--graphite-1);
+  --sidebar-accent-foreground: var(--paper);
+  --sidebar-border: var(--graphite-2);
+  --sidebar-ring: var(--amber);
+}
+
+/* Easing curves (mirrors src/lib/motion.ts). `static`: always emitted as :root variables (CSS modules use them). */
+@theme static {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-cinematic: cubic-bezier(0.65, 0.05, 0.36, 1);
+  /* Critically damped spring (damping 1.0, response 0.4s) sampled for CSS */
+  --ease-spring: linear(
+    0, 0.054, 0.171, 0.306, 0.438, 0.554, 0.653, 0.733, 0.797, 0.847, 0.885,
+    0.915, 0.937, 0.953, 0.966, 0.975, 0.982, 0.987, 0.99, 0.993, 1
+  );
+}
+
+@theme inline {
+  /* Brand tokens as utilities: bg-void, text-paper, border-graphite-2, outline-amber ... */
+  --color-void: var(--void);
+  --color-cabin: var(--cabin);
+  --color-graphite-1: var(--graphite-1);
+  --color-graphite-2: var(--graphite-2);
+  --color-graphite-3: var(--graphite-3);
+  --color-graphite-4: var(--graphite-4);
+  --color-paper: var(--paper);
+  --color-paper-muted: var(--paper-muted);
+  --color-amber: var(--amber);
+  --color-error: var(--error);
+  --color-ink-za: var(--ink-za);
+  --color-ink-mu: var(--ink-mu);
+  --color-ink-my: var(--ink-my);
+
+  /* shadcn semantic colours */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Typefaces (variables set by next/font/local in src/lib/fonts.ts) */
+  --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  /* Fluid type scale, 360px -> 1440px viewports. Tracking tightens as size grows. */
+  --text-xs: 0.75rem; /* 12px  mono labels */
+  --text-xs--line-height: 1.5;
+  --text-xs--letter-spacing: 0.04em;
+  --text-sm: 0.875rem; /* 14px  captions, meta */
+  --text-sm--line-height: 1.5;
+  --text-sm--letter-spacing: 0.005em;
+  --text-base: clamp(1rem, 0.9792rem + 0.0926vw, 1.0625rem); /* 16 -> 17px  body */
+  --text-base--line-height: 1.6;
+  --text-base--letter-spacing: 0em;
+  --text-lg: clamp(1.125rem, 1.0833rem + 0.1852vw, 1.25rem); /* 18 -> 20px  lead */
+  --text-lg--line-height: 1.55;
+  --text-lg--letter-spacing: -0.005em;
+  --text-xl: clamp(1.25rem, 1.1667rem + 0.3704vw, 1.5rem); /* 20 -> 24px  h4 */
+  --text-xl--line-height: 1.35;
+  --text-xl--letter-spacing: -0.01em;
+  --text-2xl: clamp(1.5rem, 1.3333rem + 0.7407vw, 2rem); /* 24 -> 32px  h3 */
+  --text-2xl--line-height: 1.2;
+  --text-2xl--letter-spacing: -0.015em;
+  --text-3xl: clamp(2rem, 1.6667rem + 1.4815vw, 3rem); /* 32 -> 48px  h2 */
+  --text-3xl--line-height: 1.1;
+  --text-3xl--letter-spacing: -0.02em;
+  --text-4xl: clamp(2.5rem, 1.8333rem + 2.963vw, 4.5rem); /* 40 -> 72px  h1 */
+  --text-4xl--line-height: 1.05;
+  --text-4xl--letter-spacing: -0.025em;
+  --text-display: clamp(3rem, 1.8333rem + 5.1852vw, 6.5rem); /* 48 -> 104px  display */
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.03em;
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply bg-void font-sans text-paper antialiased;
+    text-rendering: optimizeLegibility;
+    font-optical-sizing: auto;
+    /* The site restores scroll positions itself (site-state.ts); the browser's scroll anchoring would move
+       a restored page again when the scroll sequence's pin spacing settles above it (seen in WebKit). */
+    overflow-anchor: none;
+  }
+
+  body {
+    @apply min-h-dvh bg-background text-base text-foreground;
+  }
+
+  /* Focus: amber ring on keyboard focus only (2px outline, 3px offset). */
+  :focus {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--paper);
+    color: var(--void);
+  }
+}
+
+/* Inline Newsreader Italic accent: one word or short phrase inside a heading, never a sentence. */
+@utility accent-serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Comfortable reading line length for body copy. */
+@utility measure {
+  max-width: var(--measure);
+}
+
+/*
+ * Reduced motion: movement and scaling are removed everywhere. Only short opacity fades
+ * (150ms, under 200ms) remain, so state changes are still visible; colour changes apply instantly.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-property: opacity !important;
+    transition-duration: var(--duration-reduced) !important;
+    transition-timing-function: ease !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  /* Interactive scale and translate feedback is dropped, not just un-animated. */
+  [data-motion="press"]:active,
+  [data-motion="lift"]:hover {
+    transform: none !important;
+  }
+}
+
+/*
+ * The flight (Phase 4a): opening a featured project, the gallery strip's image grows into the project
+ * page's header (view-transition name "flight-hero", set in src/components/work/flight-nav.ts). The two
+ * snapshots keep their crop (cover) while the box morphs; the rest of the page cross-fades quickly.
+ */
+::view-transition-group(flight-hero) {
+  animation-duration: 520ms;
+  animation-timing-function: var(--ease-out);
+}
+
+::view-transition-old(flight-hero),
+::view-transition-new(flight-hero) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation-duration: 520ms;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/*
+ * Staggered entrances (src/components/reveal/RevealGroup.tsx): items wait hidden, with JavaScript only,
+ * until they scroll in; once a visit has seen them all (or under reduced motion) they are simply there.
+ */
+html.js [data-reveal-group]:not([data-reveal-group="done"]) [data-reveal]:not([data-revealed]) {
+  opacity: 0;
+}
+
+[data-reveal-group="run"] [data-revealed] {
+  animation: reveal-in 460ms var(--ease-out) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    translate: 0 var(--reveal-rise, 8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal-group] [data-revealed] {
+    animation: none;
+  }
+}
+
+/* ---------- Print (Phase 6): project pages print as plain, readable text ---------- */
+@media print {
+  :root {
+    --void: #ffffff;
+    --cabin: #ffffff;
+    --graphite-1: #e6e6e6;
+    --graphite-2: #cccccc;
+    --graphite-3: #999999;
+    --graphite-4: #555555;
+    --paper: #111111;
+    --paper-muted: #333333;
+    --amber: #111111;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #111111;
+  }
+
+  /* No fixed header, corner sign, footer extras or skip link on paper. */
+  body > header,
+  body > footer,
+  body > nav,
+  [class*="skip"] {
+    display: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  main {
+    padding-top: 0 !important;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  /* External links show where they go. */
+  main a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+
+  img,
+  picture,
+  svg,
+  figure {
+    break-inside: avoid;
+    max-width: 100% !important;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+}

@@ -1,0 +1,253 @@
+/*
+ * Duty free: two or three softly lit shelves in the site's greys. Each product sits in a pool of light from
+ * above, on a thin shelf edge with a faint highlight, with a shelf-edge tag below (the name and the action,
+ * in JetBrains Mono, no prices). Restrained: no shop clutter.
+ */
+
+.section {
+  padding: clamp(5rem, 14svh, 9rem) clamp(1rem, 4vw, 3rem) clamp(3rem, 8svh, 5rem);
+  border-top: 1px solid var(--graphite-2);
+  outline: none;
+}
+
+.inner {
+  max-width: 64rem;
+  margin: 0 auto;
+}
+
+.label {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  color: var(--graphite-4);
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--text-3xl, 1.875rem);
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.intro {
+  margin: 0.75rem 0 clamp(2.5rem, 6svh, 4rem);
+  font-size: 1.0625rem;
+  color: var(--paper-muted);
+}
+
+/* ---------- Shelves ---------- */
+
+.shelves {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  row-gap: clamp(2.5rem, 6svh, 3.5rem);
+}
+
+.bay {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+}
+
+@media (min-width: 768px) {
+  .bay {
+    width: calc(100% / 3);
+  }
+}
+
+.product {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+  color: var(--paper);
+  text-decoration: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The shelf: a pool of light from above, the product standing on a thin edge with a faint highlight. */
+.object {
+  position: relative;
+  display: grid;
+  place-items: end center;
+  width: 100%;
+  height: clamp(8rem, 18vw, 10.5rem);
+  padding-bottom: 2px;
+  background: radial-gradient(60% 75% at 50% 0%, rgb(255 255 255 / 0.05), transparent 70%);
+  border-bottom: 1px solid var(--graphite-3);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.06), 0 10px 18px -12px rgb(0 0 0 / 0.9);
+}
+
+.svg {
+  width: clamp(6.75rem, 16vw, 9rem);
+  height: auto;
+  overflow: visible;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.body,
+.top,
+.side,
+.paper {
+  stroke: var(--graphite-4);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.body {
+  fill: #151515;
+}
+
+.top {
+  fill: #1c1c1c;
+}
+
+.side {
+  fill: #101010;
+}
+
+.paper {
+  fill: #1a1a1a;
+}
+
+.line {
+  fill: none;
+  stroke: var(--graphite-4);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.faint {
+  fill: none;
+  stroke: var(--graphite-3);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.highlight {
+  fill: none;
+  stroke: rgb(255 255 255 / 0.22);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.mark {
+  fill: var(--paper-muted);
+}
+
+/* The shelf-edge tag, hanging below the edge like a duty-free price tag (without the price). */
+.tag {
+  display: grid;
+  justify-items: center;
+  gap: 0.25rem;
+  min-width: 8.5rem;
+  margin-top: 0.625rem;
+  padding: 0.5rem 0.75rem 0.5625rem;
+  border: 1px solid var(--graphite-2);
+  border-radius: 3px;
+  background: var(--cabin);
+  font-family: var(--font-mono);
+  text-align: center;
+}
+
+.tagName {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--paper);
+}
+
+.tagAction {
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  color: var(--graphite-4);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+/* Picked up: the product lifts a few pixels and its action turns amber. */
+.product:hover .svg,
+.product:focus-visible .svg {
+  transform: translateY(-6px);
+}
+
+.product:hover .tagAction,
+.product:focus-visible .tagAction {
+  color: var(--amber);
+}
+
+.product:focus-visible .tag {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+/* ---------- Email: Copy, and the no-JavaScript address ---------- */
+
+.copy {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  margin-top: 0.375rem;
+  padding: 0 0.5rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.copy:disabled {
+  visibility: hidden;
+}
+
+.copy:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Two classes, so the size wins over the board's own tile rules. */
+.copy .copyTiles {
+  --tw: 0.75rem;
+  gap: 1px;
+}
+
+.copy .copyTile {
+  color: var(--graphite-4);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.copy:hover .copyTile,
+.copy:focus-visible .copyTile {
+  color: var(--paper);
+}
+
+.fallback {
+  display: block;
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--paper-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svg,
+  .tagAction {
+    transition: none;
+  }
+
+  .product:hover .svg,
+  .product:focus-visible .svg {
+    transform: none;
+  }
+}

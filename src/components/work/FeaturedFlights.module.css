@@ -1,0 +1,334 @@
+/*
+ * Featured flights. Sizes here are the no-JavaScript (and pre-hydration) layout; once hydrated, motion
+ * animates flex-grow (row) or height (stack) from these same values (FeaturedFlights.tsx mirrors them).
+ *
+ * The open strip shows its screenshot whole: on wide screens the image box is exactly as wide as an open
+ * strip and 16:10 tall (the screenshots' shape), with the details in a band below it; on phones the open
+ * strip is the image at full width, then the details.
+ */
+
+/* The size container: the list's sizes are worked out from its width. */
+.gallery {
+  container-type: inline-size;
+}
+
+.list {
+  --gap: 0.5rem;
+  --grow: 10;
+  --closed-h: 76px;
+  --ratio: 1.6;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.strip {
+  position: relative;
+  height: var(--closed-h);
+  overflow: hidden;
+  border: 1px solid var(--graphite-2);
+  border-radius: 0.75rem;
+  background: var(--cabin);
+  /* Each strip is its own layer, so a neighbour's resize never repaints its image. */
+  contain: layout paint;
+}
+
+.strip[data-active] {
+  height: auto;
+}
+
+.link {
+  position: relative;
+  display: block;
+  color: var(--paper);
+  text-decoration: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.strip:has(.link:focus-visible) {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+/* ---------- The image: greyscale at rest, colour when open ---------- */
+
+/* Clipped here (not only by the strip), so the view transition's snapshot is exactly the visible image. */
+.media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.img,
+.poster {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.img {
+  object-fit: cover;
+  filter: grayscale(1);
+  opacity: 0.75;
+  transition:
+    filter 420ms var(--ease-out),
+    opacity 420ms var(--ease-out);
+}
+
+.strip[data-active] .img {
+  filter: none;
+  opacity: 1;
+}
+
+/* Collapsed strips sit further back, so light screenshots never wash out their labels. */
+.shade {
+  position: absolute;
+  inset: 0;
+  background: rgb(10 10 10 / 0.62);
+  pointer-events: none;
+  transition: opacity 420ms var(--ease-out);
+}
+
+.strip[data-active] .shade {
+  opacity: 0;
+}
+
+/* ---------- Collapsed label ---------- */
+
+.collapsed {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  top: calc(var(--closed-h) / 2);
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 0;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.strip[data-active] .collapsed {
+  opacity: 0;
+}
+
+.code {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--paper-muted);
+}
+
+.collapsedName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--paper);
+}
+
+/* ---------- Open: the details, below the image ---------- */
+
+.details {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 0.875rem;
+  padding: 1rem 1.125rem 1.125rem;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+  pointer-events: none;
+}
+
+.strip[data-active] .details {
+  opacity: 1;
+  transform: none;
+  transition-delay: 90ms;
+}
+
+.emblem {
+  grid-row: 1 / span 2;
+}
+
+.strip[data-active] .emblem {
+  --livery: var(--amber);
+}
+
+.name {
+  grid-column: 2;
+  margin: 0.125rem 0 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--paper);
+  text-wrap: balance;
+}
+
+.summary {
+  grid-column: 1 / -1;
+  max-width: 60ch;
+  margin: 0.625rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--paper-muted);
+  text-wrap: pretty;
+}
+
+/* Phones: below the summary; wide screens: beside the name (see below). */
+.view {
+  grid-column: 1 / -1;
+  justify-self: start;
+  margin-top: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--paper);
+}
+
+/* ---------- Wide screens: six strips in a row ---------- */
+
+@media (min-width: 768px) {
+  .list {
+    /* An open strip's width, and its image's height at the screenshots' 16:10 (capped by the screen). */
+    --open-w: calc((100cqw - 5 * var(--gap)) * var(--grow) / (var(--grow) + 5));
+    --img-h: min(calc(var(--open-w) / var(--ratio)), 64svh);
+    --band: 9.75rem;
+    flex-direction: row;
+    height: calc(var(--img-h) + var(--band));
+  }
+
+  .strip,
+  .strip[data-active] {
+    flex: 1 1 0;
+    min-width: 0;
+    height: auto;
+  }
+
+  /* Before hydration (no data-layout yet), and without JavaScript, the first strip is open. */
+  .strip[data-active] {
+    flex-grow: var(--grow);
+  }
+
+  .link {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Closed, the image fills the whole strip (no bar); open, it is the 16:10 box above the details. */
+  .media {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    aspect-ratio: auto;
+    transition: height 420ms var(--ease-out);
+  }
+
+  .strip[data-active] .media {
+    height: var(--img-h);
+  }
+
+  /* The image is as wide as an open strip, centred, and only revealed as the strip grows. */
+  .img,
+  .poster {
+    left: 50%;
+    width: var(--open-w);
+    transform: translateX(-50%);
+  }
+
+  /* Collapsed: the code and name run up the strip. */
+  .collapsed {
+    left: 50%;
+    right: auto;
+    top: auto;
+    bottom: 1.25rem;
+    writing-mode: vertical-rl;
+    transform: translateX(-50%) rotate(180deg);
+    max-height: calc(100% - 2.5rem);
+  }
+
+  .details {
+    position: absolute;
+    top: var(--img-h);
+    left: 0;
+    width: var(--open-w);
+    padding: 1.125rem 1.5rem 1.25rem;
+  }
+
+  .summary {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .name {
+    font-size: 1.375rem;
+  }
+
+  .view {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    margin-top: 0;
+  }
+}
+
+/* Narrow rows (tablets): a slightly taller band and a smaller name; the whole strip is already the link,
+   so View flight is left out to give the name and summary the room. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .list {
+    --band: 10.5rem;
+  }
+
+  .details {
+    padding: 1rem 1.125rem;
+  }
+
+  .name {
+    font-size: 1.125rem;
+  }
+
+  .view {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media,
+  .shade,
+  .img,
+  .collapsed,
+  .details {
+    transition: none;
+  }
+
+  .details {
+    transform: none;
+  }
+}

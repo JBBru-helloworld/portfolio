@@ -1,0 +1,530 @@
+/*
+ * Window scene (Phase 2b, v2 plate). Every image layer lives in one stage with the plate's exact aspect
+ * ratio, positioned in plate coordinates, so the clouds, the shade and the bezel line up at any size.
+ * Geometry arrives as custom properties (--l-* landscape plate, --p-* portrait plate) from the manifest.
+ * The plate's wall feathers into --void by itself, so the stage never has to cover the viewport.
+ */
+
+.scene {
+  /* ---- Tune the window here ---- */
+  /* Frame height as a share of the viewport height, per orientation (mirrored in WindowScene.tsx). */
+  --window-scale-landscape: 0.65;
+  --window-scale-portrait: 0.575;
+  /* Where the frame's centre sits, as a share of the viewport height (0.5 = middle). */
+  --window-y-landscape: 0.46;
+  --window-y-portrait: 0.42;
+  /* Film grain (static, one texel per device pixel): full strength outside the glass, half inside. */
+  --grain-opacity: 0.02;
+  --grain-blend: soft-light;
+  /* -------------------------------- */
+
+  --lift: 1600ms;
+  --grain-size: 128px; /* set to 256px / devicePixelRatio by the component */
+  --scale: var(--window-scale-landscape);
+  --window-y: var(--window-y-landscape);
+  --aspect: var(--l-aspect);
+  --gx: var(--l-gx);
+  --gy: var(--l-gy);
+  --gw: var(--l-gw);
+  --gh: var(--l-gh);
+  --cx: var(--l-cx);
+  --cy: var(--l-cy);
+  --fx-n: var(--l-fx-n);
+  --fy-n: var(--l-fy-n);
+  --fw-n: var(--l-fw-n);
+  --fh-n: var(--l-fh-n);
+  --sx: var(--l-sx);
+  --sy: var(--l-sy);
+  --sw: var(--l-sw);
+  --sh: var(--l-sh);
+  --ix: var(--l-ix);
+  --iy: var(--l-iy);
+  --iw: var(--l-iw);
+  --ih: var(--l-ih);
+  --shade-closed: var(--l-shade-closed);
+  --glass-mask: var(--l-glass-mask);
+  --aperture-clip: url(#aperture-clip-landscape);
+  --glass-clip: url(#glass-clip-landscape);
+
+  /* Stage size: the frame box is --scale of the viewport height. */
+  --stage-h: calc(var(--scale) / var(--fh-n) * 100svh);
+  --stage-w: calc(var(--stage-h) * var(--aspect));
+  /* Stage top: the frame's centre lands at --window-y. */
+  --frame-cy-n: calc(var(--fy-n) + var(--fh-n) / 2);
+  --stage-top: calc(var(--window-y) * 100svh - var(--frame-cy-n) * var(--stage-h));
+  /* Horizontal shift that centres the frame (not the plate) in the viewport. */
+  --frame-dx: calc((0.5 - var(--fx-n) - var(--fw-n) / 2) * var(--stage-w));
+  /* The frame's left edge on screen (for keeping text clear of it). */
+  --frame-left: calc(50vw - var(--fw-n) * var(--stage-w) / 2);
+
+  position: relative;
+  height: 100svh;
+  min-height: 320px;
+  overflow: hidden;
+  background: var(--void);
+  isolation: isolate;
+}
+
+/* Portrait plate (cropped to the wall panel) up to 3:4 viewports. Must match PORTRAIT_MEDIA in the TSX. */
+@media (max-aspect-ratio: 3/4) {
+  .scene {
+    --scale: var(--window-scale-portrait);
+    --window-y: var(--window-y-portrait);
+    --aspect: var(--p-aspect);
+    --gx: var(--p-gx);
+    --gy: var(--p-gy);
+    --gw: var(--p-gw);
+    --gh: var(--p-gh);
+    --cx: var(--p-cx);
+    --cy: var(--p-cy);
+    --fx-n: var(--p-fx-n);
+    --fy-n: var(--p-fy-n);
+    --fw-n: var(--p-fw-n);
+    --fh-n: var(--p-fh-n);
+    --sx: var(--p-sx);
+    --sy: var(--p-sy);
+    --sw: var(--p-sw);
+    --sh: var(--p-sh);
+    --ix: var(--p-ix);
+    --iy: var(--p-iy);
+    --iw: var(--p-iw);
+    --ih: var(--p-ih);
+    --shade-closed: var(--p-shade-closed);
+    --glass-mask: var(--p-glass-mask);
+    --aperture-clip: url(#aperture-clip-portrait);
+    --glass-clip: url(#glass-clip-portrait);
+  }
+}
+
+.defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ---------- Stage ---------- */
+
+.stage {
+  position: absolute;
+  left: 50%;
+  top: var(--stage-top);
+  width: var(--stage-w);
+  height: var(--stage-h);
+  translate: calc(-50% + var(--frame-dx)) 0;
+  container-type: size;
+}
+
+/* The camera fills the stage; the scroll push moves and scales it about the glass centre. GSAP writes its
+   transform (and would clear a CSS translate), which is why the stage's own placement lives one level up. */
+.camera {
+  position: absolute;
+  inset: 0;
+  transform-origin: var(--cx) var(--cy);
+}
+
+/* ---------- 1: the view, clipped to the glass (grown a little under the bezel) ---------- */
+
+.view,
+.glass,
+.shadeClip {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.view {
+  clip-path: var(--glass-clip);
+  -webkit-clip-path: var(--glass-clip);
+}
+
+.video {
+  position: absolute;
+  /* Cover the glass's bounding box plus a small margin (the clip path runs a little under the bezel). */
+  left: calc(var(--gx) - 1.5%);
+  top: calc(var(--gy) - 1.5%);
+  width: calc(var(--gw) + 3%);
+  height: calc(var(--gh) + 3%);
+  object-fit: cover;
+  background: #8e97a1;
+}
+
+/* ---------- 2: glass sheen and inner shadow, clipped to the glass ---------- */
+
+.glass {
+  clip-path: var(--glass-clip);
+  -webkit-clip-path: var(--glass-clip);
+}
+
+.sheen {
+  position: absolute;
+  left: var(--gx);
+  top: var(--gy);
+  width: var(--gw);
+  height: var(--gh);
+  background:
+    /* soft inner shadow where the glass meets the bezel, following its rounded shape */
+    radial-gradient(ellipse 72% 66% at 50% 50%, transparent 62%, rgb(0 0 0 / 0.1) 86%, rgb(0 0 0 / 0.22) 100%),
+    /* a faint diagonal sheen on the inner pane */
+    linear-gradient(118deg, transparent 22%, rgb(255 255 255 / 0.045) 38%, rgb(255 255 255 / 0.015) 50%, transparent 62%);
+}
+
+/* ---------- 3: the inner bezel (from the plate), between the groove and the glass ---------- */
+
+.inner {
+  position: absolute;
+  left: var(--ix);
+  top: var(--iy);
+  width: var(--iw);
+  height: var(--ih);
+  max-width: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ---------- 4: the shade, clipped to its track (inside the groove), under the outer bezel ---------- */
+
+.shadeClip {
+  clip-path: var(--aperture-clip);
+  -webkit-clip-path: var(--aperture-clip);
+}
+
+/* Closed: lowered until the lip rests in the groove at the bottom. Open: where the photograph has it. */
+.shade {
+  position: absolute;
+  left: var(--sx);
+  top: var(--sy);
+  width: var(--sw);
+  height: var(--sh);
+  max-width: none;
+  user-select: none;
+  translate: 0 calc(var(--shade-closed) * 100cqh);
+  transition: translate var(--lift) var(--ease-cinematic);
+  will-change: translate;
+}
+
+.scene[data-phase="lifting"] .shade,
+.scene[data-phase="open"] .shade,
+:global(html:not(.js)) .shade {
+  translate: 0 0;
+}
+
+/* ---------- 5: frame plate ---------- */
+
+.plate {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ---------- 6: window light: very slightly cool white, subtle; rises with the shade ---------- */
+
+.light {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse calc(var(--gw) * 2.4) calc(var(--gh) * 1.2) at var(--cx) var(--cy),
+    rgb(236 240 245 / 0.06) 0%,
+    rgb(236 240 245 / 0.028) 38%,
+    rgb(236 240 245 / 0.008) 62%,
+    transparent 80%
+  );
+  opacity: 0.25;
+  transition: opacity var(--lift) var(--ease-cinematic);
+}
+
+.scene[data-phase="lifting"] .light,
+.scene[data-phase="open"] .light,
+:global(html:not(.js)) .light {
+  opacity: 1;
+}
+
+.lightLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ---------- Scroll sequence: fly-through canvas, the white of the cloud, the fade into --void ---------- */
+
+.fly,
+.white,
+.fade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.fly {
+  display: block;
+}
+
+/* A very slightly cool white, so the inside of the cloud is soft rather than clinical. */
+.white {
+  background: #eef1f4;
+}
+
+.fade {
+  background: var(--void);
+}
+
+/* ---------- 7: grain (static, one texel per device pixel) ---------- */
+
+/* The glass mask is placed exactly over the stage: same size, same shift, same top. */
+.grain,
+.grainGlass {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--grain) 0 0 / var(--grain-size) var(--grain-size);
+  mix-blend-mode: var(--grain-blend);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+}
+
+/* Everywhere except the glass: full strength. */
+.grain {
+  opacity: var(--grain-opacity);
+  mask-image: linear-gradient(#000 0 0), var(--glass-mask);
+  -webkit-mask-image: linear-gradient(#000 0 0), var(--glass-mask);
+  mask-size: 100% 100%, var(--stage-w) var(--stage-h);
+  -webkit-mask-size: 100% 100%, var(--stage-w) var(--stage-h);
+  mask-position: 0 0, calc(50% + var(--frame-dx)) var(--stage-top);
+  -webkit-mask-position: 0 0, calc(50% + var(--frame-dx)) var(--stage-top);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+}
+
+/* Inside the glass: half strength, so the clouds stay clean. */
+.grainGlass {
+  opacity: calc(var(--grain-opacity) / 2);
+  mask-image: var(--glass-mask);
+  -webkit-mask-image: var(--glass-mask);
+  mask-size: var(--stage-w) var(--stage-h);
+  -webkit-mask-size: var(--stage-w) var(--stage-h);
+  mask-position: calc(50% + var(--frame-dx)) var(--stage-top);
+  -webkit-mask-position: calc(50% + var(--frame-dx)) var(--stage-top);
+}
+
+/* During the push the grain is off: its glass mask no longer lines up with the scaling stage, a full-screen
+   blend layer over a moving backdrop costs a GPU pass every frame, and at 2% it is invisible in motion. */
+.scene[data-pushing="true"] .grain,
+.scene[data-pushing="true"] .grainGlass {
+  display: none;
+}
+
+/* Once the departures board has risen over the whole scene, none of it is drawn: its layers leave the
+   tree entirely (the section itself keeps its size, so the pin is unaffected). The text block stays, hidden,
+   so the page's <h1> is still in the accessibility tree (the timeline has faded the block to 0 by then). */
+.scene[data-board-covered="true"] > *:not(.hud) {
+  display: none;
+}
+
+.scene[data-board-covered="true"] > .hud {
+  visibility: hidden;
+}
+
+.scene[data-board-covered="true"] > .hud .h1 {
+  visibility: visible;
+}
+
+/* Once the fly-through canvas fully covers it, the window is not drawn at all. */
+.scene[data-covered="true"] .stage {
+  visibility: hidden;
+}
+
+/* ---------- 8: vignette ---------- */
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 75% 70% at 50% 46%, transparent 55%, rgb(10 10 10 / 0.5) 85%, rgb(10 10 10 / 0.8) 100%);
+}
+
+/* ---------- 9: darkness while the shade is down ---------- */
+
+/* The frame is lit only by the window. Closed, the cabin is black; the light returns as the shade
+   lifts, on the same duration and curve, so the bezel's glow is revealed with the glass. */
+.dark {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--void);
+  opacity: 1;
+  transition: opacity var(--lift) var(--ease-cinematic);
+}
+
+.scene[data-phase="lifting"] .dark,
+.scene[data-phase="open"] .dark,
+:global(html:not(.js)) .dark {
+  opacity: 0;
+}
+
+/* ---------- Text (type sizes come from Tailwind utilities in the JSX) ---------- */
+
+/* All landing text in one layer, so the scroll push can fade it as one (GSAP sets opacity and transform). */
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Reloading on a later section: the landing text is not shown in the moment before the restore. */
+:global(html[data-restore]) .hud {
+  visibility: hidden;
+}
+
+.hud > * {
+  pointer-events: auto;
+}
+
+.wordmark {
+  position: absolute;
+  top: clamp(1rem, 3vw, 2rem);
+  left: clamp(1rem, 4vw, 3rem);
+  margin: 0;
+  display: block;
+  border-radius: 2px;
+  color: var(--paper);
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.wordmark:hover,
+.wordmark:focus-visible {
+  color: var(--amber);
+}
+
+.wordmark:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 4px;
+}
+
+/* The JB monogram: paper, amber on hover and keyboard focus (a gentle transition), the amber ring on focus. */
+.logo {
+  display: block;
+  height: clamp(1.75rem, 1.6rem + 0.3vw, 2rem);
+  width: auto;
+}
+
+
+.title {
+  --margin: clamp(1rem, 4vw, 3rem);
+  position: absolute;
+  left: var(--margin);
+  bottom: clamp(1.25rem, 5svh, 3.5rem);
+  /* Bottom left on the dark background, never across the frame: stop short of the frame's left edge. */
+  max-width: min(30rem, calc(var(--frame-left) - var(--margin) - 1.5rem));
+}
+
+@media (max-aspect-ratio: 3/4) {
+  /* Portrait: the title sits below the frame, full width, above the cue. */
+  .title {
+    max-width: min(30rem, calc(100vw - 2 * var(--margin)));
+    bottom: calc(clamp(0.75rem, 2.2svh, 1.5rem) + 5rem);
+  }
+}
+
+.h1 {
+  margin: 0;
+}
+
+.role {
+  margin: 0.35rem 0 0;
+}
+
+/* Short landscape screens (phones turned sideways): a step smaller and closer to the edges. */
+@media (max-height: 500px) and (min-aspect-ratio: 1/1) {
+  .title {
+    bottom: 1rem;
+  }
+  .title .h1 {
+    font-size: 1.25rem;
+    line-height: 1.25;
+  }
+  .title .role {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+  .wordmark {
+    top: 0.75rem;
+  }
+}
+
+/* Scroll cue: bottom centre, below the frame (never on it). */
+.cue {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(0.75rem, 2.2svh, 1.5rem);
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 500ms var(--ease-out);
+}
+
+.scene[data-phase="open"] .cue,
+:global(html:not(.js)) .cue {
+  opacity: 1;
+}
+
+.cueTrack {
+  position: relative;
+  width: 1px;
+  height: 2rem;
+  overflow: hidden;
+  background: rgb(255 255 255 / 0.08);
+}
+
+.cueLine {
+  position: absolute;
+  inset: 0;
+  background: var(--paper-muted);
+  transform-origin: top;
+  transform: scaleY(0);
+  animation: cue 2.6s var(--ease-in-out) infinite;
+}
+
+.scene[data-inview="false"] .cueLine {
+  animation-play-state: paused;
+}
+
+@keyframes cue {
+  0% { transform: scaleY(0); transform-origin: top; }
+  45% { transform: scaleY(1); transform-origin: top; }
+  55% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* ---------- Reduced motion: the end state (shade open), no movement ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .shade {
+    translate: 0 0 !important;
+    transition: none !important;
+  }
+  .light {
+    opacity: 1 !important;
+  }
+  .dark {
+    opacity: 0 !important;
+    transition: none !important;
+  }
+  .cue {
+    opacity: 1 !important;
+  }
+  .cueLine {
+    animation: none !important;
+    transform: scaleY(1);
+  }
+}
